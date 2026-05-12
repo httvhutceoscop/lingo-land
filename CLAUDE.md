@@ -27,25 +27,33 @@ LingoLand is a single-page Vietnamese-language English vocabulary game. React 18
 
 ### View routing lives in App.tsx, not a router
 
-[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'level' | 'quiz' | 'result' | 'leader' | 'profile'`) plus `activeLevel` and `quizResult`, and conditionally renders one of six view components. Navigation is callback props (`onPickLevel`, `onComplete`, `onFinish`, `onBack`, `onNavigate`) — there is no URL routing. Adding a new screen means: extend the `View` union, add the conditional render in `App.tsx`, and thread the navigation callback into whatever triggers it.
+[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile'`) plus `activeCategory`, `activeSubGroup`, `quizResult`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
 
-`BottomNav` only exposes `'map' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); the in-flow screens (`level`, `quiz`, `result`) are reached only via callbacks and collapse to `'map'` for the nav's `active` highlight.
+The `test` view dispatches to one of 4 mini-game components based on `activeSubGroup.mode`: [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx). All 4 share the contract `(words: Word[], onFinish: (r: QuizResult) => void)` — keep that shape if you add a 5th mode.
+
+`BottomNav` only exposes `'map' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) are reached only via callbacks and collapse to `'map'` for the nav's `active` highlight.
 
 ### Game state: Context + localStorage
 
-[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedLevels` and exposes `addScore` / `unlockLevel`. State is hydrated from and synced back to `localStorage` under these exact keys:
+[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups` (string IDs like `'animals.pets'`) and exposes `addScore`, `unlockNext`, `isUnlocked`. State is hydrated from and synced back to `localStorage` under these exact keys:
 
 - `lingoland_score`
 - `lingoland_streak`
-- `lingoland_levels` (JSON array of unlocked level IDs; default `[1]`)
+- `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category)
+
+On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
 `useGame()` throws if used outside `GameProvider`. The Profile screen's "reset" button does `localStorage.clear()` + `location.reload()`, so any new persisted keys should use the `lingoland_` prefix to stay consistent and get cleared together.
 
 ### Level progression
 
-Levels are static in [src/data/gameData.ts](src/data/gameData.ts) (`LEVELS: Level[]`, each with `Word[]`). Progression rule lives in [src/views/ResultView.tsx](src/views/ResultView.tsx): passing means `correct >= total * 0.7`, which calls `unlockLevel(level.id + 1)`. Quiz scoring (`addScore(20)` per correct answer) happens in [src/views/QuizView.tsx](src/views/QuizView.tsx) as the user answers, *not* on the result screen.
+Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: Category[]`, each with `subGroups: SubGroup[]`. A `SubGroup` has a stable `id` (used in localStorage), a `mode: TestMode` (which mini-game runs after the flashcard study), and 4-6 `words`.
 
-Quiz distractors are sampled from **all levels' words** (`LEVELS.flatMap(l => l.words)`), not the current level — this is deliberate and means adding a level changes the distractor pool for every other level.
+Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op (no cross-category unlock).
+
+Scoring (`addScore(20)` per correct answer) happens inside each mini-game as the user answers, *not* on the result screen.
+
+Distractor pool: [QuizView](src/views/QuizView.tsx) and [ListeningView](src/views/ListeningView.tsx) sample wrong answers from `ALL_WORDS` (a precomputed flatten of every sub-group's words) — adding a sub-group changes the distractor pool for every quiz/listening test.
 
 ### Styling and assets are CDN/inline, not bundled
 
@@ -55,4 +63,4 @@ Sound effects are `<audio>` elements in `index.html` with fixed IDs (`snd-correc
 
 ### Shared types
 
-`Word` and `Level` are exported from [src/data/gameData.ts](src/data/gameData.ts). `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx) (the result view is the canonical consumer). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). Import these rather than redefining locally.
+`Word`, `TestMode`, `SubGroup`, `Category` are exported from [src/data/gameData.ts](src/data/gameData.ts), along with helpers `ALL_WORDS`, `TOTAL_SUBGROUPS`, `findSubGroup(id)`, `nextSubGroupId(id)`. `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). Import these rather than redefining locally.

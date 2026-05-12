@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx } from '../lib/audio';
+import { playSfx, speak } from '../lib/audio';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -15,12 +15,12 @@ function buildOptions(word: Word): string[] {
   return shuffle(opts);
 }
 
-type QuizViewProps = {
+type ListeningViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
 };
 
-export default function QuizView({ words, onFinish }: QuizViewProps) {
+export default function ListeningView({ words, onFinish }: ListeningViewProps) {
   const { addScore } = useGame();
   const shuffledWords = useMemo(() => shuffle(words), [words]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -29,6 +29,11 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
 
   const word = shuffledWords[currentIdx];
   const options = useMemo(() => buildOptions(word), [word]);
+
+  useEffect(() => {
+    const t = setTimeout(() => speak(word.en), 300);
+    return () => clearTimeout(t);
+  }, [word]);
 
   const handleSelect = (opt: string) => {
     if (selected) return;
@@ -56,8 +61,8 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
 
   const optClass = (opt: string): string => {
     const base =
-      'quiz-opt p-5 bg-white border-2 border-slate-100 rounded-2xl font-bold text-left transition-all flex justify-between items-center disabled:cursor-default';
-    if (!selected) return `${base} hover:border-emerald-500 hover:bg-emerald-50`;
+      'p-5 bg-white border-2 border-slate-100 rounded-2xl font-bold text-left transition-all flex justify-between items-center disabled:cursor-default';
+    if (!selected) return `${base} hover:border-blue-500 hover:bg-blue-50`;
     if (opt === word.vi) return `${base} border-emerald-500 bg-emerald-50 text-emerald-700`;
     if (opt === selected) return `${base} border-red-500 bg-red-50 text-red-700`;
     return base;
@@ -74,16 +79,29 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
     <div className="animate-in slide-in-from-right duration-300">
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
-          KIỂM TRA KIẾN THỨC
+          NGHE ĐOÁN
         </span>
         <span className="font-bold text-emerald-500">
           {currentIdx + 1}/{shuffledWords.length}
         </span>
       </div>
-      <div className="text-6xl text-center mb-4">{word.img}</div>
-      <h2 className="text-xl font-black text-center mb-8 italic">
-        "{word.en}" có nghĩa là gì?
+
+      <div className="flex flex-col items-center my-8">
+        <button
+          onClick={() => speak(word.en)}
+          className="w-28 h-28 rounded-full bg-blue-500 text-white text-5xl shadow-xl shadow-blue-200 active:scale-95 transition-all flex items-center justify-center"
+        >
+          🔊
+        </button>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
+          Chạm để nghe lại
+        </p>
+      </div>
+
+      <h2 className="text-base font-bold text-center mb-6 text-slate-600">
+        Từ vừa nghe có nghĩa là gì?
       </h2>
+
       <div className="grid grid-cols-1 gap-3">
         {options.map((opt) => (
           <button

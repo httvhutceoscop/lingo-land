@@ -1,9 +1,9 @@
-import { LEVELS } from '../data/gameData';
+import { TOTAL_SUBGROUPS } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 
 export default function ProfileView() {
-  const { streak, unlockedLevels } = useGame();
-  const progressPct = (unlockedLevels.length / LEVELS.length) * 100;
+  const { streak, unlockedSubGroups } = useGame();
+  const progressPct = (unlockedSubGroups.length / TOTAL_SUBGROUPS) * 100;
 
   const handleReset = () => {
     if (confirm('Bạn có chắc chắn muốn xóa tất cả tiến độ học tập?')) {
@@ -33,7 +33,9 @@ export default function ProfileView() {
           </div>
         </div>
         <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-          <div className="text-emerald-500 text-2xl font-black">{unlockedLevels.length}</div>
+          <div className="text-emerald-500 text-2xl font-black">
+            {unlockedSubGroups.length}/{TOTAL_SUBGROUPS}
+          </div>
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             Chủ đề đã mở
           </div>

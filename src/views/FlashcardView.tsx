@@ -1,19 +1,26 @@
 import { useState } from 'react';
 import Flashcard from '../components/Flashcard';
 import { speak } from '../lib/audio';
-import type { Level } from '../data/gameData';
+import type { SubGroup, TestMode } from '../data/gameData';
 
-type LevelViewProps = {
-  level: Level;
+const TEST_LABEL: Record<TestMode, string> = {
+  quiz: 'Bắt đầu trắc nghiệm ➔',
+  matching: 'Bắt đầu nối từ ➔',
+  listening: 'Bắt đầu nghe đoán ➔',
+  typing: 'Bắt đầu gõ chính tả ➔',
+};
+
+type FlashcardViewProps = {
+  subGroup: SubGroup;
   onExit: () => void;
   onComplete: () => void;
 };
 
-export default function LevelView({ level, onExit, onComplete }: LevelViewProps) {
+export default function FlashcardView({ subGroup, onExit, onComplete }: FlashcardViewProps) {
   const [step, setStep] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  const words = level.words;
+  const words = subGroup.words;
   const word = words[step];
   const isLast = step >= words.length - 1;
 
@@ -55,7 +62,7 @@ export default function LevelView({ level, onExit, onComplete }: LevelViewProps)
             onClick={handleNext}
             className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
           >
-            {isLast ? 'Bắt đầu kiểm tra ➔' : 'Tiếp theo'}
+            {isLast ? TEST_LABEL[subGroup.mode] : 'Tiếp theo'}
           </button>
         </div>
       </div>

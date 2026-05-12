@@ -1,26 +1,27 @@
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { LEVELS, type Level } from '../data/gameData';
+import { nextSubGroupId, type SubGroup } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 
 export type QuizResult = { correct: number; total: number };
 
 type ResultViewProps = {
-  level: Level;
+  subGroup: SubGroup;
   result: QuizResult;
   onBack: () => void;
 };
 
-export default function ResultView({ level, result, onBack }: ResultViewProps) {
+export default function ResultView({ subGroup, result, onBack }: ResultViewProps) {
   const { correct, total } = result;
   const pass = correct >= total * 0.7;
-  const { unlockLevel } = useGame();
+  const { unlockNext } = useGame();
+  const hasNext = nextSubGroupId(subGroup.id) !== null;
 
   useEffect(() => {
-    if (pass && level.id < LEVELS.length) {
-      unlockLevel(level.id + 1);
+    if (pass) {
+      unlockNext(subGroup.id);
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
-    if (pass) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -30,7 +31,9 @@ export default function ResultView({ level, result, onBack }: ResultViewProps) {
       <h2 className="text-3xl font-black mb-2">{pass ? 'Tuyệt vời!' : 'Cố gắng lên!'}</h2>
       <p className="text-slate-400 mb-8">
         {pass
-          ? 'Bạn đã chinh phục thành công hòn đảo này.'
+          ? hasNext
+            ? `Bạn đã mở khóa chủ đề tiếp theo của ${subGroup.title}.`
+            : 'Bạn đã hoàn thành toàn bộ chủ đề này!'
           : 'Hãy ôn tập lại thẻ từ vựng một lần nữa nhé.'}
       </p>
 
@@ -51,7 +54,7 @@ export default function ResultView({ level, result, onBack }: ResultViewProps) {
         onClick={onBack}
         className="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl active:scale-95 transition-all"
       >
-        {pass ? 'Tiếp tục hành trình' : 'Quay lại bản đồ'}
+        {pass ? 'Tiếp tục hành trình' : 'Quay lại danh sách'}
       </button>
     </div>
   );

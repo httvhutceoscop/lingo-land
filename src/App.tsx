@@ -2,36 +2,59 @@ import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import BottomNav, { type NavKey } from './components/BottomNav';
 import MapView from './views/MapView';
-import LevelView from './views/LevelView';
+import CategoryView from './views/CategoryView';
+import FlashcardView from './views/FlashcardView';
 import QuizView from './views/QuizView';
+import MatchingView from './views/MatchingView';
+import ListeningView from './views/ListeningView';
+import TypingView from './views/TypingView';
 import ResultView, { type QuizResult } from './views/ResultView';
 import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
 import { speak } from './lib/audio';
-import type { Level } from './data/gameData';
+import type { Category, SubGroup } from './data/gameData';
 
-type View = 'map' | 'level' | 'quiz' | 'result' | 'leader' | 'profile';
+type View = 'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
-  const [activeLevel, setActiveLevel] = useState<Level | null>(null);
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [activeSubGroup, setActiveSubGroup] = useState<SubGroup | null>(null);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
 
   useEffect(() => {
     speak('');
   }, []);
 
-  const goMap = () => setView('map');
+  const goMap = () => {
+    setActiveCategory(null);
+    setActiveSubGroup(null);
+    setView('map');
+  };
+
+  const goCategory = () => {
+    setActiveSubGroup(null);
+    setView('category');
+  };
+
   const handleNavigate = (key: NavKey) => {
     if (key === 'map') goMap();
     else setView(key);
   };
-  const startLevel = (level: Level) => {
-    setActiveLevel(level);
-    setView('level');
+
+  const pickCategory = (category: Category) => {
+    setActiveCategory(category);
+    setView('category');
   };
-  const startQuiz = () => setView('quiz');
-  const finishQuiz = (result: QuizResult) => {
+
+  const pickSubGroup = (subGroup: SubGroup) => {
+    setActiveSubGroup(subGroup);
+    setView('flashcard');
+  };
+
+  const startTest = () => setView('test');
+
+  const finishTest = (result: QuizResult) => {
     setQuizResult(result);
     setView('result');
   };
@@ -42,15 +65,43 @@ export default function App() {
     <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
       <Header />
       <main className="flex-1 p-4 relative overflow-y-auto">
-        {view === 'map' && <MapView onPickLevel={startLevel} />}
-        {view === 'level' && activeLevel && (
-          <LevelView level={activeLevel} onExit={goMap} onComplete={startQuiz} />
+        {view === 'map' && <MapView onPickCategory={pickCategory} />}
+        {view === 'category' && activeCategory && (
+          <CategoryView
+            category={activeCategory}
+            onPickSubGroup={pickSubGroup}
+            onBack={goMap}
+          />
         )}
-        {view === 'quiz' && activeLevel && (
-          <QuizView level={activeLevel} onFinish={finishQuiz} />
+        {view === 'flashcard' && activeSubGroup && (
+          <FlashcardView
+            subGroup={activeSubGroup}
+            onExit={goCategory}
+            onComplete={startTest}
+          />
         )}
-        {view === 'result' && activeLevel && quizResult && (
-          <ResultView level={activeLevel} result={quizResult} onBack={goMap} />
+        {view === 'test' && activeSubGroup && (
+          <>
+            {activeSubGroup.mode === 'quiz' && (
+              <QuizView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+            {activeSubGroup.mode === 'matching' && (
+              <MatchingView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+            {activeSubGroup.mode === 'listening' && (
+              <ListeningView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+            {activeSubGroup.mode === 'typing' && (
+              <TypingView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+          </>
+        )}
+        {view === 'result' && activeSubGroup && quizResult && (
+          <ResultView
+            subGroup={activeSubGroup}
+            result={quizResult}
+            onBack={goCategory}
+          />
         )}
         {view === 'leader' && <LeaderboardView />}
         {view === 'profile' && <ProfileView />}
