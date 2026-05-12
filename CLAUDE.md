@@ -13,7 +13,13 @@ No test runner is configured.
 
 ## Deployment
 
-GitHub Pages via [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) on push to `main`. The site is served at `https://vietnt.github.io/lingo-land/`, so [vite.config.ts](vite.config.ts) sets `base: '/lingo-land/'`. If you rename the repo, update `base` to match — otherwise built assets 404.
+GitHub Pages via [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) on push to `main`. The site is served at `https://vietnt.github.io/lingo-land/`, so [vite.config.ts](vite.config.ts) sets `base: '/lingo-land/'`. If you rename the repo, update `base` **and** the PWA manifest's `scope` / `start_url` (both are `/lingo-land/`) — otherwise built assets 404 and the installed PWA loses its session.
+
+## PWA
+
+Configured via `vite-plugin-pwa` in [vite.config.ts](vite.config.ts) with `registerType: 'autoUpdate'` — the SW is auto-registered (injected `registerSW.js`) and silently updates on next reload. Icons live in `public/` as SVG (`icon.svg`, `icon-maskable.svg`, `favicon.svg`). Apple touch icon + theme-color meta are in [index.html](index.html).
+
+Runtime caching (workbox `CacheFirst`) is set up for the three external origins this app depends on: `cdn.tailwindcss.com`, Google Fonts, and `assets.mixkit.co` (SFX). Without these caches the app breaks offline because Tailwind is CDN-loaded (see Styling section). Add a new `runtimeCaching` entry if you introduce another external origin.
 
 ## Architecture
 
