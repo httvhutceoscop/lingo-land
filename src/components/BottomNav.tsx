@@ -15,7 +15,7 @@ type BottomNavProps = {
 
 export default function BottomNav({ active, onNavigate }: BottomNavProps) {
   return (
-    <nav className="border-t bg-white p-3 flex justify-around items-center">
+    <nav className="sticky bottom-0 z-40 border-t bg-white/90 backdrop-blur-md px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex justify-around items-center">
       {NAV_ITEMS.map((item) => (
         <button
           key={item.key}
