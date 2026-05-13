@@ -9,6 +9,7 @@ const TEST_LABEL: Record<TestMode, string> = {
   listening: 'Bắt đầu nghe đoán ➔',
   typing: 'Bắt đầu gõ chính tả ➔',
   memory: 'Bắt đầu trí nhớ ➔',
+  hangman: 'Bắt đầu đoán chữ ➔',
 };
 
 type FlashcardViewProps = {

@@ -9,6 +9,7 @@ import MatchingView from './views/MatchingView';
 import ListeningView from './views/ListeningView';
 import TypingView from './views/TypingView';
 import MemoryView from './views/MemoryView';
+import HangmanView from './views/HangmanView';
 import ResultView, { type QuizResult } from './views/ResultView';
 import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
@@ -127,6 +128,9 @@ export default function App() {
             )}
             {activeSubGroup.mode === 'memory' && (
               <MemoryView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+            {activeSubGroup.mode === 'hangman' && (
+              <HangmanView words={activeSubGroup.words} onFinish={finishTest} />
             )}
           </>
         )}

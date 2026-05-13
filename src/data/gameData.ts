@@ -6,7 +6,7 @@ export type Word = {
   ex: string;
 };
 
-export type TestMode = 'quiz' | 'matching' | 'listening' | 'typing' | 'memory';
+export type TestMode = 'quiz' | 'matching' | 'listening' | 'typing' | 'memory' | 'hangman';
 
 export type SubGroup = {
   id: string;
@@ -69,7 +69,7 @@ export const CATEGORIES: Category[] = [
         id: 'animals.sea',
         title: 'Sea Animals',
         icon: '🐬',
-        mode: 'typing',
+        mode: 'hangman',
         words: [
           { en: 'Dolphin', vi: 'Cá heo', ipa: '/ˈdɒl.fɪn/', img: '🐬', ex: 'Dolphins are very intelligent animals.' },
           { en: 'Shark', vi: 'Cá mập', ipa: '/ʃɑːk/', img: '🦈', ex: 'A shark has very sharp teeth.' },
@@ -277,7 +277,7 @@ export const CATEGORIES: Category[] = [
         id: 'weather.temperature',
         title: 'Temperature',
         icon: '🌡️',
-        mode: 'typing',
+        mode: 'hangman',
         words: [
           { en: 'Hot', vi: 'Nóng', ipa: '/hɒt/', img: '🥵', ex: "It's hot today, drink more water." },
           { en: 'Cold', vi: 'Lạnh', ipa: '/kəʊld/', img: '🥶', ex: 'Wear a coat, it is very cold.' },
