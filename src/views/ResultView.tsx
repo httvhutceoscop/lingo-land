@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { nextSubGroupId, type SubGroup } from '../data/gameData';
 import { useGame } from '../context/GameContext';
+import { getPetStage } from '../data/petData';
 
 export type QuizResult = { correct: number; total: number };
 
@@ -14,14 +15,36 @@ type ResultViewProps = {
 export default function ResultView({ subGroup, result, onBack }: ResultViewProps) {
   const { correct, total } = result;
   const pass = correct >= total * 0.7;
-  const { unlockNext, markPassed } = useGame();
+  const { unlockNext, markPassed, passedSubGroups, petName } = useGame();
   const hasNext = nextSubGroupId(subGroup.id) !== null;
+
+  const [snapshot] = useState(() => ({
+    alreadyPassed: passedSubGroups.includes(subGroup.id),
+    countBefore: passedSubGroups.length,
+  }));
+  const countAfter =
+    pass && !snapshot.alreadyPassed ? snapshot.countBefore + 1 : snapshot.countBefore;
+  const stageBefore = getPetStage(snapshot.countBefore);
+  const stageAfter = getPetStage(countAfter);
+  const evolved = pass && stageBefore.icon !== stageAfter.icon;
 
   useEffect(() => {
     if (pass) {
       markPassed(subGroup.id);
       unlockNext(subGroup.id);
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+      if (evolved) {
+        setTimeout(
+          () =>
+            confetti({
+              particleCount: 200,
+              spread: 100,
+              origin: { y: 0.5 },
+              colors: ['#a855f7', '#ec4899', '#facc15'],
+            }),
+          500
+        );
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -43,6 +66,18 @@ export default function ResultView({ subGroup, result, onBack }: ResultViewProps
         </p>
       )}
       {!pass && <div className="mb-8" />}
+
+      {evolved && (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-5 mb-6 animate-in zoom-in duration-700">
+          <div className="text-6xl mb-2 animate-bounce">{stageAfter.icon}</div>
+          <p className="font-black text-purple-800 text-lg">
+            ✨ {petName} đã tiến hoá! ✨
+          </p>
+          <p className="text-xs text-purple-600 mt-1 font-bold">
+            Giờ là {stageAfter.name}
+          </p>
+        </div>
+      )}
 
       <div className="bg-slate-50 rounded-3xl p-6 mb-8 grid grid-cols-2 gap-4">
         <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">

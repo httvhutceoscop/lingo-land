@@ -1,20 +1,24 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { CATEGORIES, nextSubGroupId } from '../data/gameData';
+import { DEFAULT_PET_NAME, PET_NAME_MAX } from '../data/petData';
 
 type GameContextValue = {
   score: number;
   streak: number;
   unlockedSubGroups: string[];
   passedSubGroups: string[];
+  petName: string;
   isUnlocked: (subGroupId: string) => boolean;
   isPassed: (subGroupId: string) => boolean;
   addScore: (delta: number) => void;
   unlockNext: (currentSubGroupId: string) => void;
   markPassed: (subGroupId: string) => void;
+  setPetName: (name: string) => void;
 };
 
 const STORAGE_UNLOCKED = 'lingoland_subgroups_v2';
 const STORAGE_PASSED = 'lingoland_passed_v2';
+const STORAGE_PET_NAME = 'lingoland_pet_name';
 const LEGACY_KEY = 'lingoland_levels';
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -54,6 +58,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   );
   const [unlockedSubGroups, setUnlockedSubGroups] = useState<string[]>(loadUnlocked);
   const [passedSubGroups, setPassedSubGroups] = useState<string[]>(loadPassed);
+  const [petName, setPetNameState] = useState<string>(
+    () => localStorage.getItem(STORAGE_PET_NAME) || DEFAULT_PET_NAME
+  );
 
   useEffect(() => {
     localStorage.setItem('lingoland_score', String(score));
@@ -66,6 +73,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_PASSED, JSON.stringify(passedSubGroups));
   }, [passedSubGroups]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_PET_NAME, petName);
+  }, [petName]);
 
   const addScore = (delta: number) => setScore((s) => s + delta);
 
@@ -82,6 +93,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setPassedSubGroups((arr) => (arr.includes(id) ? arr : [...arr, id]));
   };
 
+  const setPetName = (name: string) => {
+    const cleaned = name.trim().slice(0, PET_NAME_MAX);
+    setPetNameState(cleaned || DEFAULT_PET_NAME);
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -89,11 +105,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         streak,
         unlockedSubGroups,
         passedSubGroups,
+        petName,
         isUnlocked,
         isPassed,
         addScore,
         unlockNext,
         markPassed,
+        setPetName,
       }}
     >
       {children}

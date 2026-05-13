@@ -35,12 +35,13 @@ The `test` view dispatches to one of 5 mini-game components based on `activeSubG
 
 ### Game state: Context + localStorage
 
-[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups`, `passedSubGroups` (both `string[]` of sub-group IDs like `'animals.pets'`) and exposes `addScore`, `unlockNext`, `markPassed`, `isUnlocked`, `isPassed`. **Unlocked ≠ passed**: a sub-group is unlocked the moment its predecessor passes (or it's the first in its category), and passed only after the user themselves clears it. Stickers, MapView progress bar, and ProfileView's "Tiến độ tổng quát" all key off `passedSubGroups`. State is hydrated from and synced back to `localStorage` under these exact keys:
+[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups`, `passedSubGroups` (both `string[]` of sub-group IDs like `'animals.pets'`), and `petName` (string). Exposes `addScore`, `unlockNext`, `markPassed`, `isUnlocked`, `isPassed`, `setPetName`. **Unlocked ≠ passed**: a sub-group is unlocked the moment its predecessor passes (or it's the first in its category), and passed only after the user themselves clears it. Stickers, MapView progress bar, ProfileView's "Tiến độ tổng quát", AND the pet stage all key off `passedSubGroups`. State is hydrated from and synced back to `localStorage` under these exact keys:
 
 - `lingoland_score`
 - `lingoland_streak`
 - `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category)
 - `lingoland_passed_v2` (JSON `string[]` of passed sub-group IDs; default `[]`)
+- `lingoland_pet_name` (string, default `'Bí'`, max 16 chars via `setPetName`)
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -53,6 +54,10 @@ Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: C
 Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `markPassed(id)` then `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op for unlock but still mark the sub-group as passed (so the user gets the sticker).
 
 Stickers are surfaced through [StickersView](src/views/StickersView.tsx) — a gallery of every sub-group icon, locked ones rendered as 🔒 with `???` label. Reachable from a button inside [ProfileView](src/views/ProfileView.tsx), not the bottom nav.
+
+### Pet mascot
+
+A virtual pet (`🥚 → 🐣 → 🐤 → 🐥 → 🐔`) lives in [src/data/petData.ts](src/data/petData.ts) and evolves based on `passedSubGroups.length` thresholds (0, 3, 7, 12, 18). The pet icon + custom `petName` show in [Header](src/components/Header.tsx) on every screen, replacing what used to be the static "L" logo. [ProfileView](src/views/ProfileView.tsx) shows a big pet card with editable name, tap-to-bounce animation, and a progress bar to the next stage. [ResultView](src/views/ResultView.tsx) snapshots `passedSubGroups.length` at mount (via `useState(() => ...)`) so it can detect if the just-finished pass triggers an evolution — if yes, it shows a purple "đã tiến hoá!" banner with an extra confetti burst. The snapshot pattern is important: by the time `markPassed` flushes, `passedSubGroups` already includes the new ID, so we'd otherwise miss the transition.
 
 Scoring (`addScore(20)` per correct answer) happens inside each mini-game as the user answers, *not* on the result screen.
 
