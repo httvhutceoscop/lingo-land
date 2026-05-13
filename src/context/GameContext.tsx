@@ -8,17 +8,20 @@ type GameContextValue = {
   unlockedSubGroups: string[];
   passedSubGroups: string[];
   petName: string;
+  timeHighScore: number;
   isUnlocked: (subGroupId: string) => boolean;
   isPassed: (subGroupId: string) => boolean;
   addScore: (delta: number) => void;
   unlockNext: (currentSubGroupId: string) => void;
   markPassed: (subGroupId: string) => void;
   setPetName: (name: string) => void;
+  submitTimeScore: (score: number) => boolean;
 };
 
 const STORAGE_UNLOCKED = 'lingoland_subgroups_v2';
 const STORAGE_PASSED = 'lingoland_passed_v2';
 const STORAGE_PET_NAME = 'lingoland_pet_name';
+const STORAGE_TIME_HS = 'lingoland_time_hs';
 const LEGACY_KEY = 'lingoland_levels';
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -61,6 +64,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [petName, setPetNameState] = useState<string>(
     () => localStorage.getItem(STORAGE_PET_NAME) || DEFAULT_PET_NAME
   );
+  const [timeHighScore, setTimeHighScore] = useState<number>(
+    () => parseInt(localStorage.getItem(STORAGE_TIME_HS) ?? '', 10) || 0
+  );
 
   useEffect(() => {
     localStorage.setItem('lingoland_score', String(score));
@@ -77,6 +83,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_PET_NAME, petName);
   }, [petName]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_TIME_HS, String(timeHighScore));
+  }, [timeHighScore]);
 
   const addScore = (delta: number) => setScore((s) => s + delta);
 
@@ -98,6 +108,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setPetNameState(cleaned || DEFAULT_PET_NAME);
   };
 
+  const submitTimeScore = (newScore: number): boolean => {
+    if (newScore > timeHighScore) {
+      setTimeHighScore(newScore);
+      return true;
+    }
+    return false;
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -106,12 +124,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
         unlockedSubGroups,
         passedSubGroups,
         petName,
+        timeHighScore,
         isUnlocked,
         isPassed,
         addScore,
         unlockNext,
         markPassed,
         setPetName,
+        submitTimeScore,
       }}
     >
       {children}

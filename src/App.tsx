@@ -14,6 +14,7 @@ import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
 import PronunciationView from './views/PronunciationView';
 import StickersView from './views/StickersView';
+import TimeChallengeView from './views/TimeChallengeView';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
 
@@ -26,7 +27,8 @@ type View =
   | 'leader'
   | 'profile'
   | 'pron'
-  | 'stickers';
+  | 'stickers'
+  | 'challenge';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -84,7 +86,13 @@ export default function App() {
     <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
       <Header />
       <main className="flex-1 p-4 relative overflow-y-auto">
-        {view === 'map' && <MapView onPickCategory={pickCategory} />}
+        {view === 'map' && (
+          <MapView
+            onPickCategory={pickCategory}
+            onPickChallenge={() => setView('challenge')}
+          />
+        )}
+        {view === 'challenge' && <TimeChallengeView onBack={goMap} />}
         {view === 'category' && activeCategory && (
           <CategoryView
             category={activeCategory}

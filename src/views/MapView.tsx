@@ -3,14 +3,34 @@ import { useGame } from '../context/GameContext';
 
 type MapViewProps = {
   onPickCategory: (category: Category) => void;
+  onPickChallenge: () => void;
 };
 
-export default function MapView({ onPickCategory }: MapViewProps) {
-  const { passedSubGroups } = useGame();
+export default function MapView({ onPickCategory, onPickChallenge }: MapViewProps) {
+  const { passedSubGroups, timeHighScore } = useGame();
 
   return (
     <div className="py-4 animate-in fade-in duration-500">
-      <h2 className="text-2xl font-black mb-6">Đảo Tri Thức</h2>
+      <button
+        onClick={onPickChallenge}
+        className="w-full mb-6 p-5 bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 rounded-3xl shadow-lg shadow-orange-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+      >
+        <div className="text-5xl floating">🔥</div>
+        <div className="flex-1 text-white">
+          <div className="font-black text-lg leading-tight">Thử thách 60 giây</div>
+          <div className="text-xs opacity-90 font-bold mt-0.5">
+            Trả lời thật nhanh, ăn nhiều sao!
+          </div>
+          {timeHighScore > 0 && (
+            <div className="text-[10px] mt-1 font-bold bg-white/20 inline-block px-2 py-0.5 rounded-full">
+              🏆 Kỷ lục: {timeHighScore} câu
+            </div>
+          )}
+        </div>
+        <span className="text-white text-xl">▶️</span>
+      </button>
+
+      <h2 className="text-2xl font-black mb-4">Đảo Tri Thức</h2>
       <div className="space-y-4">
         {CATEGORIES.map((cat) => {
           const doneCount = cat.subGroups.filter((sg) =>

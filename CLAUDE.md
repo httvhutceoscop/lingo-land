@@ -42,6 +42,7 @@ The `test` view dispatches to one of 5 mini-game components based on `activeSubG
 - `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category)
 - `lingoland_passed_v2` (JSON `string[]` of passed sub-group IDs; default `[]`)
 - `lingoland_pet_name` (string, default `'Bí'`, max 16 chars via `setPetName`)
+- `lingoland_time_hs` (integer high score for the 60-second time challenge; only ever increases via `submitTimeScore`)
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -54,6 +55,10 @@ Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: C
 Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `markPassed(id)` then `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op for unlock but still mark the sub-group as passed (so the user gets the sticker).
 
 Stickers are surfaced through [StickersView](src/views/StickersView.tsx) — a gallery of every sub-group icon, locked ones rendered as 🔒 with `???` label. Reachable from a button inside [ProfileView](src/views/ProfileView.tsx), not the bottom nav.
+
+### Time Challenge (off-path)
+
+[TimeChallengeView](src/views/TimeChallengeView.tsx) is a standalone 60-second mode reached from a featured gradient card at the top of [MapView](src/views/MapView.tsx). It does **not** participate in the unlock progression — no sub-group is involved, no sticker is awarded. Words are picked uniformly at random from `ALL_WORDS`. Internal state machine: `'idle' | 'playing' | 'finished'`. Pacing: 350ms feedback between answers (much faster than QuizView's 1200ms — the time pressure IS the point). High score is submitted once when entering `'finished'` via `submitTimeScore(correctCount)` which is idempotent (only updates if strictly greater) — beating it triggers an orange-pink confetti burst.
 
 ### Pet mascot
 
