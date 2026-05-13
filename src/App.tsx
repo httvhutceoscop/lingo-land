@@ -26,6 +26,9 @@ import MathQuizView from './views/MathQuizView';
 import NumberPopView from './views/NumberPopView';
 import FeedAnimalView from './views/FeedAnimalView';
 import CompareView from './views/CompareView';
+import SubtractView from './views/SubtractView';
+import CountView from './views/CountView';
+import PlusView from './views/PlusView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
@@ -50,6 +53,9 @@ type View =
   | 'numberpop'
   | 'feedanimal'
   | 'compare'
+  | 'subtract'
+  | 'plus'
+  | 'count'
   | 'knowledge';
 
 export default function App() {
@@ -119,6 +125,9 @@ export default function App() {
             onPickNumberPop={() => setView('numberpop')}
             onPickFeedAnimal={() => setView('feedanimal')}
             onPickCompare={() => setView('compare')}
+            onPickSubtract={() => setView('subtract')}
+            onPickPlus={() => setView('plus')}
+            onPickCount={() => setView('count')}
           />
         )}
         {view === 'knowledge' && (
@@ -130,6 +139,9 @@ export default function App() {
         {view === 'numberpop' && <NumberPopView onBack={goMap} />}
         {view === 'feedanimal' && <FeedAnimalView onBack={goMap} />}
         {view === 'compare' && <CompareView onBack={goMap} />}
+        {view === 'subtract' && <SubtractView onBack={goMap} />}
+        {view === 'count' && <CountView onBack={goMap} />}
+        {view === 'plus' && <PlusView onBack={goMap} />}
         {view === 'mathland' && (
           <MathLandView
             onPickLevel={(l) => {

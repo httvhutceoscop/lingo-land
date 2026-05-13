@@ -10,6 +10,9 @@ type MapViewProps = {
   onPickNumberPop: () => void;
   onPickFeedAnimal: () => void;
   onPickCompare: () => void;
+  onPickSubtract: () => void;
+  onPickPlus: () => void;
+  onPickCount: () => void;
 };
 
 export default function MapView({
@@ -20,6 +23,9 @@ export default function MapView({
   onPickNumberPop,
   onPickFeedAnimal,
   onPickCompare,
+  onPickSubtract,
+  onPickPlus,
+  onPickCount,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -90,6 +96,48 @@ export default function MapView({
             <div className="font-black text-lg leading-tight">Cho thú ăn</div>
             <div className="text-xs opacity-90 font-bold mt-0.5">
               Kéo món ăn đúng vào con vật đang đói
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickCount}
+          className="w-full p-5 bg-gradient-to-br from-pink-400 via-fuchsia-500 to-purple-500 rounded-3xl shadow-lg shadow-fuchsia-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🐱</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Học Đếm Số</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Đếm đồ vật, ghép số và tìm số còn thiếu
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickPlus}
+          className="w-full p-5 bg-gradient-to-br from-cyan-400 via-emerald-500 to-amber-500 rounded-3xl shadow-lg shadow-emerald-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🐼</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Phép cộng vui</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Học phép cộng bằng hình ảnh đồ vật
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickSubtract}
+          className="w-full p-5 bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500 rounded-3xl shadow-lg shadow-purple-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🧸</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Phép trừ vui</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Học phép trừ bằng hình ảnh đồ vật
             </div>
           </div>
           <span className="text-white text-xl">▶️</span>
