@@ -19,9 +19,12 @@ import TimeChallengeView from './views/TimeChallengeView';
 import DailyReviewView from './views/DailyReviewView';
 import AlphabetView from './views/AlphabetView';
 import NumberView from './views/NumberView';
+import MathLandView from './views/MathLandView';
+import MathQuizView from './views/MathQuizView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
+import type { MathLevel } from './data/mathData';
 
 type View =
   | 'map'
@@ -36,7 +39,9 @@ type View =
   | 'challenge'
   | 'review'
   | 'alphabet'
-  | 'numbers';
+  | 'numbers'
+  | 'mathland'
+  | 'mathquiz';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -44,6 +49,7 @@ export default function App() {
   const [activeSubGroup, setActiveSubGroup] = useState<SubGroup | null>(null);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeMathLevel, setActiveMathLevel] = useState<MathLevel | null>(null);
 
   useEffect(() => {
     speak('');
@@ -100,7 +106,20 @@ export default function App() {
             onPickCategory={pickCategory}
             onPickChallenge={() => setView('challenge')}
             onPickReview={() => setView('review')}
+            onPickMath={() => setView('mathland')}
           />
+        )}
+        {view === 'mathland' && (
+          <MathLandView
+            onPickLevel={(l) => {
+              setActiveMathLevel(l);
+              setView('mathquiz');
+            }}
+            onBack={goMap}
+          />
+        )}
+        {view === 'mathquiz' && activeMathLevel && (
+          <MathQuizView level={activeMathLevel} onBack={() => setView('mathland')} />
         )}
         {view === 'challenge' && <TimeChallengeView onBack={goMap} />}
         {view === 'review' && <DailyReviewView onBack={goMap} />}

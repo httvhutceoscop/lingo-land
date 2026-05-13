@@ -1,19 +1,23 @@
 import { CATEGORIES, type Category } from '../data/gameData';
+import { TOTAL_MATH_LEVELS } from '../data/mathData';
 import { useGame } from '../context/GameContext';
 
 type MapViewProps = {
   onPickCategory: (category: Category) => void;
   onPickChallenge: () => void;
   onPickReview: () => void;
+  onPickMath: () => void;
 };
 
 export default function MapView({
   onPickCategory,
   onPickChallenge,
   onPickReview,
+  onPickMath,
 }: MapViewProps) {
-  const { passedSubGroups, timeHighScore, dueDeck } = useGame();
+  const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
+  const mathDone = mathPassed.length;
 
   return (
     <div className="py-4 animate-in fade-in duration-500">
@@ -32,6 +36,25 @@ export default function MapView({
           <span className="text-white text-xl">▶️</span>
         </button>
       )}
+
+      <button
+        onClick={onPickMath}
+        className="w-full mb-3 p-5 bg-gradient-to-br from-indigo-400 via-purple-500 to-pink-500 rounded-3xl shadow-lg shadow-purple-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+      >
+        <div className="text-5xl">🧮</div>
+        <div className="flex-1 text-white">
+          <div className="font-black text-lg leading-tight">Đảo Toán Học</div>
+          <div className="text-xs opacity-90 font-bold mt-0.5">
+            Nhận diện ký hiệu, cộng trừ trong 20
+          </div>
+          {mathDone > 0 && (
+            <div className="text-[10px] mt-1 font-bold bg-white/20 inline-block px-2 py-0.5 rounded-full">
+              ✓ {mathDone}/{TOTAL_MATH_LEVELS} level
+            </div>
+          )}
+        </div>
+        <span className="text-white text-xl">▶️</span>
+      </button>
 
       <button
         onClick={onPickChallenge}

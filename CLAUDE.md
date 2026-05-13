@@ -46,6 +46,7 @@ A right-side **slide-in drawer** ([SideDrawer](src/components/SideDrawer.tsx)) i
 - `lingoland_pet_name` (string, default `'Bí'`, max 16 chars via `setPetName`)
 - `lingoland_time_hs` (integer high score for the 60-second time challenge; only ever increases via `submitTimeScore`)
 - `lingoland_word_stats` (JSON `Record<wordEn, { level, lastSeen }>` for spaced-repetition state; keys are `Word.en` strings)
+- `lingoland_math_passed` (JSON `string[]` of passed math level IDs like `'math.symbols'`, `'math.plus.10'`)
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -70,6 +71,18 @@ Entry points to the system:
 The MapView card for daily review is **conditional on `dueDeck.length > 0`** — if nothing is due, the card disappears and only Time Challenge + categories show. First-time users see no review card until their first pass + the level-0 interval (1 day) elapses. To test locally without waiting, edit `lingoland_word_stats` in DevTools and rewind a `lastSeen` value, then refresh.
 
 DailyReviewView snapshots `dueDeck` into local state at mount (`useState(() => dueDeck)`) so the session list does NOT shrink mid-session as `recordReview` updates `wordStats` (which causes `dueDeck` to recompute). Each correct answer pays `addScore(+10)` — half of a regular test answer, since review is easier and recurrent.
+
+### Math Land (off-path)
+
+[MathLandView](src/views/MathLandView.tsx) + [MathQuizView](src/views/MathQuizView.tsx) implement a standalone arithmetic mode reached from a featured indigo→purple→pink card at the top of MapView. **Not** wired into the `Word`/SubGroup/sticker/SRS systems — math has its own progression state (`mathPassed: string[]` in GameContext) and storage key (`lingoland_math_passed`).
+
+Level catalog lives in [src/data/mathData.ts](src/data/mathData.ts) as `MATH_LEVELS: MathLevel[]` — 7 entries total: 1 symbol recognition intro (`math.symbols`, 5 questions covering +/−/×/:/=) followed by 6 compute levels (`math.plus.5` ↔ `math.minus.20`, 10 questions each). Levels unlock **sequentially**: `isMathUnlocked(id)` returns true iff the previous level in `MATH_LEVELS` order is passed (or `id` is the first). Pass rule mirrors regular tests: `correct >= total * 0.7`.
+
+`generateQuestions(level)` returns `MathQuestion[]` discriminated as `'symbol' | 'compute'`:
+- **symbol**: pick distinct entries from `SYMBOLS` (5 total), each question shows the glyph (uses `×` and `:` literally — not `x` and `÷` — to match Vietnamese textbook convention) and offers 4 Vietnamese name options.
+- **compute**: addition picks `a ∈ [0, range]`, `b ∈ [0, range - a]` so `a + b ≤ range` (no overflow). Subtraction picks `a ∈ [0, range]`, `b ∈ [0, a]` so result is never negative. `buildNumberOptions(answer, range)` samples 3 distractors at `answer ± [1..3]` clamped to a safe range; falls back to filling with low numbers if the candidate pool is too small (matters only for `range=5`).
+
+MathQuizView has 2 phases (`'playing' | 'done'`) — no intro screen (children don't need a click delay). On `'done'`, if pass: confetti (indigo/purple/pink palette) + `markMathPassed(id)`. The `restart` button regenerates the deck via `generateQuestions(level)` again so each replay is fresh. `addScore(+10)` per correct answer (same rate as Daily Review).
 
 ### Time Challenge (off-path)
 
