@@ -37,6 +37,26 @@
         .balloon-pop { animation: balloon-pop 0.5s ease-out forwards; }
         .balloon-btn { position: relative; }
         .balloon-btn::before { content: ''; position: absolute; top: 14%; left: 22%; width: 22%; height: 14%; background: rgba(255,255,255,0.55); border-radius: 50%; filter: blur(2px); pointer-events: none; }
+
+        /* Feed-the-animal animations */
+        @keyframes animal-hungry { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(2px) scale(0.97); } }
+        .animal-hungry { animation: animal-hungry 1.4s ease-in-out infinite; transform-origin: center bottom; }
+        @keyframes animal-bounce { 0% { transform: translateY(0); } 25% { transform: translateY(-22px) scale(1.05); } 50% { transform: translateY(0) scale(0.98); } 75% { transform: translateY(-12px) scale(1.03); } 100% { transform: translateY(0); } }
+        .animal-bounce { animation: animal-bounce 0.9s ease-out; }
+        @keyframes animal-wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(8deg); } }
+        .animal-wiggle { animation: animal-wiggle 0.9s ease-in-out; transform-origin: center bottom; }
+        @keyframes animal-roll { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+        .animal-roll { animation: animal-roll 1.1s ease-in-out; }
+        @keyframes animal-purr { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.08); } 50% { transform: scale(0.95); } 75% { transform: scale(1.05); } }
+        .animal-purr { animation: animal-purr 1s ease-in-out; }
+        @keyframes animal-stomp { 0%, 100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-14px) scale(1.08); } 60% { transform: translateY(6px) scale(1.15, 0.85); } }
+        .animal-stomp { animation: animal-stomp 0.9s ease-out; }
+
+        @keyframes food-wiggle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        .food-wiggle { animation: food-wiggle 2.4s ease-in-out infinite; }
+
+        @keyframes heart-float { 0% { transform: translateY(0) scale(0.6); opacity: 0; } 20% { transform: translateY(-20px) scale(1.1); opacity: 1; } 100% { transform: translateY(-140px) scale(0.9); opacity: 0; } }
+        .heart-float { animation: heart-float 1.5s ease-out forwards; }
     </style>
 </head>
 <body class="antialiased text-slate-800">

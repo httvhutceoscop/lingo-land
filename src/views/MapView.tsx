@@ -8,6 +8,7 @@ type MapViewProps = {
   onPickReview: () => void;
   onPickMath: () => void;
   onPickNumberPop: () => void;
+  onPickFeedAnimal: () => void;
 };
 
 export default function MapView({
@@ -16,6 +17,7 @@ export default function MapView({
   onPickReview,
   onPickMath,
   onPickNumberPop,
+  onPickFeedAnimal,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -54,6 +56,20 @@ export default function MapView({
               ✓ {mathDone}/{TOTAL_MATH_LEVELS} level
             </div>
           )}
+        </div>
+        <span className="text-white text-xl">▶️</span>
+      </button>
+
+      <button
+        onClick={onPickFeedAnimal}
+        className="w-full mb-3 p-5 bg-gradient-to-br from-amber-400 via-pink-500 to-rose-500 rounded-3xl shadow-lg shadow-rose-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+      >
+        <div className="text-5xl floating">🐰</div>
+        <div className="flex-1 text-white">
+          <div className="font-black text-lg leading-tight">Cho thú ăn</div>
+          <div className="text-xs opacity-90 font-bold mt-0.5">
+            Kéo món ăn đúng vào con vật đang đói
+          </div>
         </div>
         <span className="text-white text-xl">▶️</span>
       </button>
