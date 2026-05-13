@@ -22,6 +22,7 @@ import AlphabetView from './views/AlphabetView';
 import NumberView from './views/NumberView';
 import MathLandView from './views/MathLandView';
 import MathQuizView from './views/MathQuizView';
+import NumberPopView from './views/NumberPopView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
@@ -42,7 +43,8 @@ type View =
   | 'alphabet'
   | 'numbers'
   | 'mathland'
-  | 'mathquiz';
+  | 'mathquiz'
+  | 'numberpop';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -108,8 +110,10 @@ export default function App() {
             onPickChallenge={() => setView('challenge')}
             onPickReview={() => setView('review')}
             onPickMath={() => setView('mathland')}
+            onPickNumberPop={() => setView('numberpop')}
           />
         )}
+        {view === 'numberpop' && <NumberPopView onBack={goMap} />}
         {view === 'mathland' && (
           <MathLandView
             onPickLevel={(l) => {

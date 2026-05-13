@@ -7,6 +7,7 @@ type MapViewProps = {
   onPickChallenge: () => void;
   onPickReview: () => void;
   onPickMath: () => void;
+  onPickNumberPop: () => void;
 };
 
 export default function MapView({
@@ -14,6 +15,7 @@ export default function MapView({
   onPickChallenge,
   onPickReview,
   onPickMath,
+  onPickNumberPop,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -52,6 +54,20 @@ export default function MapView({
               ✓ {mathDone}/{TOTAL_MATH_LEVELS} level
             </div>
           )}
+        </div>
+        <span className="text-white text-xl">▶️</span>
+      </button>
+
+      <button
+        onClick={onPickNumberPop}
+        className="w-full mb-3 p-5 bg-gradient-to-br from-pink-400 via-fuchsia-500 to-blue-500 rounded-3xl shadow-lg shadow-pink-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+      >
+        <div className="text-5xl floating">🎈</div>
+        <div className="flex-1 text-white">
+          <div className="font-black text-lg leading-tight">Number Pop</div>
+          <div className="text-xs opacity-90 font-bold mt-0.5">
+            Chạm để nổ bong bóng có số đúng
+          </div>
         </div>
         <span className="text-white text-xl">▶️</span>
       </button>
