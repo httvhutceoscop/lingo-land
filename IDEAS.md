@@ -55,3 +55,8 @@ Mở ra màn hình có các nội dung học:
 1. Phát âm IPA
 2. Bảng chữ cái
 3. Bảng chữ số
+
+---
+Game kéo thả hình ảnh.
+Ý tưởng: sẽ có 1 cái bóng hình ảnh tương ứng, và 4 option hình ảnh thật.
+Khi kéo thả đúng hình ảnh sẽ có animation + âm thanh báo chính xác.

@@ -6,7 +6,7 @@ export type Word = {
   ex: string;
 };
 
-export type TestMode = 'quiz' | 'matching' | 'listening' | 'typing' | 'memory' | 'hangman';
+export type TestMode = 'quiz' | 'matching' | 'listening' | 'typing' | 'memory' | 'hangman' | 'shadow';
 
 export type SubGroup = {
   id: string;
@@ -57,7 +57,7 @@ export const CATEGORIES: Category[] = [
         id: 'animals.insects',
         title: 'Insects',
         icon: '🐝',
-        mode: 'memory',
+        mode: 'shadow',
         words: [
           { en: 'Ant', vi: 'Con kiến', ipa: '/ænt/', img: '🐜', ex: 'The ant is carrying a leaf.' },
           { en: 'Bee', vi: 'Con ong', ipa: '/biː/', img: '🐝', ex: 'Bees make honey.' },
@@ -88,7 +88,7 @@ export const CATEGORIES: Category[] = [
         id: 'food.fruits',
         title: 'Fruits',
         icon: '🍎',
-        mode: 'memory',
+        mode: 'shadow',
         words: [
           { en: 'Apple', vi: 'Quả táo', ipa: '/ˈæp.əl/', img: '🍎', ex: 'An apple a day keeps the doctor away.' },
           { en: 'Banana', vi: 'Quả chuối', ipa: '/bəˈnɑː.nə/', img: '🍌', ex: 'Monkeys love eating bananas.' },

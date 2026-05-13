@@ -10,6 +10,7 @@ import ListeningView from './views/ListeningView';
 import TypingView from './views/TypingView';
 import MemoryView from './views/MemoryView';
 import HangmanView from './views/HangmanView';
+import ShadowView from './views/ShadowView';
 import ResultView, { type QuizResult } from './views/ResultView';
 import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
@@ -156,6 +157,9 @@ export default function App() {
             )}
             {activeSubGroup.mode === 'hangman' && (
               <HangmanView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
+            {activeSubGroup.mode === 'shadow' && (
+              <ShadowView words={activeSubGroup.words} onFinish={finishTest} />
             )}
           </>
         )}

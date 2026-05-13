@@ -14,6 +14,7 @@ const MODE_LABEL: Record<TestMode, string> = {
   typing: 'Gõ chính tả',
   memory: 'Trí nhớ',
   hangman: 'Đoán chữ',
+  shadow: 'Kéo bóng',
 };
 
 const MODE_BADGE: Record<TestMode, string> = {
@@ -23,6 +24,7 @@ const MODE_BADGE: Record<TestMode, string> = {
   typing: 'bg-orange-50 text-orange-700',
   memory: 'bg-pink-50 text-pink-700',
   hangman: 'bg-amber-50 text-amber-700',
+  shadow: 'bg-indigo-50 text-indigo-700',
 };
 
 export default function CategoryView({ category, onPickSubGroup, onBack }: CategoryViewProps) {
