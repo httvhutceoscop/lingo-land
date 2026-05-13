@@ -59,7 +59,13 @@ const loadUnlocked = (): string[] => {
   if (localStorage.getItem(LEGACY_KEY) !== null) {
     localStorage.removeItem(LEGACY_KEY);
   }
-  return loadStringArray(STORAGE_UNLOCKED, defaultUnlocked);
+  const saved = loadStringArray(STORAGE_UNLOCKED, defaultUnlocked);
+  const firstOfEach = defaultUnlocked();
+  const merged = [...saved];
+  for (const id of firstOfEach) {
+    if (!merged.includes(id)) merged.push(id);
+  }
+  return merged;
 };
 
 const loadPassed = (): string[] => loadStringArray(STORAGE_PASSED, () => []);
