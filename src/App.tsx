@@ -17,6 +17,8 @@ import PronunciationView from './views/PronunciationView';
 import StickersView from './views/StickersView';
 import TimeChallengeView from './views/TimeChallengeView';
 import DailyReviewView from './views/DailyReviewView';
+import AlphabetView from './views/AlphabetView';
+import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
 
@@ -31,13 +33,15 @@ type View =
   | 'pron'
   | 'stickers'
   | 'challenge'
-  | 'review';
+  | 'review'
+  | 'alphabet';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeSubGroup, setActiveSubGroup] = useState<SubGroup | null>(null);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     speak('');
@@ -87,7 +91,7 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
-      <Header />
+      <Header onOpenMenu={() => setDrawerOpen(true)} />
       <main className="flex-1 p-4 relative overflow-y-auto">
         {view === 'map' && (
           <MapView
@@ -145,8 +149,29 @@ export default function App() {
         {view === 'profile' && <ProfileView onOpenStickers={() => setView('stickers')} />}
         {view === 'pron' && <PronunciationView />}
         {view === 'stickers' && <StickersView onBack={goProfile} />}
+        {view === 'alphabet' && <AlphabetView onBack={goMap} />}
       </main>
       <BottomNav active={navActive} onNavigate={handleNavigate} />
+      <SideDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <button
+          onClick={() => {
+            setView('alphabet');
+            setDrawerOpen(false);
+          }}
+          className="w-full p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100 rounded-2xl flex items-center gap-3 active:scale-95 transition-all text-left hover:shadow-md"
+        >
+          <div className="text-3xl bg-white w-12 h-12 flex items-center justify-center rounded-xl border-2 border-blue-200">
+            🔤
+          </div>
+          <div className="flex-1">
+            <div className="font-black text-slate-800">Bảng chữ cái</div>
+            <div className="text-[10px] text-slate-500 font-bold">
+              26 chữ A-Z, chạm để nghe
+            </div>
+          </div>
+          <span className="text-blue-400">▶️</span>
+        </button>
+      </SideDrawer>
     </div>
   );
 }

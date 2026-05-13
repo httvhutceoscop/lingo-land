@@ -1,7 +1,11 @@
 import { useGame } from '../context/GameContext';
 import { getPetStage } from '../data/petData';
 
-export default function Header() {
+type HeaderProps = {
+  onOpenMenu: () => void;
+};
+
+export default function Header({ onOpenMenu }: HeaderProps) {
   const { score, streak, passedSubGroups, petName } = useGame();
   const pet = getPetStage(passedSubGroups.length);
 
@@ -21,13 +25,20 @@ export default function Header() {
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-4 font-bold">
+      <div className="flex items-center gap-3 font-bold">
         <div className="flex items-center gap-1 text-orange-500">
           <span>🔥</span> <span>{streak}</span>
         </div>
         <div className="flex items-center gap-1 text-yellow-500">
           <span>⭐</span> <span>{score}</span>
         </div>
+        <button
+          onClick={onOpenMenu}
+          aria-label="Mở menu"
+          className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all text-slate-600 text-lg"
+        >
+          ☰
+        </button>
       </div>
     </header>
   );
