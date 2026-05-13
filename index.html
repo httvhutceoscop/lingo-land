@@ -86,6 +86,14 @@
         .hand-tap { animation: hand-tap 1.6s ease-in-out infinite; }
         @keyframes object-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
         .object-bounce { animation: object-bounce 1.6s ease-in-out infinite; }
+
+        /* Match-puzzle game */
+        @keyframes piece-snap { 0% { transform: scale(0.6) rotate(-10deg); opacity: 0.4; } 50% { transform: scale(1.25) rotate(6deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        .piece-snap { animation: piece-snap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes slot-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0); } 50% { box-shadow: 0 0 24px 8px rgba(251,191,36,0.45); } }
+        .slot-glow { animation: slot-glow 1.8s ease-in-out infinite; }
+        @keyframes piece-bounce-back { 0% { transform: translate(var(--dx,0), var(--dy,0)) scale(1.1); } 100% { transform: translate(0,0) scale(1); } }
+        .piece-return { animation: piece-bounce-back 0.35s cubic-bezier(0.5, 1.4, 0.5, 1); }
     </style>
 </head>
 <body class="antialiased text-slate-800">

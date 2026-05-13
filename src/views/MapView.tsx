@@ -13,6 +13,8 @@ type MapViewProps = {
   onPickSubtract: () => void;
   onPickPlus: () => void;
   onPickCount: () => void;
+  onPickMatchPuzzle: () => void;
+  onPickSequence: () => void;
 };
 
 export default function MapView({
@@ -26,6 +28,8 @@ export default function MapView({
   onPickSubtract,
   onPickPlus,
   onPickCount,
+  onPickMatchPuzzle,
+  onPickSequence,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -96,6 +100,34 @@ export default function MapView({
             <div className="font-black text-lg leading-tight">Cho thú ăn</div>
             <div className="text-xs opacity-90 font-bold mt-0.5">
               Kéo món ăn đúng vào con vật đang đói
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickSequence}
+          className="w-full p-5 bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 rounded-3xl shadow-lg shadow-amber-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🐝</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Điền số còn thiếu</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Kéo số đúng vào dãy số có dấu ?
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickMatchPuzzle}
+          className="w-full p-5 bg-gradient-to-br from-amber-500 via-rose-500 to-purple-500 rounded-3xl shadow-lg shadow-rose-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🐻</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Hoàn thành bức tranh</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Kéo mảnh ghép vào bóng đen tương ứng
             </div>
           </div>
           <span className="text-white text-xl">▶️</span>
