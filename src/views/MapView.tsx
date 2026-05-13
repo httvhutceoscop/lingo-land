@@ -15,6 +15,7 @@ type MapViewProps = {
   onPickCount: () => void;
   onPickMatchPuzzle: () => void;
   onPickSequence: () => void;
+  onPickColoring: () => void;
 };
 
 export default function MapView({
@@ -30,6 +31,7 @@ export default function MapView({
   onPickCount,
   onPickMatchPuzzle,
   onPickSequence,
+  onPickColoring,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -100,6 +102,20 @@ export default function MapView({
             <div className="font-black text-lg leading-tight">Cho thú ăn</div>
             <div className="text-xs opacity-90 font-bold mt-0.5">
               Kéo món ăn đúng vào con vật đang đói
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickColoring}
+          className="w-full p-5 bg-gradient-to-br from-pink-400 via-orange-400 to-amber-400 rounded-3xl shadow-lg shadow-orange-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🎨</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Tô màu vui</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Chọn màu và tô tranh đẹp
             </div>
           </div>
           <span className="text-white text-xl">▶️</span>

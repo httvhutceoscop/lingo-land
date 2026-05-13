@@ -31,6 +31,7 @@ import CountView from './views/CountView';
 import PlusView from './views/PlusView';
 import MatchPuzzleView from './views/MatchPuzzleView';
 import SequenceView from './views/SequenceView';
+import ColoringView from './views/ColoringView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
@@ -60,6 +61,7 @@ type View =
   | 'count'
   | 'matchpuzzle'
   | 'sequence'
+  | 'coloring'
   | 'knowledge';
 
 export default function App() {
@@ -134,6 +136,7 @@ export default function App() {
             onPickCount={() => setView('count')}
             onPickMatchPuzzle={() => setView('matchpuzzle')}
             onPickSequence={() => setView('sequence')}
+            onPickColoring={() => setView('coloring')}
           />
         )}
         {view === 'knowledge' && (
@@ -150,6 +153,7 @@ export default function App() {
         {view === 'plus' && <PlusView onBack={goMap} />}
         {view === 'matchpuzzle' && <MatchPuzzleView onBack={goMap} />}
         {view === 'sequence' && <SequenceView onBack={goMap} />}
+        {view === 'coloring' && <ColoringView onBack={goMap} />}
         {view === 'mathland' && (
           <MathLandView
             onPickLevel={(l) => {
