@@ -93,7 +93,7 @@ export default function MemoryView({ words, onFinish }: MemoryViewProps) {
   };
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           TRÒ CHƠI TRÍ NHỚ
@@ -107,7 +107,7 @@ export default function MemoryView({ words, onFinish }: MemoryViewProps) {
         Lật 2 thẻ để tìm cặp tiếng Anh ↔ tiếng Việt
       </p>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
         {cards.map((c) => {
           const isShown = flipped.includes(c.id) || matched.has(c.id);
           return (

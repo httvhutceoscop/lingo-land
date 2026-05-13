@@ -48,7 +48,7 @@ export default function MathLandView({ onPickLevel, onBack }: MathLandViewProps)
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {MATH_LEVELS.map((lvl) => {
           const unlocked = isMathUnlocked(lvl.id);
           const passed = isMathPassed(lvl.id);

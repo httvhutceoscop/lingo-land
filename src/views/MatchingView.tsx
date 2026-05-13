@@ -82,7 +82,7 @@ export default function MatchingView({ words, onFinish }: MatchingViewProps) {
   const matchedPairs = matched.size / 2;
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           NỐI TỪ

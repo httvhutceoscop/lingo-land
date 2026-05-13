@@ -103,9 +103,9 @@ export default function App() {
         : 'map';
 
   return (
-    <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
+    <div className="max-w-md md:max-w-3xl lg:max-w-4xl mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
       <Header onOpenMenu={() => setDrawerOpen(true)} />
-      <main className="flex-1 p-4 relative overflow-y-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 relative overflow-y-auto">
         {view === 'map' && (
           <MapView
             onPickCategory={pickCategory}

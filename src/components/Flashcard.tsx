@@ -10,7 +10,7 @@ export default function Flashcard({ word, flipped, onFlip }: FlashcardProps) {
   return (
     <div
       onClick={onFlip}
-      className="w-full aspect-square max-w-[280px] perspective-1000 cursor-pointer"
+      className="w-full aspect-square max-w-[280px] md:max-w-[360px] perspective-1000 cursor-pointer"
     >
       <div className={`card-inner w-full h-full relative ${flipped ? 'flipped' : ''}`}>
         <div className="card-front bg-white border-2 border-slate-100 rounded-[2rem] flex flex-col items-center justify-center p-6 shadow-xl">

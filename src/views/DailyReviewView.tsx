@@ -92,7 +92,7 @@ export default function DailyReviewView({ onBack }: DailyReviewViewProps) {
           ← Bản đồ
         </button>
 
-        <div className="text-center py-4">
+        <div className="text-center py-4 max-w-md mx-auto">
           <div className="text-6xl mb-4 floating">📚</div>
           <h2 className="text-2xl font-black mb-2 bg-gradient-to-r from-blue-500 to-emerald-500 bg-clip-text text-transparent">
             Ôn tập hàng ngày
@@ -146,7 +146,7 @@ export default function DailyReviewView({ onBack }: DailyReviewViewProps) {
   if (phase === 'done') {
     const accuracy = deck.length > 0 ? Math.round((correctCount / deck.length) * 100) : 0;
     return (
-      <div className="text-center py-8 animate-in zoom-in duration-500">
+      <div className="text-center py-8 animate-in zoom-in duration-500 max-w-md mx-auto">
         <div className="text-7xl mb-4">{correctCount >= deck.length * 0.7 ? '🎉' : '🌱'}</div>
         <h2 className="text-3xl font-black mb-2">
           {correctCount >= deck.length * 0.7 ? 'Tốt lắm!' : 'Tiếp tục cố gắng!'}
@@ -190,7 +190,7 @@ export default function DailyReviewView({ onBack }: DailyReviewViewProps) {
   const levelDots = Array.from({ length: MAX_LEVEL + 1 }, (_, i) => i);
 
   return (
-    <div className="animate-in fade-in duration-200">
+    <div className="animate-in fade-in duration-200 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-3">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           ÔN TẬP HÀNG NGÀY
@@ -228,7 +228,7 @@ export default function DailyReviewView({ onBack }: DailyReviewViewProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {options.map((opt) => {
           const isAnswer = opt === word.vi;
           const isWrongPick = selected === opt && !isAnswer;

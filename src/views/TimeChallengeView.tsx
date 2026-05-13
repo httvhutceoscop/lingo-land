@@ -128,7 +128,7 @@ export default function TimeChallengeView({ onBack }: TimeChallengeViewProps) {
           ← Bản đồ
         </button>
 
-        <div className="text-center py-6">
+        <div className="text-center py-6 max-w-md mx-auto">
           <div className="text-7xl mb-4 floating">🔥</div>
           <h2 className="text-3xl font-black mb-2 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
             Thử thách 60 giây
@@ -165,7 +165,7 @@ export default function TimeChallengeView({ onBack }: TimeChallengeViewProps) {
     const accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
 
     return (
-      <div className="text-center py-8 animate-in zoom-in duration-500">
+      <div className="text-center py-8 animate-in zoom-in duration-500 max-w-md mx-auto">
         <div className="text-7xl mb-4">{rating.emoji}</div>
         <h2 className="text-3xl font-black mb-1">{rating.label}</h2>
         {isNewRecord && (
@@ -225,7 +225,7 @@ export default function TimeChallengeView({ onBack }: TimeChallengeViewProps) {
   // PLAYING phase
   const lowTime = timeLeft <= 10;
   return (
-    <div className="animate-in fade-in duration-200">
+    <div className="animate-in fade-in duration-200 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-3">
         <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
           ĐIỂM:{' '}
@@ -256,7 +256,7 @@ export default function TimeChallengeView({ onBack }: TimeChallengeViewProps) {
           <h2 className="text-xl font-black text-center mb-6 italic">
             "{currentWord.en}" có nghĩa là gì?
           </h2>
-          <div className="grid grid-cols-1 gap-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             {options.map((opt) => {
               const isCorrect = opt === currentWord.vi;
               const isWrong = selected === opt && !isCorrect;

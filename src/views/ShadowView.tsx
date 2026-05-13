@@ -141,7 +141,7 @@ export default function ShadowView({ words, onFinish }: ShadowViewProps) {
   };
 
   return (
-    <div className="animate-in slide-in-from-right duration-300 select-none">
+    <div className="animate-in slide-in-from-right duration-300 select-none max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           KÉO HÌNH VÀO BÓNG

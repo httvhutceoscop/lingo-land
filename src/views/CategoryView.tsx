@@ -50,7 +50,7 @@ export default function CategoryView({ category, onPickSubGroup, onBack }: Categ
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {category.subGroups.map((sg) => {
           const unlocked = isUnlocked(sg.id);
           const passed = isPassed(sg.id);

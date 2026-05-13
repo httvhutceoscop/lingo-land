@@ -66,7 +66,7 @@ export default function TypingView({ words, onFinish }: TypingViewProps) {
         : 'border-slate-200 bg-white focus:border-orange-500';
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-md mx-auto">
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           GÕ CHÍNH TẢ

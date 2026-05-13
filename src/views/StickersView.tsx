@@ -62,7 +62,7 @@ export default function StickersView({ onBack }: StickersViewProps) {
                   {catOwned}/{cat.subGroups.length}
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
                 {cat.subGroups.map((sg) => {
                   const got = passedSubGroups.includes(sg.id);
                   return (

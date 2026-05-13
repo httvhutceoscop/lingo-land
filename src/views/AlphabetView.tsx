@@ -41,7 +41,7 @@ export default function AlphabetView({ onBack }: AlphabetViewProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
         {ALPHABET.map((letter) => {
           const example = exampleByLetter[letter];
           return (

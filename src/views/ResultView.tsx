@@ -54,7 +54,7 @@ export default function ResultView({ subGroup, result, onBack }: ResultViewProps
   }, []);
 
   return (
-    <div className="text-center py-10 animate-in zoom-in duration-500">
+    <div className="text-center py-10 animate-in zoom-in duration-500 max-w-md mx-auto">
       <div className="text-8xl mb-6">{pass ? '🏆' : '😅'}</div>
       <h2 className="text-3xl font-black mb-2">{pass ? 'Tuyệt vời!' : 'Cố gắng lên!'}</h2>
       <p className="text-slate-400 mb-2">

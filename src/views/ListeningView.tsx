@@ -76,7 +76,7 @@ export default function ListeningView({ words, onFinish }: ListeningViewProps) {
   };
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           NGHE ĐOÁN
@@ -102,7 +102,7 @@ export default function ListeningView({ words, onFinish }: ListeningViewProps) {
         Từ vừa nghe có nghĩa là gì?
       </h2>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {options.map((opt) => (
           <button
             key={opt}

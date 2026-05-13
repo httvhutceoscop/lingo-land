@@ -185,7 +185,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
         >
           ← Bản đồ
         </button>
-        <div className="text-center py-6">
+        <div className="text-center py-6 max-w-md mx-auto">
           <div className="text-7xl mb-4 floating">🎈</div>
           <h2 className="text-3xl font-black mb-2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
             Number Pop
@@ -242,7 +242,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
     const emoji =
       stars === 3 ? '🏆' : stars === 2 ? '🥈' : stars === 1 ? '🥉' : '😅';
     return (
-      <div className="text-center py-8 animate-in zoom-in duration-500">
+      <div className="text-center py-8 animate-in zoom-in duration-500 max-w-md mx-auto">
         <div className="text-7xl mb-4">{emoji}</div>
         <h2 className="text-3xl font-black mb-3">{label}</h2>
         <div className="flex justify-center gap-1 mb-6">
@@ -284,7 +284,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
 
   if (!round) return null;
   return (
-    <div className="animate-in fade-in duration-300">
+    <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-3">
         <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
           ĐIỂM:

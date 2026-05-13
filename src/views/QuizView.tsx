@@ -71,7 +71,7 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
   };
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           KIỂM TRA KIẾN THỨC
@@ -84,7 +84,7 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
       <h2 className="text-xl font-black text-center mb-8 italic">
         "{word.en}" có nghĩa là gì?
       </h2>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {options.map((opt) => (
           <button
             key={opt}

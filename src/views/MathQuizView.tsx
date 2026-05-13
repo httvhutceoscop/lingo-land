@@ -78,7 +78,7 @@ export default function MathQuizView({ level, onBack }: MathQuizViewProps) {
     const accuracy = Math.round((correctCount / deck.length) * 100);
     const justUnlocked = pass && !alreadyPassedOnEntry;
     return (
-      <div className="text-center py-8 animate-in zoom-in duration-500">
+      <div className="text-center py-8 animate-in zoom-in duration-500 max-w-md mx-auto">
         <div className="text-7xl mb-4">{pass ? '🏆' : '😅'}</div>
         <h2 className="text-3xl font-black mb-2">{pass ? 'Tuyệt vời!' : 'Cố gắng lên!'}</h2>
         <p className="text-slate-400 mb-2">
@@ -129,7 +129,7 @@ export default function MathQuizView({ level, onBack }: MathQuizViewProps) {
   // ─────────────────────────────────────────────────────────────────────
   // PLAYING phase
   return (
-    <div className="animate-in fade-in duration-200">
+    <div className="animate-in fade-in duration-200 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-3">
         <button
           onClick={onBack}
@@ -202,7 +202,7 @@ function SymbolBody({
           {question.symbol}
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {question.options.map((opt) => (
           <button
             key={opt}

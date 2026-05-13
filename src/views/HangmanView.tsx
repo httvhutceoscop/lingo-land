@@ -110,7 +110,7 @@ export default function HangmanView({ words, onFinish }: HangmanViewProps) {
   };
 
   return (
-    <div className="animate-in slide-in-from-right duration-300">
+    <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-3">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           ĐOÁN CHỮ
@@ -157,7 +157,7 @@ export default function HangmanView({ words, onFinish }: HangmanViewProps) {
         </p>
       )}
 
-      <div className="grid grid-cols-7 gap-1.5">
+      <div className="grid grid-cols-7 md:grid-cols-9 gap-1.5 max-w-lg mx-auto">
         {ALPHABET.map((letter) => (
           <button
             key={letter}

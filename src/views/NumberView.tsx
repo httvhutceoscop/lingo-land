@@ -43,7 +43,7 @@ export default function NumberView({ onBack }: NumberViewProps) {
                   {g.subtitle}
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
                 {items.map((item) => (
                   <NumberCard key={item.value} item={item} accent={g.accent} />
                 ))}

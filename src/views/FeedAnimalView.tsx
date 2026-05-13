@@ -211,7 +211,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
         >
           ← Bản đồ
         </button>
-        <div className="text-center py-6">
+        <div className="text-center py-6 max-w-md mx-auto">
           <div className="text-7xl mb-4 floating">🐰</div>
           <h2 className="text-3xl font-black mb-2 bg-gradient-to-r from-amber-500 via-pink-500 to-rose-500 bg-clip-text text-transparent">
             Cho thú ăn
@@ -258,7 +258,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
             : 'Thử lại nhé!';
     const emoji = stars === 3 ? '🏆' : stars === 2 ? '🥈' : stars === 1 ? '🥉' : '🐾';
     return (
-      <div className="text-center py-8 animate-in zoom-in duration-500">
+      <div className="text-center py-8 animate-in zoom-in duration-500 max-w-md mx-auto">
         <div className="text-7xl mb-4">{emoji}</div>
         <h2 className="text-3xl font-black mb-3">{label}</h2>
         <p className="text-slate-500 mb-4 text-sm">
@@ -304,7 +304,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
   // ─── PLAYING ─────────────────────────────────────────────────────────
   if (!round) return null;
   return (
-    <div className="animate-in fade-in duration-300 select-none">
+    <div className="animate-in fade-in duration-300 select-none max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-3">
         <button
           onClick={onBack}

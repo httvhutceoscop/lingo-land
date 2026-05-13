@@ -37,7 +37,7 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
   };
 
   return (
-    <div className="animate-in fade-in duration-300">
+    <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={onExit}
@@ -54,7 +54,7 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
       </div>
       <div className="flex flex-col items-center py-4">
         <Flashcard word={word} flipped={flipped} onFlip={() => setFlipped((f) => !f)} />
-        <div className="mt-10 flex flex-col gap-3 w-full">
+        <div className="mt-10 flex flex-col gap-3 w-full max-w-md">
           <button
             onClick={() => speak(word.en)}
             className="w-full py-4 bg-blue-50 text-blue-600 border border-blue-100 rounded-2xl font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
