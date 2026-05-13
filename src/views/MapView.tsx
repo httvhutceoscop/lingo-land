@@ -6,18 +6,18 @@ type MapViewProps = {
 };
 
 export default function MapView({ onPickCategory }: MapViewProps) {
-  const { unlockedSubGroups } = useGame();
+  const { passedSubGroups } = useGame();
 
   return (
     <div className="py-4 animate-in fade-in duration-500">
       <h2 className="text-2xl font-black mb-6">Đảo Tri Thức</h2>
       <div className="space-y-4">
         {CATEGORIES.map((cat) => {
-          const openCount = cat.subGroups.filter((sg) =>
-            unlockedSubGroups.includes(sg.id)
+          const doneCount = cat.subGroups.filter((sg) =>
+            passedSubGroups.includes(sg.id)
           ).length;
           const total = cat.subGroups.length;
-          const pct = (openCount / total) * 100;
+          const pct = (doneCount / total) * 100;
           return (
             <div
               key={cat.id}
@@ -30,7 +30,7 @@ export default function MapView({ onPickCategory }: MapViewProps) {
               <div className="flex-1">
                 <h3 className="font-bold text-lg">{cat.title}</h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
-                  {total} chủ đề nhỏ
+                  {doneCount}/{total} đã hoàn thành
                 </p>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                   <div

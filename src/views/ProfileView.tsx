@@ -1,9 +1,13 @@
 import { TOTAL_SUBGROUPS } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 
-export default function ProfileView() {
-  const { streak, unlockedSubGroups } = useGame();
-  const progressPct = (unlockedSubGroups.length / TOTAL_SUBGROUPS) * 100;
+type ProfileViewProps = {
+  onOpenStickers: () => void;
+};
+
+export default function ProfileView({ onOpenStickers }: ProfileViewProps) {
+  const { streak, unlockedSubGroups, passedSubGroups } = useGame();
+  const progressPct = (passedSubGroups.length / TOTAL_SUBGROUPS) * 100;
 
   const handleReset = () => {
     if (confirm('Bạn có chắc chắn muốn xóa tất cả tiến độ học tập?')) {
@@ -54,6 +58,22 @@ export default function ProfileView() {
           ></div>
         </div>
       </div>
+
+      <button
+        onClick={onOpenStickers}
+        className="mt-6 w-full p-5 bg-gradient-to-br from-yellow-50 to-amber-100 border-2 border-amber-200 rounded-3xl flex items-center gap-4 active:scale-95 transition-all text-left"
+      >
+        <div className="text-3xl bg-white w-14 h-14 flex items-center justify-center rounded-2xl border-2 border-amber-200">
+          🏅
+        </div>
+        <div className="flex-1">
+          <div className="font-black text-amber-800">Sổ Sưu Tập</div>
+          <div className="text-[11px] text-amber-600 font-bold">
+            {passedSubGroups.length}/{TOTAL_SUBGROUPS} huy hiệu đã nhận
+          </div>
+        </div>
+        <span className="text-amber-500 text-xl">▶️</span>
+      </button>
 
       <button
         onClick={handleReset}

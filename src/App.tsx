@@ -8,14 +8,25 @@ import QuizView from './views/QuizView';
 import MatchingView from './views/MatchingView';
 import ListeningView from './views/ListeningView';
 import TypingView from './views/TypingView';
+import MemoryView from './views/MemoryView';
 import ResultView, { type QuizResult } from './views/ResultView';
 import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
 import PronunciationView from './views/PronunciationView';
+import StickersView from './views/StickersView';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
 
-type View = 'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron';
+type View =
+  | 'map'
+  | 'category'
+  | 'flashcard'
+  | 'test'
+  | 'result'
+  | 'leader'
+  | 'profile'
+  | 'pron'
+  | 'stickers';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -37,6 +48,8 @@ export default function App() {
     setActiveSubGroup(null);
     setView('category');
   };
+
+  const goProfile = () => setView('profile');
 
   const handleNavigate = (key: NavKey) => {
     if (key === 'map') goMap();
@@ -61,7 +74,11 @@ export default function App() {
   };
 
   const navActive: NavKey =
-    view === 'leader' || view === 'profile' || view === 'pron' ? view : 'map';
+    view === 'leader' || view === 'pron'
+      ? view
+      : view === 'profile' || view === 'stickers'
+        ? 'profile'
+        : 'map';
 
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
@@ -96,6 +113,9 @@ export default function App() {
             {activeSubGroup.mode === 'typing' && (
               <TypingView words={activeSubGroup.words} onFinish={finishTest} />
             )}
+            {activeSubGroup.mode === 'memory' && (
+              <MemoryView words={activeSubGroup.words} onFinish={finishTest} />
+            )}
           </>
         )}
         {view === 'result' && activeSubGroup && quizResult && (
@@ -106,8 +126,9 @@ export default function App() {
           />
         )}
         {view === 'leader' && <LeaderboardView />}
-        {view === 'profile' && <ProfileView />}
+        {view === 'profile' && <ProfileView onOpenStickers={() => setView('stickers')} />}
         {view === 'pron' && <PronunciationView />}
+        {view === 'stickers' && <StickersView onBack={goProfile} />}
       </main>
       <BottomNav active={navActive} onNavigate={handleNavigate} />
     </div>

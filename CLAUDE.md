@@ -27,19 +27,20 @@ LingoLand is a single-page Vietnamese-language English vocabulary game. React 18
 
 ### View routing lives in App.tsx, not a router
 
-[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron'`) plus `activeCategory`, `activeSubGroup`, `quizResult`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
+[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron' | 'stickers'`) plus `activeCategory`, `activeSubGroup`, `quizResult`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`, `onOpenStickers`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
 
-The `test` view dispatches to one of 4 mini-game components based on `activeSubGroup.mode`: [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx). All 4 share the contract `(words: Word[], onFinish: (r: QuizResult) => void)` — keep that shape if you add a 5th mode.
+The `test` view dispatches to one of 5 mini-game components based on `activeSubGroup.mode`: [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx), [MemoryView](src/views/MemoryView.tsx). All 5 share the contract `(words: Word[], onFinish: (r: QuizResult) => void)` — keep that shape if you add a 6th mode. Memory-style modes (matching, memory) always emit a 100% pass when complete since the user must finish all pairs to exit.
 
-`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) are reached only via callbacks and collapse to `'map'` for the nav's `active` highlight. The `pron` tab shows [PronunciationView](src/views/PronunciationView.tsx) — a reference IPA chart, independent of the game progression flow.
+`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) collapse to `'map'` for the nav's `active` highlight, and `'stickers'` collapses to `'profile'` (it's reached only via a button inside ProfileView, not the nav).
 
 ### Game state: Context + localStorage
 
-[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups` (string IDs like `'animals.pets'`) and exposes `addScore`, `unlockNext`, `isUnlocked`. State is hydrated from and synced back to `localStorage` under these exact keys:
+[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups`, `passedSubGroups` (both `string[]` of sub-group IDs like `'animals.pets'`) and exposes `addScore`, `unlockNext`, `markPassed`, `isUnlocked`, `isPassed`. **Unlocked ≠ passed**: a sub-group is unlocked the moment its predecessor passes (or it's the first in its category), and passed only after the user themselves clears it. Stickers, MapView progress bar, and ProfileView's "Tiến độ tổng quát" all key off `passedSubGroups`. State is hydrated from and synced back to `localStorage` under these exact keys:
 
 - `lingoland_score`
 - `lingoland_streak`
 - `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category)
+- `lingoland_passed_v2` (JSON `string[]` of passed sub-group IDs; default `[]`)
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -49,7 +50,9 @@ On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` 
 
 Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: Category[]`, each with `subGroups: SubGroup[]`. A `SubGroup` has a stable `id` (used in localStorage), a `mode: TestMode` (which mini-game runs after the flashcard study), and 4-6 `words`.
 
-Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op (no cross-category unlock).
+Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `markPassed(id)` then `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op for unlock but still mark the sub-group as passed (so the user gets the sticker).
+
+Stickers are surfaced through [StickersView](src/views/StickersView.tsx) — a gallery of every sub-group icon, locked ones rendered as 🔒 with `???` label. Reachable from a button inside [ProfileView](src/views/ProfileView.tsx), not the bottom nav.
 
 Scoring (`addScore(20)` per correct answer) happens inside each mini-game as the user answers, *not* on the result screen.
 

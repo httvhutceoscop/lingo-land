@@ -14,11 +14,12 @@ type ResultViewProps = {
 export default function ResultView({ subGroup, result, onBack }: ResultViewProps) {
   const { correct, total } = result;
   const pass = correct >= total * 0.7;
-  const { unlockNext } = useGame();
+  const { unlockNext, markPassed } = useGame();
   const hasNext = nextSubGroupId(subGroup.id) !== null;
 
   useEffect(() => {
     if (pass) {
+      markPassed(subGroup.id);
       unlockNext(subGroup.id);
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
@@ -29,13 +30,19 @@ export default function ResultView({ subGroup, result, onBack }: ResultViewProps
     <div className="text-center py-10 animate-in zoom-in duration-500">
       <div className="text-8xl mb-6">{pass ? '🏆' : '😅'}</div>
       <h2 className="text-3xl font-black mb-2">{pass ? 'Tuyệt vời!' : 'Cố gắng lên!'}</h2>
-      <p className="text-slate-400 mb-8">
+      <p className="text-slate-400 mb-2">
         {pass
           ? hasNext
             ? `Bạn đã mở khóa chủ đề tiếp theo của ${subGroup.title}.`
             : 'Bạn đã hoàn thành toàn bộ chủ đề này!'
           : 'Hãy ôn tập lại thẻ từ vựng một lần nữa nhé.'}
       </p>
+      {pass && (
+        <p className="text-amber-600 text-sm font-bold mb-8">
+          🏅 +1 huy hiệu vào sổ sưu tập!
+        </p>
+      )}
+      {!pass && <div className="mb-8" />}
 
       <div className="bg-slate-50 rounded-3xl p-6 mb-8 grid grid-cols-2 gap-4">
         <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">

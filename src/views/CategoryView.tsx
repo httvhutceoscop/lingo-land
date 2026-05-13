@@ -12,6 +12,7 @@ const MODE_LABEL: Record<TestMode, string> = {
   matching: 'Nối từ',
   listening: 'Nghe đoán',
   typing: 'Gõ chính tả',
+  memory: 'Trí nhớ',
 };
 
 const MODE_BADGE: Record<TestMode, string> = {
@@ -19,10 +20,11 @@ const MODE_BADGE: Record<TestMode, string> = {
   matching: 'bg-purple-50 text-purple-700',
   listening: 'bg-blue-50 text-blue-700',
   typing: 'bg-orange-50 text-orange-700',
+  memory: 'bg-pink-50 text-pink-700',
 };
 
 export default function CategoryView({ category, onPickSubGroup, onBack }: CategoryViewProps) {
-  const { isUnlocked } = useGame();
+  const { isUnlocked, isPassed } = useGame();
 
   return (
     <div className="py-4 animate-in fade-in duration-300">
@@ -47,6 +49,7 @@ export default function CategoryView({ category, onPickSubGroup, onBack }: Categ
       <div className="space-y-3">
         {category.subGroups.map((sg) => {
           const unlocked = isUnlocked(sg.id);
+          const passed = isPassed(sg.id);
           return (
             <div
               key={sg.id}
@@ -59,7 +62,10 @@ export default function CategoryView({ category, onPickSubGroup, onBack }: Categ
                 {unlocked ? sg.icon : '🔒'}
               </div>
               <div className="flex-1">
-                <h3 className="font-bold">{sg.title}</h3>
+                <h3 className="font-bold flex items-center gap-2">
+                  {sg.title}
+                  {passed && <span className="text-amber-500 text-base">🏅</span>}
+                </h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span
                     className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${MODE_BADGE[sg.mode]}`}
