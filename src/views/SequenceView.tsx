@@ -165,8 +165,9 @@ const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 function pickDistinctIndices(count: number, length: number): number[] {
   const pool = Array.from({ length }, (_, i) => i);
-  shuffle(pool);
-  return pool.slice(0, count).sort((a, b) => a - b);
+  return shuffle(pool)
+    .slice(0, count)
+    .sort((a, b) => a - b);
 }
 
 // ─── Sequence generation ──────────────────────────────────────────────
