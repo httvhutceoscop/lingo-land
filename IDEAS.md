@@ -41,7 +41,7 @@ Chức năng bảng số và cách đọc, ví dụ
 Mục đích cho trẻ em nhận diện mặt số, nên số phải to rõ ràng
 
 ---
-Chức năng nhận diện các phép toán cơ bản: +, -, x, :
+Chức năng nhận diện các phép toán cơ bản: +, -, x, :, =
 Áp dụng các level phạm vi: 5, 10, 15, 20, ...
 
 ---
