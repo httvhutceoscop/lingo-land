@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import BottomNav, { type NavKey } from './components/BottomNav';
 import MapView from './views/MapView';
+import KnowledgeIslandsView from './views/KnowledgeIslandsView';
 import CategoryView from './views/CategoryView';
 import FlashcardView from './views/FlashcardView';
 import QuizView from './views/QuizView';
@@ -48,7 +49,8 @@ type View =
   | 'mathquiz'
   | 'numberpop'
   | 'feedanimal'
-  | 'compare';
+  | 'compare'
+  | 'knowledge';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -110,13 +112,19 @@ export default function App() {
       <main className="flex-1 p-4 md:p-6 lg:p-8 relative overflow-y-auto">
         {view === 'map' && (
           <MapView
-            onPickCategory={pickCategory}
+            onPickKnowledge={() => setView('knowledge')}
             onPickChallenge={() => setView('challenge')}
             onPickReview={() => setView('review')}
             onPickMath={() => setView('mathland')}
             onPickNumberPop={() => setView('numberpop')}
             onPickFeedAnimal={() => setView('feedanimal')}
             onPickCompare={() => setView('compare')}
+          />
+        )}
+        {view === 'knowledge' && (
+          <KnowledgeIslandsView
+            onPickCategory={pickCategory}
+            onBack={goMap}
           />
         )}
         {view === 'numberpop' && <NumberPopView onBack={goMap} />}
@@ -140,7 +148,7 @@ export default function App() {
           <CategoryView
             category={activeCategory}
             onPickSubGroup={pickSubGroup}
-            onBack={goMap}
+            onBack={() => setView('knowledge')}
           />
         )}
         {view === 'flashcard' && activeSubGroup && (

@@ -1,9 +1,9 @@
-import { CATEGORIES, type Category } from '../data/gameData';
+import { TOTAL_SUBGROUPS } from '../data/gameData';
 import { TOTAL_MATH_LEVELS } from '../data/mathData';
 import { useGame } from '../context/GameContext';
 
 type MapViewProps = {
-  onPickCategory: (category: Category) => void;
+  onPickKnowledge: () => void;
   onPickChallenge: () => void;
   onPickReview: () => void;
   onPickMath: () => void;
@@ -13,7 +13,7 @@ type MapViewProps = {
 };
 
 export default function MapView({
-  onPickCategory,
+  onPickKnowledge,
   onPickChallenge,
   onPickReview,
   onPickMath,
@@ -24,6 +24,7 @@ export default function MapView({
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
   const mathDone = mathPassed.length;
+  const knowledgeDone = passedSubGroups.length;
 
   return (
     <div className="py-4 animate-in fade-in duration-500">
@@ -43,6 +44,23 @@ export default function MapView({
             <span className="text-white text-xl">▶️</span>
           </button>
         )}
+
+        <button
+          onClick={onPickKnowledge}
+          className="w-full p-5 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-3xl shadow-lg shadow-emerald-200 active:scale-95 transition-all flex items-center gap-4 text-left md:col-span-2"
+        >
+          <div className="text-5xl">🏝️</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Đảo Tri Thức</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Học từ vựng theo chủ đề, mở khoá nhãn dán
+            </div>
+            <div className="text-[10px] mt-1 font-bold bg-white/20 inline-block px-2 py-0.5 rounded-full">
+              ✓ {knowledgeDone}/{TOTAL_SUBGROUPS} bài
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
 
         <button
           onClick={onPickMath}
@@ -123,41 +141,6 @@ export default function MapView({
           </div>
           <span className="text-white text-xl">▶️</span>
         </button>
-      </div>
-
-      <h2 className="text-2xl font-black mb-4">Đảo Tri Thức</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {CATEGORIES.map((cat) => {
-          const doneCount = cat.subGroups.filter((sg) =>
-            passedSubGroups.includes(sg.id)
-          ).length;
-          const total = cat.subGroups.length;
-          const pct = (doneCount / total) * 100;
-          return (
-            <div
-              key={cat.id}
-              onClick={() => onPickCategory(cat)}
-              className="island-node flex items-center p-5 bg-white border-2 border-slate-100 rounded-3xl cursor-pointer shadow-sm"
-            >
-              <div className="text-4xl mr-4 bg-slate-50 w-16 h-16 flex items-center justify-center rounded-2xl">
-                {cat.icon}
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-lg">{cat.title}</h3>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
-                  {doneCount}/{total} đã hoàn thành
-                </p>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-emerald-500 h-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
-                  ></div>
-                </div>
-              </div>
-              <span className="text-emerald-500 ml-3">▶️</span>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
