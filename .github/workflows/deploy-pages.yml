@@ -41,6 +41,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_GOOGLE_TAG: ${{ vars.VITE_GOOGLE_TAG }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
