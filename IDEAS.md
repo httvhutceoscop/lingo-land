@@ -60,3 +60,6 @@ Mở ra màn hình có các nội dung học:
 Game kéo thả hình ảnh.
 Ý tưởng: sẽ có 1 cái bóng hình ảnh tương ứng, và 4 option hình ảnh thật.
 Khi kéo thả đúng hình ảnh sẽ có animation + âm thanh báo chính xác.
+
+---
+https://chatgpt.com/s/t_6a042cbb046881918b2f6b62be7d67af
