@@ -1,6 +1,6 @@
-export function speak(text: string): void {
+export function speak(text: string, lang: string = 'en-US'): void {
   const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = 'en-US';
+  msg.lang = lang;
   window.speechSynthesis.speak(msg);
 }
 

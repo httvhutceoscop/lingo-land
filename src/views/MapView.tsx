@@ -9,6 +9,7 @@ type MapViewProps = {
   onPickMath: () => void;
   onPickNumberPop: () => void;
   onPickFeedAnimal: () => void;
+  onPickCompare: () => void;
 };
 
 export default function MapView({
@@ -18,6 +19,7 @@ export default function MapView({
   onPickMath,
   onPickNumberPop,
   onPickFeedAnimal,
+  onPickCompare,
 }: MapViewProps) {
   const { passedSubGroups, timeHighScore, dueDeck, mathPassed } = useGame();
   const dueCount = dueDeck.length;
@@ -70,6 +72,20 @@ export default function MapView({
             <div className="font-black text-lg leading-tight">Cho thú ăn</div>
             <div className="text-xs opacity-90 font-bold mt-0.5">
               Kéo món ăn đúng vào con vật đang đói
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickCompare}
+          className="w-full p-5 bg-gradient-to-br from-sky-400 via-amber-400 to-pink-500 rounded-3xl shadow-lg shadow-amber-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-5xl floating">🦊</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">So sánh số lượng</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Chọn dấu {'<'}, {'>'} hoặc {'='}
             </div>
           </div>
           <span className="text-white text-xl">▶️</span>
