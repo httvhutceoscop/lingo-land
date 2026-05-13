@@ -4,13 +4,35 @@ import { useGame } from '../context/GameContext';
 type MapViewProps = {
   onPickCategory: (category: Category) => void;
   onPickChallenge: () => void;
+  onPickReview: () => void;
 };
 
-export default function MapView({ onPickCategory, onPickChallenge }: MapViewProps) {
-  const { passedSubGroups, timeHighScore } = useGame();
+export default function MapView({
+  onPickCategory,
+  onPickChallenge,
+  onPickReview,
+}: MapViewProps) {
+  const { passedSubGroups, timeHighScore, dueDeck } = useGame();
+  const dueCount = dueDeck.length;
 
   return (
     <div className="py-4 animate-in fade-in duration-500">
+      {dueCount > 0 && (
+        <button
+          onClick={onPickReview}
+          className="w-full mb-3 p-4 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-3xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center gap-4 text-left"
+        >
+          <div className="text-4xl">📚</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-base leading-tight">Ôn tập hàng ngày</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              {dueCount} từ cần ôn để nhớ lâu hơn
+            </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+      )}
+
       <button
         onClick={onPickChallenge}
         className="w-full mb-6 p-5 bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 rounded-3xl shadow-lg shadow-orange-200 active:scale-95 transition-all flex items-center gap-4 text-left"

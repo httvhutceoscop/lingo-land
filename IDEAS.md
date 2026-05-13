@@ -19,3 +19,20 @@ Hiện emoji + VI + slot _ _ _ _, trẻ bấm bàn phím ảo đoán chữ cái.
 Ý kiến cá nhân: nếu chọn 2 cái làm trước, tôi đề xuất Memory pairs (vì rẻ nhất + tác động cao nhất với target trẻ em) + Sticker album (vì tạo extrinsic reward loop kết hợp tốt với 4 mini-game đang có). Pet mascot là "vũ khí hạng nặng" nhưng để giai đoạn sau khi base game đã polish.
 
 Bạn muốn đào sâu cái nào, hay có hướng khác (vd nhạc, AR, kể chuyện) tôi chưa nghĩ tới?
+
+---
+Chức năng đăng ký nhưng khi submit thì call API để lưu vào google sheet
+
+---
+Thêm animation bắt mắt khi tap/click vào các button
+
+---
+Chức năng nhận diện thời tiết theo khu vực địa lý
+
+---
+Chức năng bảng chữ cái tiếng Anh, cách đọc, ví dụ
+Mục đích cho trẻ em nhận diện mặt chữ, nên chữ phải to rõ ràng
+
+---
+Chức năng bảng số và cách đọc, ví dụ
+Mục đích cho trẻ em nhận diện mặt số, nên số phải to rõ ràng

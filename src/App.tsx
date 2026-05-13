@@ -15,6 +15,7 @@ import ProfileView from './views/ProfileView';
 import PronunciationView from './views/PronunciationView';
 import StickersView from './views/StickersView';
 import TimeChallengeView from './views/TimeChallengeView';
+import DailyReviewView from './views/DailyReviewView';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
 
@@ -28,7 +29,8 @@ type View =
   | 'profile'
   | 'pron'
   | 'stickers'
-  | 'challenge';
+  | 'challenge'
+  | 'review';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -90,9 +92,11 @@ export default function App() {
           <MapView
             onPickCategory={pickCategory}
             onPickChallenge={() => setView('challenge')}
+            onPickReview={() => setView('review')}
           />
         )}
         {view === 'challenge' && <TimeChallengeView onBack={goMap} />}
+        {view === 'review' && <DailyReviewView onBack={goMap} />}
         {view === 'category' && activeCategory && (
           <CategoryView
             category={activeCategory}

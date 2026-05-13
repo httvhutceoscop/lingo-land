@@ -15,7 +15,7 @@ type ResultViewProps = {
 export default function ResultView({ subGroup, result, onBack }: ResultViewProps) {
   const { correct, total } = result;
   const pass = correct >= total * 0.7;
-  const { unlockNext, markPassed, passedSubGroups, petName } = useGame();
+  const { unlockNext, markPassed, passedSubGroups, petName, addWordsToSRS } = useGame();
   const hasNext = nextSubGroupId(subGroup.id) !== null;
 
   const [snapshot] = useState(() => ({
@@ -27,11 +27,15 @@ export default function ResultView({ subGroup, result, onBack }: ResultViewProps
   const stageBefore = getPetStage(snapshot.countBefore);
   const stageAfter = getPetStage(countAfter);
   const evolved = pass && stageBefore.icon !== stageAfter.icon;
+  const firstPass = pass && !snapshot.alreadyPassed;
 
   useEffect(() => {
     if (pass) {
       markPassed(subGroup.id);
       unlockNext(subGroup.id);
+      if (firstPass) {
+        addWordsToSRS(subGroup.words);
+      }
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
       if (evolved) {
         setTimeout(
@@ -61,9 +65,16 @@ export default function ResultView({ subGroup, result, onBack }: ResultViewProps
           : 'Hãy ôn tập lại thẻ từ vựng một lần nữa nhé.'}
       </p>
       {pass && (
-        <p className="text-amber-600 text-sm font-bold mb-8">
-          🏅 +1 huy hiệu vào sổ sưu tập!
-        </p>
+        <div className="mb-8">
+          <p className="text-amber-600 text-sm font-bold">
+            🏅 +1 huy hiệu vào sổ sưu tập!
+          </p>
+          {firstPass && (
+            <p className="text-blue-600 text-xs font-bold mt-1">
+              📚 +{subGroup.words.length} từ vào sổ ôn tập hàng ngày
+            </p>
+          )}
+        </div>
       )}
       {!pass && <div className="mb-8" />}
 

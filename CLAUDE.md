@@ -43,6 +43,7 @@ The `test` view dispatches to one of 5 mini-game components based on `activeSubG
 - `lingoland_passed_v2` (JSON `string[]` of passed sub-group IDs; default `[]`)
 - `lingoland_pet_name` (string, default `'Bí'`, max 16 chars via `setPetName`)
 - `lingoland_time_hs` (integer high score for the 60-second time challenge; only ever increases via `submitTimeScore`)
+- `lingoland_word_stats` (JSON `Record<wordEn, { level, lastSeen }>` for spaced-repetition state; keys are `Word.en` strings)
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -55,6 +56,18 @@ Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: C
 Categories are always open. Within each category, sub-groups unlock **sequentially**: only the first is unlocked by default; passing one (`correct >= total * 0.7` in [ResultView](src/views/ResultView.tsx)) calls `markPassed(id)` then `unlockNext(currentId)`, which uses `nextSubGroupId()` from gameData to find the next sub-group in the **same** category. Last-in-category passes are a no-op for unlock but still mark the sub-group as passed (so the user gets the sticker).
 
 Stickers are surfaced through [StickersView](src/views/StickersView.tsx) — a gallery of every sub-group icon, locked ones rendered as 🔒 with `???` label. Reachable from a button inside [ProfileView](src/views/ProfileView.tsx), not the bottom nav.
+
+### Spaced repetition (Daily Review)
+
+[src/data/srsData.ts](src/data/srsData.ts) defines a 4-level Leitner-style schedule with intervals `[1, 3, 7, 14]` days. Word-keyed state lives in [GameContext](src/context/GameContext.tsx) as `wordStats: Record<wordEn, { level, lastSeen }>` plus a memoized `dueDeck: Word[]` selector (filters `ALL_WORDS` where `isDue(stat)`, sorts by oldest `lastSeen`, caps at 10 = `DAILY_CAP`).
+
+Entry points to the system:
+1. **First pass of a sub-group** ([ResultView](src/views/ResultView.tsx)) → `addWordsToSRS(subGroup.words)` adds each word at level 0, `lastSeen=now`. Re-passing the same sub-group is a no-op (only adds words NOT already in stats).
+2. **Daily review session** ([DailyReviewView](src/views/DailyReviewView.tsx)) → for each answered word calls `recordReview(wordEn, correct)` which sets new `lastSeen=now` and `level = correct ? min(level+1, 3) : 0` (a single wrong answer resets the word to the start of the schedule — strict but matches Leitner spirit).
+
+The MapView card for daily review is **conditional on `dueDeck.length > 0`** — if nothing is due, the card disappears and only Time Challenge + categories show. First-time users see no review card until their first pass + the level-0 interval (1 day) elapses. To test locally without waiting, edit `lingoland_word_stats` in DevTools and rewind a `lastSeen` value, then refresh.
+
+DailyReviewView snapshots `dueDeck` into local state at mount (`useState(() => dueDeck)`) so the session list does NOT shrink mid-session as `recordReview` updates `wordStats` (which causes `dueDeck` to recompute). Each correct answer pays `addScore(+10)` — half of a regular test answer, since review is easier and recurrent.
 
 ### Time Challenge (off-path)
 
