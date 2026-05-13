@@ -11,10 +11,11 @@ import TypingView from './views/TypingView';
 import ResultView, { type QuizResult } from './views/ResultView';
 import LeaderboardView from './views/LeaderboardView';
 import ProfileView from './views/ProfileView';
+import PronunciationView from './views/PronunciationView';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
 
-type View = 'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile';
+type View = 'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron';
 
 export default function App() {
   const [view, setView] = useState<View>('map');
@@ -59,7 +60,8 @@ export default function App() {
     setView('result');
   };
 
-  const navActive: NavKey = view === 'leader' || view === 'profile' ? view : 'map';
+  const navActive: NavKey =
+    view === 'leader' || view === 'profile' || view === 'pron' ? view : 'map';
 
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
@@ -105,6 +107,7 @@ export default function App() {
         )}
         {view === 'leader' && <LeaderboardView />}
         {view === 'profile' && <ProfileView />}
+        {view === 'pron' && <PronunciationView />}
       </main>
       <BottomNav active={navActive} onNavigate={handleNavigate} />
     </div>

@@ -27,11 +27,11 @@ LingoLand is a single-page Vietnamese-language English vocabulary game. React 18
 
 ### View routing lives in App.tsx, not a router
 
-[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile'`) plus `activeCategory`, `activeSubGroup`, `quizResult`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
+[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron'`) plus `activeCategory`, `activeSubGroup`, `quizResult`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
 
 The `test` view dispatches to one of 4 mini-game components based on `activeSubGroup.mode`: [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx). All 4 share the contract `(words: Word[], onFinish: (r: QuizResult) => void)` — keep that shape if you add a 5th mode.
 
-`BottomNav` only exposes `'map' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) are reached only via callbacks and collapse to `'map'` for the nav's `active` highlight.
+`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) are reached only via callbacks and collapse to `'map'` for the nav's `active` highlight. The `pron` tab shows [PronunciationView](src/views/PronunciationView.tsx) — a reference IPA chart, independent of the game progression flow.
 
 ### Game state: Context + localStorage
 
@@ -61,6 +61,10 @@ Distractor pool: [QuizView](src/views/QuizView.tsx) and [ListeningView](src/view
 
 Sound effects are `<audio>` elements in `index.html` with fixed IDs (`snd-correct`, `snd-wrong`), played by [src/lib/audio.ts](src/lib/audio.ts) `playSfx(id)` via `document.getElementById`. Pronunciation uses `window.speechSynthesis` (`speak()` in the same file). Adding a new SFX = add an `<audio id="snd-...">` in `index.html`, then call `playSfx('snd-...')`.
 
+### IPA reference data
+
+[src/data/ipaData.ts](src/data/ipaData.ts) holds the 44-phoneme English IPA chart used by [PronunciationView](src/views/PronunciationView.tsx). Each `Phoneme` carries `ipa`, `type` (short vowel / long vowel / diphthong / consonant), example words, and a Vietnamese pronunciation hint. The helper `youtubeSearchUrl(ipa)` builds a `youtube.com/results?search_query=...` URL — note we **deliberately do not hardcode specific video IDs** since they can disappear; users land on a search results page to pick a current video.
+
 ### Shared types
 
-`Word`, `TestMode`, `SubGroup`, `Category` are exported from [src/data/gameData.ts](src/data/gameData.ts), along with helpers `ALL_WORDS`, `TOTAL_SUBGROUPS`, `findSubGroup(id)`, `nextSubGroupId(id)`. `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). Import these rather than redefining locally.
+`Word`, `TestMode`, `SubGroup`, `Category` are exported from [src/data/gameData.ts](src/data/gameData.ts), along with helpers `ALL_WORDS`, `TOTAL_SUBGROUPS`, `findSubGroup(id)`, `nextSubGroupId(id)`. `Phoneme`, `PhonemeType` are exported from [src/data/ipaData.ts](src/data/ipaData.ts). `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). Import these rather than redefining locally.

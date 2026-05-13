@@ -1,9 +1,10 @@
-export type NavKey = 'map' | 'leader' | 'profile';
+export type NavKey = 'map' | 'pron' | 'leader' | 'profile';
 
 type NavItem = { key: NavKey; icon: string; label: string };
 
 const NAV_ITEMS: NavItem[] = [
   { key: 'map', icon: '🏝️', label: 'KHÁM PHÁ' },
+  { key: 'pron', icon: '🔤', label: 'PHÁT ÂM' },
   { key: 'leader', icon: '🏆', label: 'XẾP HẠNG' },
   { key: 'profile', icon: '👤', label: 'HỒ SƠ' },
 ];
