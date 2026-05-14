@@ -1,5 +1,7 @@
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
+import kaboom from 'kaboom';
+import type { GameObj, KaboomCtx } from 'kaboom';
 import { useGame } from '../context/GameContext';
 import { playSfx, speak } from '../lib/audio';
 
@@ -7,47 +9,31 @@ type Phase = 'idle' | 'playing' | 'finished';
 type Mode = 'find' | 'math';
 
 const TOTAL_ROUNDS = 10;
-const ROUND_DELAY_MS = 750;
-
-const BALLOON_COLORS = [
-  'from-pink-400 to-rose-500',
-  'from-sky-400 to-blue-500',
-  'from-amber-300 to-orange-400',
-  'from-violet-400 to-purple-500',
-];
-
-type Balloon = {
-  id: number;
-  value: number;
-  color: string;
-  delay: number;
-  popped: boolean;
-};
+const ROUND_DELAY_MS = 800;
+const CANVAS_W = 400;
+const CANVAS_H = 520;
 
 type Round = {
   target: number;
   prompt: string;
   voice: string;
-  balloons: Balloon[];
+  values: number[];
 };
 
-const randInt = (min: number, max: number): number =>
+const BALLOON_PALETTES: Array<[number, number, number]> = [
+  [236, 72, 153],
+  [59, 130, 246],
+  [251, 191, 36],
+  [168, 85, 247],
+];
+
+const randInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
-function makeBalloons(values: number[]): Balloon[] {
-  return shuffle(values).map((v, i) => ({
-    id: i,
-    value: v,
-    color: BALLOON_COLORS[i % BALLOON_COLORS.length],
-    delay: Math.random() * 0.8,
-    popped: false,
-  }));
-}
-
-function buildFindRound(roundIdx: number): Round {
-  const range = roundIdx < 3 ? 5 : roundIdx < 6 ? 9 : 10;
+function buildFindRound(idx: number): Round {
+  const range = idx < 3 ? 5 : idx < 6 ? 9 : 10;
   const target = randInt(1, range);
   const pool = new Set<number>([target]);
   const distractorMax = Math.max(range, 9);
@@ -56,13 +42,13 @@ function buildFindRound(roundIdx: number): Round {
     target,
     prompt: `Tìm số ${target}!`,
     voice: `Find number ${target}!`,
-    balloons: makeBalloons(Array.from(pool)),
+    values: shuffle(Array.from(pool)),
   };
 }
 
-function buildMathRound(roundIdx: number): Round {
-  const max = roundIdx < 5 ? 5 : 10;
-  const isPlus = roundIdx % 2 === 0;
+function buildMathRound(idx: number): Round {
+  const max = idx < 5 ? 5 : 10;
+  const isPlus = idx % 2 === 0;
   let a: number;
   let b: number;
   let result: number;
@@ -87,7 +73,7 @@ function buildMathRound(roundIdx: number): Round {
     target: result,
     prompt: `${a} ${op} ${b} = ?`,
     voice: `${a} ${voiceOp} ${b}`,
-    balloons: makeBalloons(Array.from(pool)),
+    values: shuffle(Array.from(pool)),
   };
 }
 
@@ -106,14 +92,29 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
   const [roundIdx, setRoundIdx] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [round, setRound] = useState<Round | null>(null);
-  const [wrongId, setWrongId] = useState<number | null>(null);
-  const [locked, setLocked] = useState(false);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const kRef = useRef<KaboomCtx | null>(null);
+  const lockedRef = useRef(false);
+  const roundRef = useRef<Round | null>(null);
+  const roundIdxRef = useRef(0);
+  const modeRef = useRef<Mode>('find');
+
+  useEffect(() => {
+    roundRef.current = round;
+  }, [round]);
+  useEffect(() => {
+    roundIdxRef.current = roundIdx;
+  }, [roundIdx]);
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
 
   const startGame = (m: Mode) => {
     setMode(m);
     setRoundIdx(0);
     setCorrectCount(0);
-    setLocked(false);
+    lockedRef.current = false;
     const r = buildRound(m, 0);
     setRound(r);
     setPhase('playing');
@@ -130,51 +131,217 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
         colors: ['#ec4899', '#3b82f6', '#f59e0b', '#a855f7'],
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, correctCount]);
+
+  useEffect(() => {
+    if (phase !== 'playing' || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const k = kaboom({
+      canvas,
+      width: CANVAS_W,
+      height: CANVAS_H,
+      background: [240, 249, 255],
+      global: false,
+      touchToMouse: true,
+      crisp: true,
+    });
+    kRef.current = k;
+
+    const cloud = (x: number, y: number, s: number) => {
+      const opts = [k.color(255, 255, 255), k.opacity(0.85), k.z(-1)];
+      k.add([k.circle(s), k.pos(x, y), k.anchor('center'), ...opts]);
+      k.add([
+        k.circle(s * 0.78),
+        k.pos(x - s * 0.85, y + s * 0.25),
+        k.anchor('center'),
+        ...opts,
+      ]);
+      k.add([
+        k.circle(s * 0.78),
+        k.pos(x + s * 0.85, y + s * 0.25),
+        k.anchor('center'),
+        ...opts,
+      ]);
+    };
+    cloud(80, 80, 22);
+    cloud(320, 130, 26);
+    cloud(210, 60, 18);
+
+    return () => {
+      try {
+        k.quit();
+      } catch {
+        // ignore — kaboom may already be torn down
+      }
+      kRef.current = null;
+    };
   }, [phase]);
 
-  const handlePop = (e: MouseEvent<HTMLButtonElement>, balloon: Balloon) => {
-    if (!round || locked || balloon.popped) return;
-    if (balloon.value === round.target) {
+  useEffect(() => {
+    const k = kRef.current;
+    if (!k || !round || phase !== 'playing') return;
+
+    k.destroyAll('balloon');
+    lockedRef.current = false;
+
+    const w = k.width();
+    const balloonCount = round.values.length;
+    const cellW = w / balloonCount;
+    const baseY = 360;
+
+    const handleCorrect = (balloon: GameObj, followers: GameObj[]) => {
+      if (lockedRef.current) return;
+      lockedRef.current = true;
       playSfx('snd-correct');
       addScore(10);
       setCorrectCount((c) => c + 1);
-      setRound({
-        ...round,
-        balloons: round.balloons.map((b) =>
-          b.id === balloon.id ? { ...b, popped: true } : b
-        ),
-      });
-      const rect = e.currentTarget.getBoundingClientRect();
-      confetti({
+
+      const px = balloon.pos.x;
+      const py = balloon.pos.y;
+
+      for (let i = 0; i < 14; i++) {
+        const angle = (Math.PI * 2 * i) / 14 + Math.random() * 0.4;
+        const speed = 90 + Math.random() * 80;
+        const piece = k.add([
+          k.rect(8, 14),
+          k.pos(px, py),
+          k.anchor('center'),
+          k.color(
+            120 + Math.floor(Math.random() * 135),
+            120 + Math.floor(Math.random() * 135),
+            120 + Math.floor(Math.random() * 135),
+          ),
+          k.rotate(Math.random() * 360),
+          k.opacity(1),
+          'balloon',
+          {
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0,
+          },
+        ]);
+        piece.onUpdate(() => {
+          piece.life += k.dt();
+          piece.pos.x += piece.vx * k.dt();
+          piece.pos.y += piece.vy * k.dt();
+          piece.vy += 220 * k.dt();
+          piece.angle += 320 * k.dt();
+          piece.opacity = Math.max(0, 1 - piece.life / 0.6);
+        });
+      }
+
+      followers.forEach((f) => k.destroy(f));
+      k.destroy(balloon);
+
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect) confetti({
         particleCount: 60,
         spread: 70,
         startVelocity: 28,
         origin: {
-          x: (rect.left + rect.width / 2) / window.innerWidth,
-          y: (rect.top + rect.height / 2) / window.innerHeight,
+          x: (rect.left + (px / CANVAS_W) * rect.width) / window.innerWidth,
+          y: (rect.top + (py / CANVAS_H) * rect.height) / window.innerHeight,
         },
         colors: ['#fbbf24', '#ec4899', '#a855f7', '#3b82f6'],
       });
-      setLocked(true);
+
       window.setTimeout(() => {
-        const next = roundIdx + 1;
+        const next = roundIdxRef.current + 1;
         if (next >= TOTAL_ROUNDS) {
           setPhase('finished');
           return;
         }
         setRoundIdx(next);
-        const nr = buildRound(mode, next);
+        const nr = buildRound(modeRef.current, next);
         setRound(nr);
-        setLocked(false);
         window.setTimeout(() => speak(nr.voice), 200);
       }, ROUND_DELAY_MS);
-    } else {
+    };
+
+    const handleWrong = (balloon: GameObj) => {
       playSfx('snd-wrong');
-      setWrongId(balloon.id);
-      window.setTimeout(() => setWrongId((id) => (id === balloon.id ? null : id)), 450);
-    }
-  };
+      balloon.shakeUntil = k.time() + 0.4;
+    };
+
+    round.values.forEach((value, i) => {
+      const cx = cellW * (i + 0.5);
+      const palette = BALLOON_PALETTES[i % BALLOON_PALETTES.length];
+      const darker = palette.map((c) => Math.floor(c * 0.7)) as [
+        number,
+        number,
+        number,
+      ];
+
+      const string = k.add([
+        k.rect(2, 60),
+        k.pos(cx, baseY + 36),
+        k.color(180, 180, 200),
+        k.anchor('top'),
+        'balloon',
+      ]);
+
+      const balloon = k.add([
+        k.circle(40),
+        k.pos(cx, baseY),
+        k.color(palette[0], palette[1], palette[2]),
+        k.anchor('center'),
+        k.area(),
+        k.scale(1),
+        k.outline(4, k.rgb(darker[0], darker[1], darker[2])),
+        'balloon',
+        {
+          value,
+          baseY,
+          baseX: cx,
+          t: Math.random() * Math.PI * 2,
+          shakeUntil: 0,
+        },
+      ]);
+
+      const highlight = k.add([
+        k.circle(9),
+        k.pos(cx - 14, baseY - 18),
+        k.color(255, 255, 255),
+        k.opacity(0.55),
+        k.anchor('center'),
+        k.follow(balloon, k.vec2(-14, -18)),
+        'balloon',
+      ]);
+
+      const label = k.add([
+        k.text(String(value), { size: 38 }),
+        k.pos(cx, baseY),
+        k.color(255, 255, 255),
+        k.anchor('center'),
+        k.follow(balloon, k.vec2(0, 0)),
+        'balloon',
+      ]);
+
+      const followers = [string, highlight, label];
+
+      balloon.onUpdate(() => {
+        balloon.t += k.dt() * 2.4;
+        const floatY = Math.sin(balloon.t + i) * 8;
+        const time = k.time();
+        const shakeDx =
+          time < balloon.shakeUntil ? Math.sin(time * 80) * 7 : 0;
+        balloon.pos.y = balloon.baseY + floatY;
+        balloon.pos.x = balloon.baseX + shakeDx;
+        string.pos.x = balloon.pos.x;
+        string.pos.y = balloon.pos.y + 36;
+      });
+
+      balloon.onClick(() => {
+        const cur = roundRef.current;
+        if (!cur || lockedRef.current) return;
+        if (balloon.value === cur.target) {
+          handleCorrect(balloon, followers);
+        } else {
+          handleWrong(balloon);
+        }
+      });
+    });
+  }, [round, phase, addScore]);
 
   if (phase === 'idle') {
     return (
@@ -190,8 +357,11 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
           <h2 className="text-3xl font-black mb-2 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
             Number Pop
           </h2>
-          <p className="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed mb-8">
+          <p className="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed mb-2">
             Chạm vào bong bóng đúng để làm nó nổ tung! Chọn một chế độ chơi nhé.
+          </p>
+          <p className="text-[10px] uppercase tracking-widest font-black text-slate-300 mb-8">
+            Engine: Kaboom.js
           </p>
 
           <div className="space-y-3 mb-4">
@@ -284,7 +454,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
 
   if (!round) return null;
   return (
-    <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
+    <div className="animate-in fade-in duration-300 max-w-md mx-auto">
       <div className="flex items-center justify-between mb-3">
         <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
           ĐIỂM:
@@ -297,14 +467,14 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
           </span>
         </div>
       </div>
-      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-5">
+      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
         <div
           className="h-full bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 transition-all duration-500"
           style={{ width: `${(roundIdx / TOTAL_ROUNDS) * 100}%` }}
         />
       </div>
 
-      <div className="text-center mb-5">
+      <div className="text-center mb-3">
         <button
           onClick={() => speak(round.voice)}
           className="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-100 rounded-full font-black text-2xl text-slate-700 active:scale-95 transition-all shadow-sm"
@@ -313,34 +483,19 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-5 px-2 py-2">
-        {round.balloons.map((b) => {
-          const isWrong = wrongId === b.id;
-          return (
-            <div key={b.id} className="relative flex justify-center">
-              <button
-                onClick={(e) => handlePop(e, b)}
-                disabled={b.popped || locked}
-                className={`balloon-btn aspect-square w-full max-w-[150px] rounded-full bg-gradient-to-br ${b.color} text-white font-black text-5xl shadow-xl flex items-center justify-center active:scale-95 disabled:cursor-default ${
-                  b.popped ? 'balloon-pop' : isWrong ? 'shake-x' : 'balloon-float'
-                }`}
-                style={{ animationDelay: `${b.delay}s` }}
-              >
-                <span className="drop-shadow-md">{b.value}</span>
-              </button>
-              {!b.popped && (
-                <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 text-slate-300 text-xs select-none pointer-events-none">
-                  │
-                </span>
-              )}
-            </div>
-          );
-        })}
+      <div
+        className="relative rounded-3xl overflow-hidden border-2 border-sky-100 shadow-inner bg-sky-50"
+        style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}` }}
+      >
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full block select-none touch-none"
+        />
       </div>
 
       <button
         onClick={onBack}
-        className="mt-6 w-full py-3 bg-white border-2 border-slate-100 text-slate-500 rounded-2xl font-bold text-sm active:scale-95 transition-all"
+        className="mt-5 w-full py-3 bg-white border-2 border-slate-100 text-slate-500 rounded-2xl font-bold text-sm active:scale-95 transition-all"
       >
         ← Thoát
       </button>

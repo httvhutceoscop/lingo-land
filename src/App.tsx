@@ -32,6 +32,7 @@ import PlusView from './views/PlusView';
 import MatchPuzzleView from './views/MatchPuzzleView';
 import SequenceView from './views/SequenceView';
 import ColoringView from './views/ColoringView';
+import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import type { Category, SubGroup } from './data/gameData';
@@ -62,6 +63,7 @@ type View =
   | 'matchpuzzle'
   | 'sequence'
   | 'coloring'
+  | 'gameisland'
   | 'knowledge';
 
 export default function App() {
@@ -118,6 +120,43 @@ export default function App() {
         ? 'profile'
         : 'map';
 
+  const goGameIsland = () => setView('gameisland');
+
+  const pickGame = (key: GameKey) => {
+    switch (key) {
+      case 'numberpop':
+        setView('numberpop');
+        break;
+      case 'feedanimal':
+        setView('feedanimal');
+        break;
+      case 'coloring':
+        setView('coloring');
+        break;
+      case 'sequence':
+        setView('sequence');
+        break;
+      case 'matchpuzzle':
+        setView('matchpuzzle');
+        break;
+      case 'count':
+        setView('count');
+        break;
+      case 'plus':
+        setView('plus');
+        break;
+      case 'subtract':
+        setView('subtract');
+        break;
+      case 'compare':
+        setView('compare');
+        break;
+      case 'challenge':
+        setView('challenge');
+        break;
+    }
+  };
+
   return (
     <div className="max-w-md md:max-w-3xl lg:max-w-4xl mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
       <Header onOpenMenu={() => setDrawerOpen(true)} />
@@ -125,19 +164,13 @@ export default function App() {
         {view === 'map' && (
           <MapView
             onPickKnowledge={() => setView('knowledge')}
-            onPickChallenge={() => setView('challenge')}
             onPickReview={() => setView('review')}
             onPickMath={() => setView('mathland')}
-            onPickNumberPop={() => setView('numberpop')}
-            onPickFeedAnimal={() => setView('feedanimal')}
-            onPickCompare={() => setView('compare')}
-            onPickSubtract={() => setView('subtract')}
-            onPickPlus={() => setView('plus')}
-            onPickCount={() => setView('count')}
-            onPickMatchPuzzle={() => setView('matchpuzzle')}
-            onPickSequence={() => setView('sequence')}
-            onPickColoring={() => setView('coloring')}
+            onPickGameIsland={goGameIsland}
           />
+        )}
+        {view === 'gameisland' && (
+          <GameIslandsView onPickGame={pickGame} onBack={goMap} />
         )}
         {view === 'knowledge' && (
           <KnowledgeIslandsView
@@ -145,15 +178,15 @@ export default function App() {
             onBack={goMap}
           />
         )}
-        {view === 'numberpop' && <NumberPopView onBack={goMap} />}
-        {view === 'feedanimal' && <FeedAnimalView onBack={goMap} />}
-        {view === 'compare' && <CompareView onBack={goMap} />}
-        {view === 'subtract' && <SubtractView onBack={goMap} />}
-        {view === 'count' && <CountView onBack={goMap} />}
-        {view === 'plus' && <PlusView onBack={goMap} />}
-        {view === 'matchpuzzle' && <MatchPuzzleView onBack={goMap} />}
-        {view === 'sequence' && <SequenceView onBack={goMap} />}
-        {view === 'coloring' && <ColoringView onBack={goMap} />}
+        {view === 'numberpop' && <NumberPopView onBack={goGameIsland} />}
+        {view === 'feedanimal' && <FeedAnimalView onBack={goGameIsland} />}
+        {view === 'compare' && <CompareView onBack={goGameIsland} />}
+        {view === 'subtract' && <SubtractView onBack={goGameIsland} />}
+        {view === 'count' && <CountView onBack={goGameIsland} />}
+        {view === 'plus' && <PlusView onBack={goGameIsland} />}
+        {view === 'matchpuzzle' && <MatchPuzzleView onBack={goGameIsland} />}
+        {view === 'sequence' && <SequenceView onBack={goGameIsland} />}
+        {view === 'coloring' && <ColoringView onBack={goGameIsland} />}
         {view === 'mathland' && (
           <MathLandView
             onPickLevel={(l) => {
@@ -166,7 +199,7 @@ export default function App() {
         {view === 'mathquiz' && activeMathLevel && (
           <MathQuizView level={activeMathLevel} onBack={() => setView('mathland')} />
         )}
-        {view === 'challenge' && <TimeChallengeView onBack={goMap} />}
+        {view === 'challenge' && <TimeChallengeView onBack={goGameIsland} />}
         {view === 'review' && <DailyReviewView onBack={goMap} />}
         {view === 'category' && activeCategory && (
           <CategoryView
