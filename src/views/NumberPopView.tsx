@@ -1,7 +1,7 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'finished';
 type Mode = 'find' | 'math';
@@ -117,7 +117,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
     const r = buildRound(m, 0);
     setRound(r);
     setPhase('playing');
-    window.setTimeout(() => speak(r.voice), 250);
+    window.setTimeout(() => speak(r.voice, LANG_SPEAK_DEFAULT), 250);
   };
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
         const nr = buildRound(mode, next);
         setRound(nr);
         setLocked(false);
-        window.setTimeout(() => speak(nr.voice), 200);
+        window.setTimeout(() => speak(nr.voice, LANG_SPEAK_DEFAULT), 200);
       }, ROUND_DELAY_MS);
     } else {
       playSfx('snd-wrong');
@@ -306,7 +306,7 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
 
       <div className="text-center mb-5">
         <button
-          onClick={() => speak(round.voice)}
+          onClick={() => speak(round.voice, LANG_SPEAK_DEFAULT)}
           className="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-100 rounded-full font-black text-2xl text-slate-700 active:scale-95 transition-all shadow-sm"
         >
           🔊 <span>{round.prompt}</span>

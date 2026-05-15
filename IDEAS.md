@@ -63,3 +63,6 @@ Khi kéo thả đúng hình ảnh sẽ có animation + âm thanh báo chính xá
 
 ---
 https://chatgpt.com/s/t_6a042cbb046881918b2f6b62be7d67af
+
+---
+Thêm dữ liệu tô màu: búp bê, elsa

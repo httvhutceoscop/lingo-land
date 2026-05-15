@@ -35,6 +35,7 @@ import ColoringView from './views/ColoringView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
+import { startBgm, stopBgm } from './lib/bgm';
 import type { Category, SubGroup } from './data/gameData';
 import type { MathLevel } from './data/mathData';
 
@@ -66,6 +67,19 @@ type View =
   | 'gameisland'
   | 'knowledge';
 
+const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
+  'numberpop',
+  'feedanimal',
+  'compare',
+  'subtract',
+  'count',
+  'plus',
+  'matchpuzzle',
+  'sequence',
+  'coloring',
+  'challenge',
+]);
+
 export default function App() {
   const [view, setView] = useState<View>('map');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
@@ -77,6 +91,14 @@ export default function App() {
   useEffect(() => {
     speak('');
   }, []);
+
+  useEffect(() => {
+    if (GAME_ISLAND_VIEWS.has(view)) {
+      startBgm();
+    } else {
+      stopBgm();
+    }
+  }, [view]);
 
   const goMap = () => {
     setActiveCategory(null);

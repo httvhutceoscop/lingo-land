@@ -6,7 +6,7 @@ import {
   OUTLINE_COLOR,
   type ColoringPicture,
 } from '../data/coloringData';
-import { speak } from '../lib/audio';
+import { LANG_SPEAK_DEFAULT, speak } from '../lib/audio';
 
 type Phase = 'library' | 'coloring';
 type AllFills = Record<string, Record<string, string>>;
@@ -56,7 +56,7 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   useEffect(() => {
     if (phase !== 'coloring' || !activePicture) return;
     const t = window.setTimeout(() => {
-      speak(`Tô màu ${activePicture.vi.toLowerCase()}`, 'vi-VN');
+      speak(`Tô màu ${activePicture.vi.toLowerCase()}`, LANG_SPEAK_DEFAULT);
     }, 300);
     return () => window.clearTimeout(t);
   }, [phase, activePicture]);

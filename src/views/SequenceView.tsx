@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'finished';
 type Level = 'easy' | 'medium' | 'hard';
@@ -338,7 +338,7 @@ export default function SequenceView({ onBack }: SequenceViewProps) {
   useEffect(() => {
     if (phase !== 'playing' || !round) return;
     const t = window.setTimeout(() => {
-      speak('Hãy điền số còn thiếu', 'vi-VN');
+      speak('Hãy điền số còn thiếu', LANG_SPEAK_DEFAULT);
     }, 350);
     return () => window.clearTimeout(t);
   }, [phase, idx, round]);
@@ -361,7 +361,7 @@ export default function SequenceView({ onBack }: SequenceViewProps) {
         origin: { y: 0.5 },
         colors: ['#fbbf24', '#34d399', '#a855f7', '#06b6d4', '#ec4899'],
       });
-      window.setTimeout(() => speak('Giỏi lắm!', 'vi-VN'), 250);
+      window.setTimeout(() => speak('Giỏi lắm!', LANG_SPEAK_DEFAULT), 250);
       window.setTimeout(() => setMascotCheer(false), 900);
     }
   }, [filledBySlot, phase, round, roundDone, addScore]);
@@ -379,7 +379,7 @@ export default function SequenceView({ onBack }: SequenceViewProps) {
         origin: { y: 0.5 },
         colors: ['#fbbf24', '#34d399', '#a855f7', '#06b6d4'],
       });
-      window.setTimeout(() => speak('Bé giỏi quá!', 'vi-VN'), 250);
+      window.setTimeout(() => speak('Bé giỏi quá!', LANG_SPEAK_DEFAULT), 250);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -700,7 +700,7 @@ export default function SequenceView({ onBack }: SequenceViewProps) {
           🐝
         </span>
         <button
-          onClick={() => speak('Hãy điền số còn thiếu', 'vi-VN')}
+          onClick={() => speak('Hãy điền số còn thiếu', LANG_SPEAK_DEFAULT)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-100 rounded-full font-black text-sm text-slate-700 active:scale-95 transition-all shadow-sm"
           aria-label="Nghe lại"
         >

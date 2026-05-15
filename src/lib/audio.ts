@@ -1,3 +1,5 @@
+export const LANG_SPEAK_DEFAULT = 'vi-VN';
+
 export function speak(text: string, lang: string = 'en-US'): void {
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = lang;

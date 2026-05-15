@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'finished';
 type Level = 'easy' | 'medium';
@@ -133,7 +133,7 @@ export default function CompareView({ onBack }: CompareViewProps) {
   useEffect(() => {
     if (phase !== 'playing' || !question) return;
     const t = window.setTimeout(() => {
-      speak('Hãy chọn dấu đúng', 'vi-VN');
+      speak('Hãy chọn dấu đúng', LANG_SPEAK_DEFAULT);
     }, 300);
     return () => window.clearTimeout(t);
   }, [phase, idx]);
@@ -148,7 +148,7 @@ export default function CompareView({ onBack }: CompareViewProps) {
         origin: { y: 0.5 },
         colors: ['#38bdf8', '#fbbf24', '#ec4899', '#a78bfa', '#34d399'],
       });
-      window.setTimeout(() => speak('Chúc mừng bé!', 'vi-VN'), 250);
+      window.setTimeout(() => speak('Chúc mừng bé!', LANG_SPEAK_DEFAULT), 250);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -180,12 +180,12 @@ export default function CompareView({ onBack }: CompareViewProps) {
         origin: { y: 0.45 },
         colors: ['#38bdf8', '#fbbf24', '#ec4899', '#a78bfa'],
       });
-      window.setTimeout(() => speak('Chính xác!', 'vi-VN'), 200);
+      window.setTimeout(() => speak('Chính xác!', LANG_SPEAK_DEFAULT), 200);
       window.setTimeout(() => setMascotCheer(false), 800);
     } else {
       setWrongSymbol(sym);
       playSfx('snd-wrong');
-      window.setTimeout(() => speak('Thử lại nhé!', 'vi-VN'), 100);
+      window.setTimeout(() => speak('Thử lại nhé!', LANG_SPEAK_DEFAULT), 100);
       window.setTimeout(
         () => setWrongSymbol((s) => (s === sym ? null : s)),
         500
@@ -375,7 +375,7 @@ export default function CompareView({ onBack }: CompareViewProps) {
           🦊
         </span>
         <button
-          onClick={() => speak('Hãy chọn dấu đúng', 'vi-VN')}
+          onClick={() => speak('Hãy chọn dấu đúng', LANG_SPEAK_DEFAULT)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-100 rounded-full font-black text-sm text-slate-700 active:scale-95 transition-all shadow-sm"
           aria-label="Nghe lại"
         >

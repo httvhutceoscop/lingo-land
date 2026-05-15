@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'finished';
 type Level = 'easy' | 'medium' | 'hard';
@@ -172,7 +172,7 @@ export default function SubtractView({ onBack }: SubtractViewProps) {
   useEffect(() => {
     if (phase !== 'playing' || !question) return;
     const t = window.setTimeout(() => {
-      speak(`${question.a} trừ ${question.b} bằng mấy?`, 'vi-VN');
+      speak(`${question.a} trừ ${question.b} bằng mấy?`, LANG_SPEAK_DEFAULT);
     }, 350);
     return () => window.clearTimeout(t);
   }, [phase, idx, question]);
@@ -191,7 +191,7 @@ export default function SubtractView({ onBack }: SubtractViewProps) {
         origin: { y: 0.5 },
         colors: ['#a855f7', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'],
       });
-      window.setTimeout(() => speak('Bé học giỏi quá!', 'vi-VN'), 250);
+      window.setTimeout(() => speak('Bé học giỏi quá!', LANG_SPEAK_DEFAULT), 250);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -232,14 +232,14 @@ export default function SubtractView({ onBack }: SubtractViewProps) {
         origin: { y: 0.5 },
         colors: ['#a855f7', '#ec4899', '#f59e0b', '#10b981'],
       });
-      window.setTimeout(() => speak('Chính xác!', 'vi-VN'), 200);
+      window.setTimeout(() => speak('Chính xác!', LANG_SPEAK_DEFAULT), 200);
       window.setTimeout(() => setMascotCheer(false), 800);
       window.setTimeout(() => setStreakFlash(false), 600);
     } else {
       setWrong(n);
       setStreak(0);
       playSfx('snd-wrong');
-      window.setTimeout(() => speak('Thử lại nhé!', 'vi-VN'), 100);
+      window.setTimeout(() => speak('Thử lại nhé!', LANG_SPEAK_DEFAULT), 100);
       window.setTimeout(() => setWrong((w) => (w === n ? null : w)), 500);
     }
   };
@@ -448,7 +448,7 @@ export default function SubtractView({ onBack }: SubtractViewProps) {
           🧸
         </span>
         <button
-          onClick={() => speak(`${question.a} trừ ${question.b} bằng mấy?`, 'vi-VN')}
+          onClick={() => speak(`${question.a} trừ ${question.b} bằng mấy?`, LANG_SPEAK_DEFAULT)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-100 rounded-full font-black text-sm text-slate-700 active:scale-95 transition-all shadow-sm"
           aria-label="Nghe lại"
         >
