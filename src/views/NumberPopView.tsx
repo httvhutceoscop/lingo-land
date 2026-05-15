@@ -321,9 +321,8 @@ export default function NumberPopView({ onBack }: NumberPopViewProps) {
               <button
                 onClick={(e) => handlePop(e, b)}
                 disabled={b.popped || locked}
-                className={`balloon-btn aspect-square w-full max-w-[150px] rounded-full bg-gradient-to-br ${b.color} text-white font-black text-5xl shadow-xl flex items-center justify-center active:scale-95 disabled:cursor-default ${
-                  b.popped ? 'balloon-pop' : isWrong ? 'shake-x' : 'balloon-float'
-                }`}
+                className={`balloon-btn aspect-square w-full max-w-[150px] rounded-full bg-gradient-to-br ${b.color} text-white font-black text-5xl shadow-xl flex items-center justify-center active:scale-95 disabled:cursor-default ${b.popped ? 'balloon-pop' : isWrong ? 'shake-x' : 'balloon-float'
+                  }`}
                 style={{ animationDelay: `${b.delay}s` }}
               >
                 <span className="drop-shadow-md">{b.value}</span>
