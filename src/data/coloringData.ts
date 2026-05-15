@@ -1,3 +1,8 @@
+import sample2025041Svg from '../../docs/svg-sample/2025041.svg?raw';
+import sample1227864Svg from '../../docs/svg-sample/1227864.svg?raw';
+import sample1454214Svg from '../../docs/svg-sample/1454214.svg?raw';
+import sample2023924Svg from '../../docs/svg-sample/2023924.svg?raw';
+
 export type ColoringRegion = {
   id: string;
   d: string;
@@ -9,6 +14,7 @@ export type ColoringPicture = {
   vi: string;
   emoji: string;
   viewBox: string;
+  transform?: string;
   regions: ColoringRegion[];
 };
 
@@ -22,6 +28,35 @@ export const COLOR_PALETTE: string[] = [
 
 export const DEFAULT_FILL = '#ffffff';
 export const OUTLINE_COLOR = '#1f2937';
+
+function parseSvgAsset(svg: string): {
+  viewBox: string;
+  transform?: string;
+  paths: string[];
+} {
+  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
+  const transformMatch = svg.match(/<g[^>]*\stransform="([^"]+)"/);
+  const paths: string[] = [];
+  const pathRe = /<path[^>]*\sd="([^"]+)"/g;
+  let m: RegExpExecArray | null;
+  while ((m = pathRe.exec(svg)) !== null) {
+    paths.push(m[1]);
+  }
+  return {
+    viewBox: viewBoxMatch?.[1] ?? '0 0 100 100',
+    transform: transformMatch?.[1],
+    paths,
+  };
+}
+
+function svgAssetToRegions(paths: string[]): ColoringRegion[] {
+  return paths.map((d, i) => ({ id: `shape${i}`, d }));
+}
+
+const sample2025041 = parseSvgAsset(sample2025041Svg);
+const sample1227864 = parseSvgAsset(sample1227864Svg);
+const sample1454214 = parseSvgAsset(sample1454214Svg);
+const sample2023924 = parseSvgAsset(sample2023924Svg);
 
 // All pictures share a 200×200 viewBox for layout consistency.
 // Each region's `d` is a closed path (or arc-based circle). Render order = array order;
@@ -207,5 +242,346 @@ export const COLORING_PICTURES: ColoringPicture[] = [
         d: 'M 100 51 A 14 14 0 1 0 100 79 A 14 14 0 1 0 100 51 Z',
       },
     ],
+  },
+  {
+    id: 'elsa',
+    vi: 'Công chúa Elsa',
+    emoji: '👸',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'cape',
+        d: 'M 30 130 L 170 130 L 200 200 L 0 200 Z',
+      },
+      {
+        id: 'hairBack',
+        d: 'M 50 100 C 45 40 155 40 150 100 L 165 180 L 35 180 Z',
+      },
+      {
+        id: 'dress',
+        d: 'M 78 125 L 122 125 L 150 180 L 50 180 Z',
+      },
+      {
+        id: 'face',
+        d: 'M 100 55 C 78 55 72 80 75 100 C 78 118 88 128 100 128 C 112 128 122 118 125 100 C 128 80 122 55 100 55 Z',
+      },
+      {
+        id: 'hairFront',
+        d: 'M 75 75 C 80 55 120 55 125 75 C 115 65 105 72 100 70 C 95 72 85 65 75 75 Z',
+      },
+      {
+        id: 'braid',
+        d: 'M 122 122 C 148 138 150 170 138 195 L 115 195 C 128 170 120 145 105 125 Z',
+      },
+      {
+        id: 'browLeft',
+        d: 'M 82 82 C 82 78 96 78 96 82 L 95 85 C 92 82 86 82 83 85 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'browRight',
+        d: 'M 104 82 C 104 78 118 78 118 82 L 117 85 C 114 82 108 82 105 85 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'eyeLeft',
+        d: 'M 83 92 A 4 5 0 1 0 91 92 A 4 5 0 1 0 83 92 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'eyeRight',
+        d: 'M 109 92 A 4 5 0 1 0 117 92 A 4 5 0 1 0 109 92 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'mouth',
+        d: 'M 92 110 C 96 114 104 114 108 110 C 104 116 96 116 92 110 Z',
+      },
+      {
+        id: 'snowflake',
+        d: 'M 138 158 L 138 152 L 134 152 L 134 158 L 128 158 L 128 162 L 134 162 L 134 168 L 138 168 L 138 162 L 144 162 L 144 158 Z',
+      },
+    ],
+  },
+  {
+    id: 'cat',
+    vi: 'Con mèo',
+    emoji: '🐱',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'leftEar',
+        d: 'M 55 80 L 45 30 L 90 65 Z',
+      },
+      {
+        id: 'rightEar',
+        d: 'M 145 80 L 155 30 L 110 65 Z',
+      },
+      {
+        id: 'head',
+        d: 'M 100 65 C 55 65 45 110 50 145 C 55 180 80 195 100 195 C 120 195 145 180 150 145 C 155 110 145 65 100 65 Z',
+      },
+      {
+        id: 'leftInnerEar',
+        d: 'M 62 72 L 56 42 L 85 62 Z',
+      },
+      {
+        id: 'rightInnerEar',
+        d: 'M 138 72 L 144 42 L 115 62 Z',
+      },
+      {
+        id: 'leftEye',
+        d: 'M 73 115 A 6 8 0 1 0 87 115 A 6 8 0 1 0 73 115 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightEye',
+        d: 'M 113 115 A 6 8 0 1 0 127 115 A 6 8 0 1 0 113 115 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'nose',
+        d: 'M 100 138 L 92 146 L 108 146 Z',
+      },
+      {
+        id: 'mouth',
+        d: 'M 88 152 C 92 162 100 160 100 154 C 100 160 108 162 112 152 C 108 158 92 158 88 152 Z',
+      },
+    ],
+  },
+  {
+    id: 'bear',
+    vi: 'Con gấu',
+    emoji: '🐻',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'leftEar',
+        d: 'M 55 70 A 18 18 0 1 0 91 70 A 18 18 0 1 0 55 70 Z',
+      },
+      {
+        id: 'rightEar',
+        d: 'M 109 70 A 18 18 0 1 0 145 70 A 18 18 0 1 0 109 70 Z',
+      },
+      {
+        id: 'head',
+        d: 'M 100 65 C 55 65 45 110 50 140 C 55 175 80 195 100 195 C 120 195 145 175 150 140 C 155 110 145 65 100 65 Z',
+      },
+      {
+        id: 'leftInnerEar',
+        d: 'M 65 70 A 10 10 0 1 0 85 70 A 10 10 0 1 0 65 70 Z',
+      },
+      {
+        id: 'rightInnerEar',
+        d: 'M 115 70 A 10 10 0 1 0 135 70 A 10 10 0 1 0 115 70 Z',
+      },
+      {
+        id: 'snout',
+        d: 'M 70 145 C 70 130 130 130 130 145 C 130 170 110 178 100 178 C 90 178 70 170 70 145 Z',
+      },
+      {
+        id: 'leftEye',
+        d: 'M 75 115 A 5 6 0 1 0 85 115 A 5 6 0 1 0 75 115 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightEye',
+        d: 'M 115 115 A 5 6 0 1 0 125 115 A 5 6 0 1 0 115 115 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'nose',
+        d: 'M 90 138 C 90 130 110 130 110 138 C 110 148 100 152 100 152 C 100 152 90 148 90 138 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'mouth',
+        d: 'M 88 162 C 92 168 100 166 100 162 C 100 166 108 168 112 162 C 108 166 92 166 88 162 Z',
+      },
+    ],
+  },
+  {
+    id: 'rabbit',
+    vi: 'Con thỏ',
+    emoji: '🐰',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'leftEar',
+        d: 'M 78 15 C 65 20 60 60 70 95 C 75 102 85 102 88 95 C 95 60 92 15 78 15 Z',
+      },
+      {
+        id: 'rightEar',
+        d: 'M 122 15 C 135 20 140 60 130 95 C 125 102 115 102 112 95 C 105 60 108 15 122 15 Z',
+      },
+      {
+        id: 'leftInnerEar',
+        d: 'M 78 30 C 70 35 68 60 75 90 C 78 95 84 95 86 90 C 90 60 86 30 78 30 Z',
+      },
+      {
+        id: 'rightInnerEar',
+        d: 'M 122 30 C 130 35 132 60 125 90 C 122 95 116 95 114 90 C 110 60 114 30 122 30 Z',
+      },
+      {
+        id: 'head',
+        d: 'M 100 85 C 55 85 45 130 50 160 C 55 185 80 195 100 195 C 120 195 145 185 150 160 C 155 130 145 85 100 85 Z',
+      },
+      {
+        id: 'leftEye',
+        d: 'M 75 135 A 5 6 0 1 0 85 135 A 5 6 0 1 0 75 135 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightEye',
+        d: 'M 115 135 A 5 6 0 1 0 125 135 A 5 6 0 1 0 115 135 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'leftCheek',
+        d: 'M 65 158 A 7 5 0 1 0 79 158 A 7 5 0 1 0 65 158 Z',
+      },
+      {
+        id: 'rightCheek',
+        d: 'M 121 158 A 7 5 0 1 0 135 158 A 7 5 0 1 0 121 158 Z',
+      },
+      {
+        id: 'nose',
+        d: 'M 100 152 L 92 160 L 108 160 Z',
+      },
+      {
+        id: 'mouth',
+        d: 'M 92 168 C 95 175 100 172 100 168 C 100 172 105 175 108 168 C 105 172 95 172 92 168 Z',
+      },
+    ],
+  },
+  {
+    id: 'pig',
+    vi: 'Con lợn',
+    emoji: '🐷',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'leftEar',
+        d: 'M 50 60 L 75 50 L 78 80 Z',
+      },
+      {
+        id: 'rightEar',
+        d: 'M 150 60 L 125 50 L 122 80 Z',
+      },
+      {
+        id: 'head',
+        d: 'M 100 65 C 50 65 40 110 45 145 C 50 180 80 195 100 195 C 120 195 150 180 155 145 C 160 110 150 65 100 65 Z',
+      },
+      {
+        id: 'leftCheek',
+        d: 'M 55 132 A 8 6 0 1 0 71 132 A 8 6 0 1 0 55 132 Z',
+      },
+      {
+        id: 'rightCheek',
+        d: 'M 129 132 A 8 6 0 1 0 145 132 A 8 6 0 1 0 129 132 Z',
+      },
+      {
+        id: 'snout',
+        d: 'M 70 145 C 70 125 130 125 130 145 C 130 165 70 165 70 145 Z',
+      },
+      {
+        id: 'leftNostril',
+        d: 'M 86 142 A 4 6 0 1 0 96 142 A 4 6 0 1 0 86 142 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightNostril',
+        d: 'M 104 142 A 4 6 0 1 0 114 142 A 4 6 0 1 0 104 142 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'leftEye',
+        d: 'M 75 110 A 4 5 0 1 0 85 110 A 4 5 0 1 0 75 110 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightEye',
+        d: 'M 115 110 A 4 5 0 1 0 125 110 A 4 5 0 1 0 115 110 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'mouth',
+        d: 'M 88 172 C 92 178 100 176 100 172 C 100 176 108 178 112 172 C 108 176 92 176 88 172 Z',
+      },
+    ],
+  },
+  {
+    id: 'chick',
+    vi: 'Gà con',
+    emoji: '🐥',
+    viewBox: '0 0 200 200',
+    regions: [
+      {
+        id: 'body',
+        d: 'M 100 35 C 50 35 40 80 45 130 C 50 175 80 192 100 192 C 120 192 150 175 155 130 C 160 80 150 35 100 35 Z',
+      },
+      {
+        id: 'leftWing',
+        d: 'M 50 110 C 35 115 35 150 55 160 C 65 158 70 130 65 115 Z',
+      },
+      {
+        id: 'rightWing',
+        d: 'M 150 110 C 165 115 165 150 145 160 C 135 158 130 130 135 115 Z',
+      },
+      {
+        id: 'beak',
+        d: 'M 90 95 L 95 110 L 110 110 L 105 95 Z',
+      },
+      {
+        id: 'leftEye',
+        d: 'M 75 78 A 6 7 0 1 0 87 78 A 6 7 0 1 0 75 78 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'rightEye',
+        d: 'M 113 78 A 6 7 0 1 0 125 78 A 6 7 0 1 0 113 78 Z',
+        defaultFill: OUTLINE_COLOR,
+      },
+      {
+        id: 'leftFoot',
+        d: 'M 82 192 L 70 200 L 95 200 Z',
+      },
+      {
+        id: 'rightFoot',
+        d: 'M 118 192 L 130 200 L 105 200 Z',
+      },
+    ],
+  },
+  {
+    id: 'sample2025041',
+    vi: 'Hình mẫu 1',
+    emoji: '🖼️',
+    viewBox: sample2025041.viewBox,
+    transform: sample2025041.transform,
+    regions: svgAssetToRegions(sample2025041.paths),
+  },
+  {
+    id: 'sample1227864',
+    vi: 'Hình mẫu 2',
+    emoji: '🖼️',
+    viewBox: sample1227864.viewBox,
+    transform: sample1227864.transform,
+    regions: svgAssetToRegions(sample1227864.paths),
+  },
+  {
+    id: 'sample1454214',
+    vi: 'Hình mẫu 3',
+    emoji: '🖼️',
+    viewBox: sample1454214.viewBox,
+    transform: sample1454214.transform,
+    regions: svgAssetToRegions(sample1454214.paths),
+  },
+  {
+    id: 'sample2023924',
+    vi: 'Hình mẫu 4',
+    emoji: '🖼️',
+    viewBox: sample2023924.viewBox,
+    transform: sample2023924.transform,
+    regions: svgAssetToRegions(sample2023924.paths),
   },
 ];

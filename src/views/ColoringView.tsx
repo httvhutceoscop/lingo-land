@@ -186,28 +186,31 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
           className="block w-full mx-auto max-w-md select-none"
           style={{ touchAction: 'manipulation' }}
         >
-          {activePicture.regions.map((region) => {
-            const fill =
-              activeFills[region.id] ?? region.defaultFill ?? DEFAULT_FILL;
-            const isPulsing = pulsingRegion === region.id;
-            return (
-              <path
-                key={region.id}
-                d={region.d}
-                fill={fill}
-                stroke={OUTLINE_COLOR}
-                strokeWidth={2.5}
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                className={isPulsing ? 'color-pulse' : undefined}
-                style={{
-                  transition: 'fill 0.25s ease',
-                  cursor: 'pointer',
-                }}
-                onClick={() => paintRegion(activePicture.id, region.id)}
-              />
-            );
-          })}
+          <g transform={activePicture.transform}>
+            {activePicture.regions.map((region) => {
+              const fill =
+                activeFills[region.id] ?? region.defaultFill ?? DEFAULT_FILL;
+              const isPulsing = pulsingRegion === region.id;
+              return (
+                <path
+                  key={region.id}
+                  d={region.d}
+                  fill={fill}
+                  stroke={OUTLINE_COLOR}
+                  strokeWidth={2.5}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                  className={isPulsing ? 'color-pulse' : undefined}
+                  style={{
+                    transition: 'fill 0.25s ease',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => paintRegion(activePicture.id, region.id)}
+                />
+              );
+            })}
+          </g>
         </svg>
         {savedToast && (
           <div className="absolute top-2 right-2 px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full badge-pop">
@@ -262,20 +265,23 @@ function PictureThumbnail({ picture, fills }: PictureThumbnailProps) {
       className="w-20 h-20"
       aria-hidden
     >
-      {picture.regions.map((region) => {
-        const fill = fills[region.id] ?? region.defaultFill ?? DEFAULT_FILL;
-        return (
-          <path
-            key={region.id}
-            d={region.d}
-            fill={fill}
-            stroke={OUTLINE_COLOR}
-            strokeWidth={2.5}
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        );
-      })}
+      <g transform={picture.transform}>
+        {picture.regions.map((region) => {
+          const fill = fills[region.id] ?? region.defaultFill ?? DEFAULT_FILL;
+          return (
+            <path
+              key={region.id}
+              d={region.d}
+              fill={fill}
+              stroke={OUTLINE_COLOR}
+              strokeWidth={2.5}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          );
+        })}
+      </g>
     </svg>
   );
 }
