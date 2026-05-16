@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -18,9 +19,10 @@ function buildOptions(word: Word): string[] {
 type QuizViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
-export default function QuizView({ words, onFinish }: QuizViewProps) {
+export default function QuizView({ words, onFinish, onExit }: QuizViewProps) {
   const { addScore } = useGame();
   const shuffledWords = useMemo(() => shuffle(words), [words]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -72,6 +74,7 @@ export default function QuizView({ words, onFinish }: QuizViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           KIỂM TRA KIẾN THỨC

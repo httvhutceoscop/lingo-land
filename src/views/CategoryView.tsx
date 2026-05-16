@@ -4,6 +4,7 @@ import { useGame } from '../context/GameContext';
 type CategoryViewProps = {
   category: Category;
   onPickSubGroup: (subGroup: SubGroup) => void;
+  onStartTest: (subGroup: SubGroup) => void;
   onBack: () => void;
 };
 
@@ -27,7 +28,7 @@ const MODE_BADGE: Record<TestMode, string> = {
   shadow: 'bg-indigo-50 text-indigo-700',
 };
 
-export default function CategoryView({ category, onPickSubGroup, onBack }: CategoryViewProps) {
+export default function CategoryView({ category, onPickSubGroup, onStartTest, onBack }: CategoryViewProps) {
   const { isUnlocked, isPassed } = useGame();
 
   return (
@@ -81,7 +82,17 @@ export default function CategoryView({ category, onPickSubGroup, onBack }: Categ
                   </span>
                 </div>
               </div>
-              {unlocked && <span className="text-emerald-500">▶️</span>}
+              {unlocked && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStartTest(sg);
+                  }}
+                  className="ml-2 shrink-0 px-3 py-2 bg-emerald-500 text-white text-xs font-black rounded-xl shadow-md shadow-emerald-200 active:scale-95 transition-all whitespace-nowrap"
+                >
+                  Test ▶
+                </button>
+              )}
             </div>
           );
         })}

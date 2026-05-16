@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -9,11 +10,12 @@ const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 type MatchingViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
 type Side = 'en' | 'vi';
 
-export default function MatchingView({ words, onFinish }: MatchingViewProps) {
+export default function MatchingView({ words, onFinish, onExit }: MatchingViewProps) {
   const { addScore } = useGame();
 
   const enOrder = useMemo(() => shuffle(words.map((w) => w.en)), [words]);
@@ -83,6 +85,7 @@ export default function MatchingView({ words, onFinish }: MatchingViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-6">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           NỐI TỪ

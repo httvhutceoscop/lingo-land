@@ -128,6 +128,11 @@ export default function App() {
     setView('flashcard');
   };
 
+  const startTestDirect = (subGroup: SubGroup) => {
+    setActiveSubGroup(subGroup);
+    setView('test');
+  };
+
   const startTest = () => setView('test');
 
   const finishTest = (result: QuizResult) => {
@@ -227,6 +232,7 @@ export default function App() {
           <CategoryView
             category={activeCategory}
             onPickSubGroup={pickSubGroup}
+            onStartTest={startTestDirect}
             onBack={() => setView('knowledge')}
           />
         )}
@@ -240,25 +246,25 @@ export default function App() {
         {view === 'test' && activeSubGroup && (
           <>
             {activeSubGroup.mode === 'quiz' && (
-              <QuizView words={activeSubGroup.words} onFinish={finishTest} />
+              <QuizView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'matching' && (
-              <MatchingView words={activeSubGroup.words} onFinish={finishTest} />
+              <MatchingView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'listening' && (
-              <ListeningView words={activeSubGroup.words} onFinish={finishTest} />
+              <ListeningView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'typing' && (
-              <TypingView words={activeSubGroup.words} onFinish={finishTest} />
+              <TypingView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'memory' && (
-              <MemoryView words={activeSubGroup.words} onFinish={finishTest} />
+              <MemoryView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'hangman' && (
-              <HangmanView words={activeSubGroup.words} onFinish={finishTest} />
+              <HangmanView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
             {activeSubGroup.mode === 'shadow' && (
-              <ShadowView words={activeSubGroup.words} onFinish={finishTest} />
+              <ShadowView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
             )}
           </>
         )}

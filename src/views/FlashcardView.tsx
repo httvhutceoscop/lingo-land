@@ -22,6 +22,7 @@ type FlashcardViewProps = {
 export default function FlashcardView({ subGroup, onExit, onComplete }: FlashcardViewProps) {
   const [step, setStep] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [showFinish, setShowFinish] = useState(false);
 
   const words = subGroup.words;
   const word = words[step];
@@ -32,7 +33,7 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
     if (!isLast) {
       setStep(step + 1);
     } else {
-      onComplete();
+      setShowFinish(true);
     }
   };
 
@@ -65,10 +66,38 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
             onClick={handleNext}
             className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
           >
-            {isLast ? TEST_LABEL[subGroup.mode] : 'Tiếp theo'}
+            {isLast ? 'Hoàn thành học ➔' : 'Tiếp theo'}
           </button>
         </div>
       </div>
+
+      {showFinish && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="text-center">
+              <div className="text-6xl mb-3">🎉</div>
+              <h3 className="text-2xl font-black mb-2">Đã học xong!</h3>
+              <p className="text-sm text-slate-500 mb-6">
+                Bạn có muốn làm bài kiểm tra ngay bây giờ?
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={onComplete}
+                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
+                >
+                  {TEST_LABEL[subGroup.mode]}
+                </button>
+                <button
+                  onClick={onExit}
+                  className="w-full py-3 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold active:scale-95 transition-all"
+                >
+                  ← Quay lại danh sách
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

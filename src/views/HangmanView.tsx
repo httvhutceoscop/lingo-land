@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx, speak } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const MAX_WRONGS = 6;
@@ -19,9 +20,10 @@ type Outcome = 'won' | 'lost' | null;
 type HangmanViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
-export default function HangmanView({ words, onFinish }: HangmanViewProps) {
+export default function HangmanView({ words, onFinish, onExit }: HangmanViewProps) {
   const { addScore } = useGame();
   const shuffledWords = useMemo(() => shuffle(words), [words]);
 
@@ -111,6 +113,7 @@ export default function HangmanView({ words, onFinish }: HangmanViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-3">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           ĐOÁN CHỮ

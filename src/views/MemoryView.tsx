@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -17,9 +18,10 @@ type Card = {
 type MemoryViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
-export default function MemoryView({ words, onFinish }: MemoryViewProps) {
+export default function MemoryView({ words, onFinish, onExit }: MemoryViewProps) {
   const { addScore } = useGame();
 
   const cards = useMemo<Card[]>(
@@ -94,6 +96,7 @@ export default function MemoryView({ words, onFinish }: MemoryViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 max-w-2xl mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-4">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           TRÒ CHƠI TRÍ NHỚ

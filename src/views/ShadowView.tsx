@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx, speak } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -26,6 +27,7 @@ function buildOptions(correct: Word): Word[] {
 type ShadowViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
 type DragState = {
@@ -36,7 +38,7 @@ type DragState = {
   pos: { x: number; y: number };
 };
 
-export default function ShadowView({ words, onFinish }: ShadowViewProps) {
+export default function ShadowView({ words, onFinish, onExit }: ShadowViewProps) {
   const { addScore } = useGame();
   const shuffledWords = useMemo(() => shuffle(words), [words]);
   const [roundIdx, setRoundIdx] = useState(0);
@@ -142,6 +144,7 @@ export default function ShadowView({ words, onFinish }: ShadowViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 select-none max-w-xl mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-6">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           KÉO HÌNH VÀO BÓNG
@@ -185,7 +188,7 @@ export default function ShadowView({ words, onFinish }: ShadowViewProps) {
         Kéo hình đúng vào bóng phía trên 👆
       </p>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-4 gap-2">
         {options.map((w) => {
           const isDragging = drag?.wordEn === w.en;
           const isWrong = wrongEn === w.en;
@@ -198,7 +201,7 @@ export default function ShadowView({ words, onFinish }: ShadowViewProps) {
                 onPointerMove={onTilePointerMove}
                 onPointerUp={(e) => onTilePointerUp(e, w)}
                 onPointerCancel={onTilePointerCancel}
-                className={`w-full h-full bg-white border-2 rounded-2xl flex items-center justify-center text-7xl disabled:opacity-50 ${
+                className={`w-full h-full bg-white border-2 rounded-2xl flex items-center justify-center text-5xl disabled:opacity-50 ${
                   isWrong
                     ? 'shake-x border-red-300 bg-red-50'
                     : isDragging

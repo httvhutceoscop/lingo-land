@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, useEffect, type FormEvent } from 'react';
 import type { Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { playSfx } from '../lib/audio';
+import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -11,9 +12,10 @@ const normalize = (s: string) => s.trim().toLowerCase();
 type TypingViewProps = {
   words: Word[];
   onFinish: (result: QuizResult) => void;
+  onExit: () => void;
 };
 
-export default function TypingView({ words, onFinish }: TypingViewProps) {
+export default function TypingView({ words, onFinish, onExit }: TypingViewProps) {
   const { addScore } = useGame();
   const shuffledWords = useMemo(() => shuffle(words), [words]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -67,6 +69,7 @@ export default function TypingView({ words, onFinish }: TypingViewProps) {
 
   return (
     <div className="animate-in slide-in-from-right duration-300 max-w-md mx-auto">
+      <TestExitButton onExit={onExit} />
       <div className="flex justify-between items-center mb-8">
         <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">
           GÕ CHÍNH TẢ
