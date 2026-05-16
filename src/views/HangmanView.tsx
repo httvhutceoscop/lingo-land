@@ -50,7 +50,7 @@ export default function HangmanView({ words, onFinish, onExit }: HangmanViewProp
         addScore(20);
         setCorrectCount((c) => c + 1);
         setOutcome('won');
-        speak(word.en);
+        window.setTimeout(() => speak(word.en), 500);
       } else {
         playSfx('snd-correct');
       }
@@ -60,6 +60,7 @@ export default function HangmanView({ words, onFinish, onExit }: HangmanViewProp
       setWrongs(newWrongs);
       if (newWrongs >= MAX_WRONGS) {
         setOutcome('lost');
+        window.setTimeout(() => speak(word.en), 500);
       }
     }
   };

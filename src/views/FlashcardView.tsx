@@ -37,6 +37,12 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
     }
   };
 
+  const handleBack = () => {
+    if (step === 0) return;
+    setFlipped(false);
+    setStep(step - 1);
+  };
+
   return (
     <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -62,12 +68,21 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
           >
             <span>🔊</span> Phát âm
           </button>
-          <button
-            onClick={handleNext}
-            className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
-          >
-            {isLast ? 'Hoàn thành học ➔' : 'Tiếp theo'}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleBack}
+              disabled={step === 0}
+              className="shrink-0 px-5 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold active:scale-95 transition-all disabled:opacity-40 disabled:active:scale-100"
+            >
+              ← Trước
+            </button>
+            <button
+              onClick={handleNext}
+              className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
+            >
+              {isLast ? 'Hoàn thành học ➔' : 'Tiếp theo'}
+            </button>
+          </div>
         </div>
       </div>
 
