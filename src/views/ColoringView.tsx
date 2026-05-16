@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   COLOR_PALETTE,
   COLORING_PICTURES,
@@ -44,6 +44,22 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   const [pulsingRegion, setPulsingRegion] = useState<string | null>(null);
   const [resetArmed, setResetArmed] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
+  const libraryScrollRef = useRef({ mainTop: 0, winY: 0 });
+
+  useLayoutEffect(() => {
+    const main = document.querySelector('main');
+    const apply = (mainTop: number, winY: number) => {
+      if (main) main.scrollTop = mainTop;
+      window.scrollTo(0, winY);
+    };
+    if (phase === 'library') {
+      const { mainTop, winY } = libraryScrollRef.current;
+      apply(mainTop, winY);
+      const id = requestAnimationFrame(() => apply(mainTop, winY));
+      return () => cancelAnimationFrame(id);
+    }
+    apply(0, 0);
+  }, [phase]);
 
   const activePicture: ColoringPicture | null = useMemo(
     () => COLORING_PICTURES.find((p) => p.id === activePictureId) ?? null,
@@ -69,6 +85,11 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   }, [resetArmed]);
 
   const openPicture = (id: string) => {
+    const main = document.querySelector('main');
+    libraryScrollRef.current = {
+      mainTop: main?.scrollTop ?? 0,
+      winY: window.scrollY,
+    };
     setActivePictureId(id);
     setPhase('coloring');
     setResetArmed(false);

@@ -1,8 +1,3 @@
-import sample2025041Svg from '../../docs/svg-sample/2025041.svg?raw';
-import sample1227864Svg from '../../docs/svg-sample/1227864.svg?raw';
-import sample1454214Svg from '../../docs/svg-sample/1454214.svg?raw';
-import sample2023924Svg from '../../docs/svg-sample/2023924.svg?raw';
-
 export type ColoringRegion = {
   id: string;
   d: string;
@@ -53,10 +48,39 @@ function svgAssetToRegions(paths: string[]): ColoringRegion[] {
   return paths.map((d, i) => ({ id: `shape${i}`, d }));
 }
 
-const sample2025041 = parseSvgAsset(sample2025041Svg);
-const sample1227864 = parseSvgAsset(sample1227864Svg);
-const sample1454214 = parseSvgAsset(sample1454214Svg);
-const sample2023924 = parseSvgAsset(sample2023924Svg);
+const svgModules = import.meta.glob('../assets/coloring/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+function filenameSlug(path: string): string {
+  const file = path.split('/').pop() ?? '';
+  return file.replace(/\.svg$/i, '');
+}
+
+function humanize(slug: string): string {
+  return slug
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const autoPictures: ColoringPicture[] = Object.entries(svgModules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, svg]) => {
+    const slug = filenameSlug(path);
+    const asset = parseSvgAsset(svg);
+    return {
+      id: `asset.${slug}`,
+      vi: humanize(slug),
+      emoji: '🖼️',
+      viewBox: asset.viewBox,
+      transform: asset.transform,
+      regions: svgAssetToRegions(asset.paths),
+    };
+  })
+  .filter((p) => p.regions.length > 0);
 
 // All pictures share a 200×200 viewBox for layout consistency.
 // Each region's `d` is a closed path (or arc-based circle). Render order = array order;
@@ -552,36 +576,5 @@ export const COLORING_PICTURES: ColoringPicture[] = [
       },
     ],
   },
-  {
-    id: 'sample2025041',
-    vi: 'Hình mẫu 1',
-    emoji: '🖼️',
-    viewBox: sample2025041.viewBox,
-    transform: sample2025041.transform,
-    regions: svgAssetToRegions(sample2025041.paths),
-  },
-  {
-    id: 'sample1227864',
-    vi: 'Hình mẫu 2',
-    emoji: '🖼️',
-    viewBox: sample1227864.viewBox,
-    transform: sample1227864.transform,
-    regions: svgAssetToRegions(sample1227864.paths),
-  },
-  {
-    id: 'sample1454214',
-    vi: 'Hình mẫu 3',
-    emoji: '🖼️',
-    viewBox: sample1454214.viewBox,
-    transform: sample1454214.transform,
-    regions: svgAssetToRegions(sample1454214.paths),
-  },
-  {
-    id: 'sample2023924',
-    vi: 'Hình mẫu 4',
-    emoji: '🖼️',
-    viewBox: sample2023924.viewBox,
-    transform: sample2023924.transform,
-    regions: svgAssetToRegions(sample2023924.paths),
-  },
+  ...autoPictures,
 ];

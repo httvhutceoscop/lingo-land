@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import Header from './components/Header';
 import BottomNav, { type NavKey } from './components/BottomNav';
 import MapView from './views/MapView';
@@ -31,7 +31,7 @@ import CountView from './views/CountView';
 import PlusView from './views/PlusView';
 import MatchPuzzleView from './views/MatchPuzzleView';
 import SequenceView from './views/SequenceView';
-import ColoringView from './views/ColoringView';
+const ColoringView = lazy(() => import('./views/ColoringView'));
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -213,7 +213,17 @@ export default function App() {
         {view === 'plus' && <PlusView onBack={goGameIsland} />}
         {view === 'matchpuzzle' && <MatchPuzzleView onBack={goGameIsland} />}
         {view === 'sequence' && <SequenceView onBack={goGameIsland} />}
-        {view === 'coloring' && <ColoringView onBack={goGameIsland} />}
+        {view === 'coloring' && (
+          <Suspense
+            fallback={
+              <div className="py-10 text-center text-slate-400 font-bold animate-pulse">
+                🎨 Đang tải tranh tô màu…
+              </div>
+            }
+          >
+            <ColoringView onBack={goGameIsland} />
+          </Suspense>
+        )}
         {view === 'mathland' && (
           <MathLandView
             onPickLevel={(l) => {
