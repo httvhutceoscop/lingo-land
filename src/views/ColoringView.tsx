@@ -32,6 +32,15 @@ function saveFills(fills: AllFills): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(fills));
 }
 
+function normalizeForSearch(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/đ/g, 'd')
+    .trim();
+}
+
 type ColoringViewProps = {
   onBack: () => void;
 };
@@ -44,7 +53,16 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   const [pulsingRegion, setPulsingRegion] = useState<string | null>(null);
   const [resetArmed, setResetArmed] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
+  const [search, setSearch] = useState('');
   const libraryScrollRef = useRef({ mainTop: 0, winY: 0 });
+
+  const filteredPictures = useMemo(() => {
+    const q = normalizeForSearch(search);
+    if (!q) return COLORING_PICTURES;
+    return COLORING_PICTURES.filter((p) =>
+      normalizeForSearch(p.vi).includes(q)
+    );
+  }, [search]);
 
   useLayoutEffect(() => {
     const main = document.querySelector('main');
@@ -133,7 +151,7 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   // ─── LIBRARY ───────────────────────────────────────────────────────
   if (phase === 'library' || !activePicture) {
     return (
-      <div className="animate-in fade-in duration-500">
+      <>
         <button
           onClick={onBack}
           className="text-slate-400 font-bold hover:text-slate-600 transition-colors mb-4"
@@ -150,28 +168,65 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
-          {COLORING_PICTURES.map((pic) => {
-            const fills = allFills[pic.id] ?? {};
-            const filledCount = Object.keys(fills).length;
-            return (
+        <div className="sticky top-0 z-10 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8 py-3 mb-3 bg-white/95 backdrop-blur border-b border-slate-100">
+          <div className="relative max-w-md mx-auto">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm tranh..."
+              className="w-full pl-11 pr-10 py-3 border-2 border-slate-200 rounded-2xl focus:border-amber-400 focus:outline-none font-bold text-slate-700 placeholder:text-slate-400 placeholder:font-normal"
+            />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              🔍
+            </span>
+            {search && (
               <button
-                key={pic.id}
-                onClick={() => openPicture(pic.id)}
-                className="bg-white border-2 border-slate-100 rounded-3xl p-4 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-2 text-center hover:shadow-md"
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Xoá tìm kiếm"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-black flex items-center justify-center active:scale-95"
               >
-                <PictureThumbnail picture={pic} fills={fills} />
-                <div className="font-black text-slate-700 text-sm">{pic.vi}</div>
-                {filledCount > 0 && (
-                  <div className="text-[10px] font-bold text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
-                    Đã tô {filledCount} vùng
-                  </div>
-                )}
+                ✕
               </button>
-            );
-          })}
+            )}
+          </div>
+          {search && (
+            <p className="text-center text-[10px] text-slate-400 font-black uppercase tracking-widest mt-2">
+              {filteredPictures.length} kết quả
+            </p>
+          )}
         </div>
-      </div>
+
+        {filteredPictures.length === 0 ? (
+          <div className="text-center py-12 text-slate-400">
+            <div className="text-5xl mb-2">🔎</div>
+            <p className="font-bold">Không tìm thấy tranh phù hợp</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
+            {filteredPictures.map((pic) => {
+              const fills = allFills[pic.id] ?? {};
+              const filledCount = Object.keys(fills).length;
+              return (
+                <button
+                  key={pic.id}
+                  onClick={() => openPicture(pic.id)}
+                  className="bg-white border-2 border-slate-100 rounded-3xl p-4 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-2 text-center hover:shadow-md"
+                >
+                  <PictureThumbnail picture={pic} fills={fills} />
+                  <div className="font-black text-slate-700 text-sm">{pic.vi}</div>
+                  {filledCount > 0 && (
+                    <div className="text-[10px] font-bold text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
+                      Đã tô {filledCount} vùng
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </>
     );
   }
 

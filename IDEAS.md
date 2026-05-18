@@ -66,3 +66,4 @@ https://chatgpt.com/s/t_6a042cbb046881918b2f6b62be7d67af
 
 ---
 Thêm dữ liệu tô màu: búp bê, elsa
+https://www.svgrepo.com/svg/415005/rc-car-control
