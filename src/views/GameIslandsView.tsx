@@ -10,6 +10,7 @@ type GameKey =
   | 'compare'
   | 'mathrescue'
   | 'ocean'
+  | 'greenknight'
   | 'challenge';
 
 type GameCard = {
@@ -109,6 +110,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Lái tàu ngầm, ăn chữ cái hoàn thành từ',
     gradient: 'from-cyan-400 via-blue-500 to-indigo-600',
     shadow: 'shadow-cyan-200',
+  },
+  {
+    key: 'greenknight',
+    emoji: '🛡️',
+    title: 'Hiệp sĩ xanh',
+    subtitle: 'Kéo rác vào đúng thùng để cứu Trái Đất',
+    gradient: 'from-emerald-400 via-green-500 to-lime-500',
+    shadow: 'shadow-emerald-200',
   },
   {
     key: 'challenge',

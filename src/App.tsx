@@ -33,6 +33,7 @@ import MatchPuzzleView from './views/MatchPuzzleView';
 import SequenceView from './views/SequenceView';
 import MathRescueView from './views/MathRescueView';
 import OceanVocabularyView from './views/OceanVocabularyView';
+import GreenKnightRecycleView from './views/GreenKnightRecycleView';
 const ColoringView = lazy(() => import('./views/ColoringView'));
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
@@ -68,6 +69,7 @@ type View =
   | 'coloring'
   | 'mathrescue'
   | 'ocean'
+  | 'greenknight'
   | 'gameisland'
   | 'knowledge';
 
@@ -83,6 +85,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'coloring',
   'mathrescue',
   'ocean',
+  'greenknight',
   'challenge',
 ]);
 
@@ -190,6 +193,9 @@ export default function App() {
       case 'ocean':
         setView('ocean');
         break;
+      case 'greenknight':
+        setView('greenknight');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -227,6 +233,7 @@ export default function App() {
         {view === 'sequence' && <SequenceView onBack={goGameIsland} />}
         {view === 'mathrescue' && <MathRescueView onBack={goGameIsland} />}
         {view === 'ocean' && <OceanVocabularyView onBack={goGameIsland} />}
+        {view === 'greenknight' && <GreenKnightRecycleView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={
