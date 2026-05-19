@@ -11,6 +11,7 @@ type GameKey =
   | 'mathrescue'
   | 'ocean'
   | 'greenknight'
+  | 'codekingdom'
   | 'challenge';
 
 type GameCard = {
@@ -118,6 +119,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Kéo rác vào đúng thùng để cứu Trái Đất',
     gradient: 'from-emerald-400 via-green-500 to-lime-500',
     shadow: 'shadow-emerald-200',
+  },
+  {
+    key: 'codekingdom',
+    emoji: '🤖',
+    title: 'Vương quốc code nhí',
+    subtitle: 'Xếp lệnh điều khiển robot nhặt kim cương',
+    gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+    shadow: 'shadow-purple-200',
   },
   {
     key: 'challenge',
