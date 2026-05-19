@@ -8,6 +8,7 @@ type GameKey =
   | 'plus'
   | 'subtract'
   | 'compare'
+  | 'mathrescue'
   | 'challenge';
 
 type GameCard = {
@@ -91,6 +92,14 @@ const GAMES: GameCard[] = [
     subtitle: "Chọn dấu <, > hoặc =",
     gradient: 'from-sky-400 via-amber-400 to-pink-500',
     shadow: 'shadow-amber-200',
+  },
+  {
+    key: 'mathrescue',
+    emoji: '🚁',
+    title: 'Biệt đội cứu hộ toán',
+    subtitle: 'Bấm số đúng để cứu các bạn thú khỏi bong bóng rơi',
+    gradient: 'from-sky-400 via-pink-500 to-purple-500',
+    shadow: 'shadow-sky-200',
   },
   {
     key: 'challenge',
