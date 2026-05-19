@@ -15,6 +15,13 @@ No test runner is configured.
 
 GitHub Pages via [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) on push to `main`. The site is served at `https://vietnt.github.io/lingo-land/`, so [vite.config.ts](vite.config.ts) sets `base: '/lingo-land/'`. If you rename the repo, update `base` **and** the PWA manifest's `scope` / `start_url` (both are `/lingo-land/`) — otherwise built assets 404 and the installed PWA loses its session.
 
+## Env vars (Vite)
+
+`.env.example` shows the public env contract; both are optional.
+
+- `VITE_GOOGLE_TAG` — gtag ID. If set, a custom Vite plugin (`googleTagPlugin` in [vite.config.ts](vite.config.ts)) injects the gtag.js snippet into `index.html` at build time. Leave empty for local/dev.
+- `VITE_BGM_ENABLED` — set to `'false'` to disable background music globally; any other value (or unset) keeps BGM on. Checked once at module load in [src/lib/bgm.ts](src/lib/bgm.ts).
+
 ## PWA
 
 Configured via `vite-plugin-pwa` in [vite.config.ts](vite.config.ts) with `registerType: 'autoUpdate'` — the SW is auto-registered (injected `registerSW.js`) and silently updates on next reload. Icons live in `public/` as SVG (`icon.svg`, `icon-maskable.svg`, `favicon.svg`). Apple touch icon + theme-color meta are in [index.html](index.html).
@@ -23,36 +30,47 @@ Runtime caching (workbox `CacheFirst`) is set up for the three external origins 
 
 ## Architecture
 
-LingoLand is a single-page Vietnamese-language English vocabulary game. React 18 + TypeScript + Vite. No router, no test framework, no CSS pipeline.
+LingoLand is a single-page Vietnamese-language English vocabulary game **plus a kids' mini-game collection**. React 18 + TypeScript + Vite. No router, no test framework, no CSS pipeline.
 
 ### View routing lives in App.tsx, not a router
 
-[src/App.tsx](src/App.tsx) holds a `view: View` state (`'map' | 'category' | 'flashcard' | 'test' | 'result' | 'leader' | 'profile' | 'pron' | 'stickers' | 'challenge' | 'review' | 'alphabet' | 'numbers' | 'mathland' | 'mathquiz'`) plus `activeCategory`, `activeSubGroup`, `quizResult`, `activeMathLevel`. Conditionally renders one view component per state. Navigation is callback props (`onPickCategory`, `onPickSubGroup`, `onComplete`, `onFinish`, `onBack`, `onNavigate`, `onOpenStickers`, `onPickChallenge`, `onPickReview`, `onPickMath`, `onPickLevel`) — no URL routing. Adding a screen: extend `View` union, add conditional render in `App.tsx`, thread callback into the trigger.
+[src/App.tsx](src/App.tsx) holds a `view: View` union with ~25 entries: `'map'`, `'knowledge'`, `'gameisland'`, `'category'`, `'flashcard'`, `'test'`, `'result'`, `'leader'`, `'profile'`, `'pron'`, `'stickers'`, `'review'`, `'alphabet'`, `'numbers'`, `'mathland'`, `'mathquiz'`, plus 10 Game Island views (`'numberpop'`, `'feedanimal'`, `'compare'`, `'subtract'`, `'plus'`, `'count'`, `'matchpuzzle'`, `'sequence'`, `'coloring'`, `'challenge'`). State also tracks `activeCategory`, `activeSubGroup`, `quizResult`, `activeMathLevel`, `drawerOpen`. Conditionally renders one view per state. Navigation is callback props — no URL routing. Adding a screen: extend `View` union, add conditional render in [App.tsx](src/App.tsx), thread a callback into the trigger.
 
-The `test` view dispatches to one of 7 mini-game components based on `activeSubGroup.mode` (`TestMode` in [src/data/gameData.ts](src/data/gameData.ts)): [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx), [MemoryView](src/views/MemoryView.tsx), [HangmanView](src/views/HangmanView.tsx), [ShadowView](src/views/ShadowView.tsx). All 7 share the contract `(words: Word[], onFinish: (r: QuizResult) => void)` — keep that shape if you add an 8th mode. Completion-gated modes (matching, memory, shadow) always emit a 100% pass since the user must complete every pair/round to exit (shadow advances only on a correct drag-drop; wrong drops just shake and stay on the current round). Hangman emits `correct/total` where each word is a win/lose round (6 wrong-letter limit).
+**MapView is a hub**, not the category picker. [MapView](src/views/MapView.tsx) renders four cards: Daily Review (conditional on `dueDeck.length > 0`), Đảo Tri Thức (→ [KnowledgeIslandsView](src/views/KnowledgeIslandsView.tsx)), Đảo Toán Học (→ [MathLandView](src/views/MathLandView.tsx)), Đảo Trò Chơi (→ [GameIslandsView](src/views/GameIslandsView.tsx)). The 60-second time challenge is **not** a top-level card anymore — it lives inside Game Island. Categories (`CATEGORIES`) are listed inside `KnowledgeIslandsView`, not on the map.
 
-`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow screens (`category`, `flashcard`, `test`, `result`) collapse to `'map'` for the nav's `active` highlight, and `'stickers'` collapses to `'profile'` (it's reached only via a button inside ProfileView, not the nav).
+The `test` view dispatches to one of 7 mini-game components based on `activeSubGroup.mode` (`TestMode` in [src/data/gameData.ts](src/data/gameData.ts)): [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx), [MemoryView](src/views/MemoryView.tsx), [HangmanView](src/views/HangmanView.tsx), [ShadowView](src/views/ShadowView.tsx). All 7 share the contract `(words: Word[], onFinish: (r: QuizResult) => void, onExit: () => void)` — keep that shape if you add an 8th mode. `onExit` should be wired to [TestExitButton](src/components/TestExitButton.tsx), the shared "✕ Thoát" widget that shows a confirm modal before discarding mid-test progress. Completion-gated modes (matching, memory, shadow) always emit a 100% pass since the user must complete every pair/round to exit (shadow advances only on a correct drag-drop; wrong drops just shake and stay on the current round). Hangman emits `correct/total` where each word is a win/lose round (6 wrong-letter limit).
 
-A right-side **slide-in drawer** ([SideDrawer](src/components/SideDrawer.tsx)) is mounted at the App container level (not BottomNav) and toggled via a ☰ button in [Header](src/components/Header.tsx). It hosts secondary tap-to-speak reference tools that don't deserve a bottom-nav slot: [AlphabetView](src/views/AlphabetView.tsx) (26 letters A-Z, examples drawn from `ALL_WORDS`) and [NumberView](src/views/NumberView.tsx) (0-10 / 11-19 / 20-90 / 100-1000 grouped sections). The drawer is `fixed`-positioned (viewport-scoped), locks body scroll while open, closes on backdrop tap / ✕ button / Escape key, and uses Tailwind's `translate-x-full ↔ translate-x-0` transition. Items inside the drawer should set the target view AND close the drawer in one tap handler.
+`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow / off-path screens (`category`, `flashcard`, `test`, `result`, `mathland`, `mathquiz`, `review`, `knowledge`, `gameisland`, and all 10 game-island views) collapse to `'map'` for the nav's `active` highlight, and `'stickers'` collapses to `'profile'` (it's reached only via a button inside ProfileView, not the nav).
+
+A right-side **slide-in drawer** ([SideDrawer](src/components/SideDrawer.tsx)) is mounted at the App container level (not BottomNav) and toggled via a ☰ button in [Header](src/components/Header.tsx). It hosts secondary tap-to-speak reference tools that don't deserve a bottom-nav slot: [AlphabetView](src/views/AlphabetView.tsx) (26 letters A-Z, examples drawn from `ALL_WORDS`) and [NumberView](src/views/NumberView.tsx) (0-10 / 11-19 / 20-90 / 100-1000 grouped sections; data in [src/data/numberData.ts](src/data/numberData.ts)). The drawer is `fixed`-positioned (viewport-scoped), locks body scroll while open, closes on backdrop tap / ✕ button / Escape key, and uses Tailwind's `translate-x-full ↔ translate-x-0` transition. Items inside the drawer should set the target view AND close the drawer in one tap handler.
+
+### Lazy loading
+
+[ColoringView](src/views/ColoringView.tsx) is the **only** view loaded via `React.lazy` + `Suspense` in [App.tsx](src/App.tsx). It pulls in the entire coloring SVG set (auto-imported via `import.meta.glob('../assets/coloring/*.svg')` in [src/data/coloringData.ts](src/data/coloringData.ts)) plus the SVG parsing/render path, which would otherwise bloat the initial bundle. All other views are statically imported. If you add another asset-heavy screen, follow the same pattern: `const X = lazy(() => import('./views/X'))` with a Vietnamese-text Suspense fallback.
 
 ### Game state: Context + localStorage
 
-[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups`, `passedSubGroups` (both `string[]` of sub-group IDs like `'animals.pets'`), and `petName` (string). Exposes `addScore`, `unlockNext`, `markPassed`, `isUnlocked`, `isPassed`, `setPetName`. **Unlocked ≠ passed**: a sub-group is unlocked the moment its predecessor passes (or it's the first in its category), and passed only after the user themselves clears it. Stickers, MapView progress bar, ProfileView's "Tiến độ tổng quát", AND the pet stage all key off `passedSubGroups`. State is hydrated from and synced back to `localStorage` under these exact keys:
+[src/context/GameContext.tsx](src/context/GameContext.tsx) owns `score`, `streak`, `unlockedSubGroups`, `passedSubGroups` (both `string[]` of sub-group IDs like `'animals.pets'`), `petName` (string), `timeHighScore`, `wordStats`, `mathPassed`. Exposes `addScore`, `unlockNext`, `markPassed`, `isUnlocked`, `isPassed`, `setPetName`, `submitTimeScore`, `addWordsToSRS`, `recordReview`, `isMathPassed`, `isMathUnlocked`, `markMathPassed`, plus the memoized `dueDeck` selector. **Unlocked ≠ passed**: a sub-group is unlocked the moment its predecessor passes (or it's the first in its category), and passed only after the user themselves clears it. Stickers, the KnowledgeIslandsView progress bar, ProfileView's "Tiến độ tổng quát", AND the pet stage all key off `passedSubGroups`. State is hydrated from and synced back to `localStorage` under these exact keys:
 
 - `lingoland_score`
 - `lingoland_streak`
-- `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category)
+- `lingoland_subgroups_v2` (JSON `string[]` of unlocked sub-group IDs; default = first sub-group of every category). On load, `loadUnlocked` **merges in the first sub-group of every category** so that categories added after a user's first visit show up unlocked instead of staying invisible.
 - `lingoland_passed_v2` (JSON `string[]` of passed sub-group IDs; default `[]`)
 - `lingoland_pet_name` (string, default `'Bí'`, max 16 chars via `setPetName`)
 - `lingoland_time_hs` (integer high score for the 60-second time challenge; only ever increases via `submitTimeScore`)
 - `lingoland_word_stats` (JSON `Record<wordEn, { level, lastSeen }>` for spaced-repetition state; keys are `Word.en` strings)
 - `lingoland_math_passed` (JSON `string[]` of passed math level IDs like `'math.symbols'`, `'math.plus.10'`)
 
+Game Island views own **their own** storage keys (not exposed via GameContext):
+
+- `lingoland_coloring` ([ColoringView](src/views/ColoringView.tsx)) — JSON `Record<pictureId, Record<regionId, hexColor>>`. Persists per-region fill choices across sessions.
+- `lingoland_count_hs`, `lingoland_plus_hs`, `lingoland_subtract_hs`, `lingoland_match_hs`, `lingoland_sequence_hs` — per-game high scores written directly inside [CountView](src/views/CountView.tsx), [PlusView](src/views/PlusView.tsx), [SubtractView](src/views/SubtractView.tsx), [MatchPuzzleView](src/views/MatchPuzzleView.tsx), [SequenceView](src/views/SequenceView.tsx).
+
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
-`useGame()` throws if used outside `GameProvider`. The Profile screen's "reset" button does `localStorage.clear()` + `location.reload()`, so any new persisted keys should use the `lingoland_` prefix to stay consistent and get cleared together.
+`useGame()` throws if used outside `GameProvider`. The Profile screen's "reset" button does `localStorage.clear()` + `location.reload()`, so any new persisted keys should use the `lingoland_` prefix to stay consistent and get cleared together (including the game-island keys above).
 
-### Level progression
+### Level progression (Knowledge Island)
 
 Data is static in [src/data/gameData.ts](src/data/gameData.ts) as `CATEGORIES: Category[]`, each with `subGroups: SubGroup[]`. A `SubGroup` has a stable `id` (used in localStorage), a `mode: TestMode` (which mini-game runs after the flashcard study), and 4-6 `words`.
 
@@ -68,13 +86,13 @@ Entry points to the system:
 1. **First pass of a sub-group** ([ResultView](src/views/ResultView.tsx)) → `addWordsToSRS(subGroup.words)` adds each word at level 0, `lastSeen=now`. Re-passing the same sub-group is a no-op (only adds words NOT already in stats).
 2. **Daily review session** ([DailyReviewView](src/views/DailyReviewView.tsx)) → for each answered word calls `recordReview(wordEn, correct)` which sets new `lastSeen=now` and `level = correct ? min(level+1, 3) : 0` (a single wrong answer resets the word to the start of the schedule — strict but matches Leitner spirit).
 
-The MapView card for daily review is **conditional on `dueDeck.length > 0`** — if nothing is due, the card disappears and only Time Challenge + categories show. First-time users see no review card until their first pass + the level-0 interval (1 day) elapses. To test locally without waiting, edit `lingoland_word_stats` in DevTools and rewind a `lastSeen` value, then refresh.
+The MapView card for daily review is **conditional on `dueDeck.length > 0`** — if nothing is due, the card disappears and only the three island cards show. First-time users see no review card until their first pass + the level-0 interval (1 day) elapses. To test locally without waiting, edit `lingoland_word_stats` in DevTools and rewind a `lastSeen` value, then refresh.
 
 DailyReviewView snapshots `dueDeck` into local state at mount (`useState(() => dueDeck)`) so the session list does NOT shrink mid-session as `recordReview` updates `wordStats` (which causes `dueDeck` to recompute). Each correct answer pays `addScore(+10)` — half of a regular test answer, since review is easier and recurrent.
 
 ### Math Land (off-path)
 
-[MathLandView](src/views/MathLandView.tsx) + [MathQuizView](src/views/MathQuizView.tsx) implement a standalone arithmetic mode reached from a featured indigo→purple→pink card at the top of MapView. **Not** wired into the `Word`/SubGroup/sticker/SRS systems — math has its own progression state (`mathPassed: string[]` in GameContext) and storage key (`lingoland_math_passed`).
+[MathLandView](src/views/MathLandView.tsx) + [MathQuizView](src/views/MathQuizView.tsx) implement a standalone arithmetic mode reached from the indigo→purple→pink Đảo Toán Học card on MapView. **Not** wired into the `Word`/SubGroup/sticker/SRS systems — math has its own progression state (`mathPassed: string[]` in GameContext) and storage key (`lingoland_math_passed`).
 
 Level catalog lives in [src/data/mathData.ts](src/data/mathData.ts) as `MATH_LEVELS: MathLevel[]` — 7 entries total: 1 symbol recognition intro (`math.symbols`, 5 questions covering +/−/×/:/=) followed by 6 compute levels (`math.plus.5` ↔ `math.minus.20`, 10 questions each). Levels unlock **sequentially**: `isMathUnlocked(id)` returns true iff the previous level in `MATH_LEVELS` order is passed (or `id` is the first). Pass rule mirrors regular tests: `correct >= total * 0.7`.
 
@@ -84,15 +102,36 @@ Level catalog lives in [src/data/mathData.ts](src/data/mathData.ts) as `MATH_LEV
 
 MathQuizView has 2 phases (`'playing' | 'done'`) — no intro screen (children don't need a click delay). On `'done'`, if pass: confetti (indigo/purple/pink palette) + `markMathPassed(id)`. The `restart` button regenerates the deck via `generateQuestions(level)` again so each replay is fresh. `addScore(+10)` per correct answer (same rate as Daily Review).
 
-### Time Challenge (off-path)
+### Game Island (off-path mini-game collection)
 
-[TimeChallengeView](src/views/TimeChallengeView.tsx) is a standalone 60-second mode reached from a featured gradient card at the top of [MapView](src/views/MapView.tsx). It does **not** participate in the unlock progression — no sub-group is involved, no sticker is awarded. Words are picked uniformly at random from `ALL_WORDS`. Internal state machine: `'idle' | 'playing' | 'finished'`. Pacing: 350ms feedback between answers (much faster than QuizView's 1200ms — the time pressure IS the point). High score is submitted once when entering `'finished'` via `submitTimeScore(correctCount)` which is idempotent (only updates if strictly greater) — beating it triggers an orange-pink confetti burst.
+[GameIslandsView](src/views/GameIslandsView.tsx) is reached from the pink→fuchsia→blue Đảo Trò Chơi card on MapView. It lists 10 standalone kids' games keyed by `GameKey` (exported from the same file):
+
+- `numberpop` → [NumberPopView](src/views/NumberPopView.tsx) — balloon-popping; has `'find'` and `'math'` sub-modes.
+- `feedanimal` → [FeedAnimalView](src/views/FeedAnimalView.tsx) — drag food to the animal that wants it. Data + round generator in [src/data/feedAnimalData.ts](src/data/feedAnimalData.ts) (`buildRound(optionsCount, excludeAnimalId)`).
+- `coloring` → [ColoringView](src/views/ColoringView.tsx) — region-fill SVG tap-to-paint. Lazy-loaded; SVG library auto-imported via `import.meta.glob`.
+- `sequence` → [SequenceView](src/views/SequenceView.tsx) — drag the missing number into a sequence.
+- `matchpuzzle` → [MatchPuzzleView](src/views/MatchPuzzleView.tsx) — drag piece into its silhouette.
+- `count` → [CountView](src/views/CountView.tsx) — count objects / pick the matching number.
+- `plus` → [PlusView](src/views/PlusView.tsx) — visual addition.
+- `subtract` → [SubtractView](src/views/SubtractView.tsx) — visual subtraction.
+- `compare` → [CompareView](src/views/CompareView.tsx) — pick `<`, `>`, or `=`.
+- `challenge` → [TimeChallengeView](src/views/TimeChallengeView.tsx) — 60-second vocabulary blitz (moved here from MapView).
+
+**None** of these participate in the Knowledge Island unlock/sticker/SRS systems. There's no cross-game progression: each game owns its own internal phase machine (typically `'idle' | 'playing' | 'finished'`) and several persist a high score under their own `lingoland_*_hs` key (see localStorage section). [ColoringView](src/views/ColoringView.tsx) is the exception — it persists per-picture fills, not a score.
+
+Routing/back behaviour: each Game Island view receives `onBack` and returns to `gameisland` (not `map`). The dispatch happens in [App.tsx](src/App.tsx) via `pickGame(key: GameKey)`.
+
+### Background music
+
+[src/lib/bgm.ts](src/lib/bgm.ts) hand-synthesizes a chip-tune-style loop using the WebAudio API (no audio assets — oscillators + a noise click for accents, no bundle/network cost beyond the code itself). `startBgm()` lazily initializes a shared `AudioContext` on first call (browsers block AudioContext until a user gesture, and the first call typically follows a tap), schedules notes ~300 ms ahead via `setInterval`, ramps the master gain from 0 → `MASTER_GAIN` over 0.4s, and alternates between two 16-step melodies (`MELODY_A` / `MELODY_B`). `stopBgm()` ramps the master gain back to 0 and clears the scheduler; the context is kept alive for the next start.
+
+BGM is scoped to **Game Island views only** (the `GAME_ISLAND_VIEWS` set in [App.tsx](src/App.tsx) — all 10 game keys including `'challenge'`). Entering one of those views starts the loop; leaving stops it. Knowledge tests, Math Land, daily review, and reference screens stay silent. Disable globally with `VITE_BGM_ENABLED=false`.
 
 ### Pet mascot
 
 A virtual pet (`🥚 → 🐣 → 🐤 → 🐥 → 🐔`) lives in [src/data/petData.ts](src/data/petData.ts) and evolves based on `passedSubGroups.length` thresholds (0, 3, 7, 12, 18). The pet icon + custom `petName` show in [Header](src/components/Header.tsx) on every screen, replacing what used to be the static "L" logo. [ProfileView](src/views/ProfileView.tsx) shows a big pet card with editable name, tap-to-bounce animation, and a progress bar to the next stage. [ResultView](src/views/ResultView.tsx) snapshots `passedSubGroups.length` at mount (via `useState(() => ...)`) so it can detect if the just-finished pass triggers an evolution — if yes, it shows a purple "đã tiến hoá!" banner with an extra confetti burst. The snapshot pattern is important: by the time `markPassed` flushes, `passedSubGroups` already includes the new ID, so we'd otherwise miss the transition.
 
-Scoring (`addScore(20)` per correct answer) happens inside each mini-game as the user answers, *not* on the result screen.
+Scoring (`addScore(20)` per correct answer) happens inside each Knowledge Island mini-game as the user answers, *not* on the result screen. Daily Review and Math Land pay `+10` per correct answer instead.
 
 Distractor pool: [QuizView](src/views/QuizView.tsx) and [ListeningView](src/views/ListeningView.tsx) sample wrong answers from `ALL_WORDS` (a precomputed flatten of every sub-group's words) — adding a sub-group changes the distractor pool for every quiz/listening test.
 
@@ -100,7 +139,7 @@ Distractor pool: [QuizView](src/views/QuizView.tsx) and [ListeningView](src/view
 
 [index.html](index.html) loads Tailwind via `cdn.tailwindcss.com` and Google Fonts, and defines all custom CSS (`perspective-1000`, `card-inner`, `flipped`, `floating`, `progress-bar`, `island-node`, `locked`) in an inline `<style>` block. There is **no** PostCSS / Tailwind config in the repo. To add a custom class, edit the `<style>` block in `index.html`.
 
-Sound effects are `<audio>` elements in `index.html` with fixed IDs (`snd-correct`, `snd-wrong`), played by [src/lib/audio.ts](src/lib/audio.ts) `playSfx(id)` via `document.getElementById`. Pronunciation uses `window.speechSynthesis` (`speak()` in the same file). Adding a new SFX = add an `<audio id="snd-...">` in `index.html`, then call `playSfx('snd-...')`.
+Sound effects are `<audio>` elements in `index.html` with fixed IDs (`snd-correct`, `snd-wrong`, sourced from `assets.mixkit.co`), played by [src/lib/audio.ts](src/lib/audio.ts) `playSfx(id)` via `document.getElementById`. Pronunciation uses `window.speechSynthesis` (`speak(text, lang = 'en-US')`); `LANG_SPEAK_DEFAULT = 'vi-VN'` is also exported for the Vietnamese voice prompts used by Game Island views. Adding a new SFX = add an `<audio id="snd-...">` in `index.html`, then call `playSfx('snd-...')` (and if the asset is hosted off-origin, add a `runtimeCaching` entry in [vite.config.ts](vite.config.ts) so it works offline). Game Island BGM is **not** an `<audio>` element — see the Background music section.
 
 ### IPA reference data
 
@@ -108,4 +147,4 @@ Sound effects are `<audio>` elements in `index.html` with fixed IDs (`snd-correc
 
 ### Shared types
 
-`Word`, `TestMode`, `SubGroup`, `Category` are exported from [src/data/gameData.ts](src/data/gameData.ts), along with helpers `ALL_WORDS`, `TOTAL_SUBGROUPS`, `findSubGroup(id)`, `nextSubGroupId(id)`. `Phoneme`, `PhonemeType` are exported from [src/data/ipaData.ts](src/data/ipaData.ts). `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). Import these rather than redefining locally.
+`Word`, `TestMode`, `SubGroup`, `Category` are exported from [src/data/gameData.ts](src/data/gameData.ts), along with helpers `ALL_WORDS`, `TOTAL_SUBGROUPS`, `findSubGroup(id)`, `nextSubGroupId(id)`. `Phoneme`, `PhonemeType` are exported from [src/data/ipaData.ts](src/data/ipaData.ts). `QuizResult` is exported from [src/views/ResultView.tsx](src/views/ResultView.tsx). `NavKey` is exported from [src/components/BottomNav.tsx](src/components/BottomNav.tsx). `GameKey` is exported from [src/views/GameIslandsView.tsx](src/views/GameIslandsView.tsx). `MathLevel`, `MathQuestion` and the `TOTAL_MATH_LEVELS` count are exported from [src/data/mathData.ts](src/data/mathData.ts). Import these rather than redefining locally.
