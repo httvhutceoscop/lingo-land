@@ -9,6 +9,7 @@ type GameKey =
   | 'subtract'
   | 'compare'
   | 'mathrescue'
+  | 'ocean'
   | 'challenge';
 
 type GameCard = {
@@ -100,6 +101,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Bấm số đúng để cứu các bạn thú khỏi bong bóng rơi',
     gradient: 'from-sky-400 via-pink-500 to-purple-500',
     shadow: 'shadow-sky-200',
+  },
+  {
+    key: 'ocean',
+    emoji: '🚤',
+    title: 'Thám hiểm đại dương',
+    subtitle: 'Lái tàu ngầm, ăn chữ cái hoàn thành từ',
+    gradient: 'from-cyan-400 via-blue-500 to-indigo-600',
+    shadow: 'shadow-cyan-200',
   },
   {
     key: 'challenge',
