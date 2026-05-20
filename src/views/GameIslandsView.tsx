@@ -12,6 +12,7 @@ type GameKey =
   | 'ocean'
   | 'greenknight'
   | 'codekingdom'
+  | 'traintrack'
   | 'challenge';
 
 type GameCard = {
@@ -127,6 +128,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Xếp lệnh điều khiển robot nhặt kim cương',
     gradient: 'from-indigo-500 via-purple-500 to-pink-500',
     shadow: 'shadow-purple-200',
+  },
+  {
+    key: 'traintrack',
+    emoji: '🚂',
+    title: 'Đường ray mê cung',
+    subtitle: 'Xoay mảnh ray để tàu chạy từ ga đến cờ',
+    gradient: 'from-amber-400 via-orange-500 to-rose-500',
+    shadow: 'shadow-orange-200',
   },
   {
     key: 'challenge',
