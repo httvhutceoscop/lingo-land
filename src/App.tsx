@@ -36,6 +36,7 @@ import OceanVocabularyView from './views/OceanVocabularyView';
 import GreenKnightRecycleView from './views/GreenKnightRecycleView';
 import CodeKingdomView from './views/CodeKingdomView';
 import TrainTrackPuzzleView from './views/TrainTrackPuzzleView';
+import EcoBalanceView from './views/EcoBalanceView';
 const ColoringView = lazy(() => import('./views/ColoringView'));
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
@@ -74,6 +75,7 @@ type View =
   | 'greenknight'
   | 'codekingdom'
   | 'traintrack'
+  | 'ecobalance'
   | 'gameisland'
   | 'knowledge';
 
@@ -92,6 +94,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'greenknight',
   'codekingdom',
   'traintrack',
+  'ecobalance',
   'challenge',
 ]);
 
@@ -208,6 +211,9 @@ export default function App() {
       case 'traintrack':
         setView('traintrack');
         break;
+      case 'ecobalance':
+        setView('ecobalance');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -248,6 +254,7 @@ export default function App() {
         {view === 'greenknight' && <GreenKnightRecycleView onBack={goGameIsland} />}
         {view === 'codekingdom' && <CodeKingdomView onBack={goGameIsland} />}
         {view === 'traintrack' && <TrainTrackPuzzleView onBack={goGameIsland} />}
+        {view === 'ecobalance' && <EcoBalanceView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

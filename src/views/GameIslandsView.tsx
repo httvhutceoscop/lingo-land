@@ -13,6 +13,7 @@ type GameKey =
   | 'greenknight'
   | 'codekingdom'
   | 'traintrack'
+  | 'ecobalance'
   | 'challenge';
 
 type GameCard = {
@@ -136,6 +137,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Xoay mảnh ray để tàu chạy từ ga đến cờ',
     gradient: 'from-amber-400 via-orange-500 to-rose-500',
     shadow: 'shadow-orange-200',
+  },
+  {
+    key: 'ecobalance',
+    emoji: '⚖️',
+    title: 'Cân bằng sinh thái',
+    subtitle: 'Suy luận trọng lượng — cân bằng đĩa cân',
+    gradient: 'from-emerald-400 via-amber-400 to-rose-500',
+    shadow: 'shadow-emerald-200',
   },
   {
     key: 'challenge',
