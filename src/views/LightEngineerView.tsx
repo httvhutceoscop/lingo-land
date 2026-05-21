@@ -25,7 +25,11 @@ const CANVAS_H = 450;
 // Gương vẽ dạng đoạn thẳng có độ dài cố định.
 const MIRROR_LEN = 70;            // Tổng độ dài đoạn thẳng gương (px)
 const MIRROR_HALF = MIRROR_LEN / 2;
-const MIRROR_HIT_PAD = 16;        // Bán kính hit-test mở rộng (cho dễ chạm trên mobile)
+const MIRROR_HIT_PAD = 16;        // Bán kính hit-test theo ĐOẠN THẲNG gương (cho dễ chạm trên mobile)
+// Hitbox tròn VÔ HÌNH quanh TÂM gương — chỉ phục vụ nhận diện click/tap để
+// xoay gương dễ trúng hơn (đặc biệt khi gương xoay gần đứng — vùng đoạn thẳng
+// rất hẹp theo chiều ngang). Bán kính 18px tạo cảm giác "núm xoay" rộng rãi.
+const MIRROR_CENTER_HIT_R = 18;
 
 // Mục tiêu (viên ngọc) là vùng hình tròn.
 const TARGET_RADIUS = 22;
@@ -538,12 +542,25 @@ export default function LightEngineerView({ onBack }: Props) {
     return { x: startX + idx * TRAY_SLOT_W, y: TRAY_TOP + TRAY_HEIGHT / 2 };
   };
 
-  /** Hit-test gương đã đặt — quét NGƯỢC để ưu tiên gương vẽ sau (lớp trên). */
+  /**
+   * Hit-test gương đã đặt — quét NGƯỢC để ưu tiên gương vẽ sau (lớp trên).
+   *
+   * Một điểm được coi là chạm gương nếu thoả MỘT trong 2 điều kiện:
+   *   1) Cách ĐOẠN THẲNG gương ≤ MIRROR_HIT_PAD (16px) — chạm vào mặt gương.
+   *   2) Cách TÂM gương ≤ MIRROR_CENTER_HIT_R (18px) — chạm vào "núm xoay" vô hình.
+   *
+   * Hitbox tròn quanh tâm giúp tap-to-rotate dễ trúng — đặc biệt khi gương
+   * đang đứng gần thẳng (vùng đoạn thẳng theo chiều ngang chỉ rộng vài px,
+   * trẻ khó tap chính xác). Ngược lại, đoạn-thẳng-pad vẫn cần thiết để bắt
+   * thao tác kéo dọc theo thân gương.
+   */
   const hitTestPlacedMirror = (px: number, py: number): Mirror | null => {
     const list = mirrorsRef.current;
     for (let i = list.length - 1; i >= 0; i--) {
       const m = list[i];
-      if (distToMirror(px, py, m) <= MIRROR_HIT_PAD) return m;
+      const dCenter = Math.hypot(px - m.x, py - m.y);
+      if (dCenter <= MIRROR_CENTER_HIT_R) return m;            // (2) núm xoay tâm
+      if (distToMirror(px, py, m) <= MIRROR_HIT_PAD) return m; // (1) mặt gương
     }
     return null;
   };
