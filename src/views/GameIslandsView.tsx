@@ -14,6 +14,7 @@ type GameKey =
   | 'codekingdom'
   | 'traintrack'
   | 'ecobalance'
+  | 'lightengineer'
   | 'challenge';
 
 type GameCard = {
@@ -145,6 +146,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Suy luận trọng lượng — cân bằng đĩa cân',
     gradient: 'from-emerald-400 via-amber-400 to-rose-500',
     shadow: 'shadow-emerald-200',
+  },
+  {
+    key: 'lightengineer',
+    emoji: '🔦',
+    title: 'Kỹ sư ánh sáng',
+    subtitle: 'Đặt gương, bẻ tia laser chạm tới viên ngọc',
+    gradient: 'from-slate-700 via-indigo-600 to-cyan-500',
+    shadow: 'shadow-cyan-200',
   },
   {
     key: 'challenge',
