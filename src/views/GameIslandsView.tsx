@@ -15,6 +15,7 @@ type GameKey =
   | 'traintrack'
   | 'ecobalance'
   | 'lightengineer'
+  | 'magicisland'
   | 'challenge';
 
 type GameCard = {
@@ -154,6 +155,14 @@ const GAMES: GameCard[] = [
     subtitle: 'Đặt gương, bẻ tia laser chạm tới viên ngọc',
     gradient: 'from-slate-700 via-indigo-600 to-cyan-500',
     shadow: 'shadow-cyan-200',
+  },
+  {
+    key: 'magicisland',
+    emoji: '🐉',
+    title: 'Đảo Thần Kỳ 2048',
+    subtitle: 'Gộp thú cùng loài để tiến hoá tới Rồng',
+    gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+    shadow: 'shadow-emerald-200',
   },
   {
     key: 'challenge',
