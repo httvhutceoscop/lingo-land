@@ -89,6 +89,18 @@ export default defineConfig(({ mode }) => {
                 rangeRequests: true,
               },
             },
+            {
+              urlPattern: ({ url }) =>
+                url.origin === 'https://translate.google.com' &&
+                url.pathname === '/translate_tts',
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-tts',
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+                cacheableResponse: { statuses: [0, 200] },
+                rangeRequests: true,
+              },
+            },
           ],
         },
       }),
