@@ -16,6 +16,7 @@ type GameKey =
   | 'ecobalance'
   | 'lightengineer'
   | 'magicisland'
+  | 'marspack'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -185,6 +186,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Gộp thú cùng loài để tiến hoá tới Rồng',
     gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
     shadow: 'shadow-emerald-200',
+    age: 'primary',
+  },
+  {
+    key: 'marspack',
+    emoji: '🚀',
+    title: 'Hành lý lên Sao Hỏa',
+    subtitle: 'Xếp khối hành lý lấp đầy khoang tàu vũ trụ',
+    gradient: 'from-slate-700 via-indigo-700 to-orange-600',
+    shadow: 'shadow-indigo-200',
     age: 'primary',
   },
   {
