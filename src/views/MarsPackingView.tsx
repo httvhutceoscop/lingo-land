@@ -407,18 +407,35 @@ function canPlace(
   return true;
 }
 
+/**
+ * Kiểm tra điểm (px, py) trên canvas có nhấp TRÚNG một khối hành lý hay không.
+ *
+ * Hàm duyệt qua TỪNG Ô VUÔNG THỰC TẾ tạo nên khối, KHÔNG kiểm tra theo khung
+ * hình chữ nhật bao quanh (bounding box). Lý do: các khối lõm (chữ L, chữ T,
+ * chữ J...) có bounding box bao trùm cả những khoảng TRỐNG không thuộc khối.
+ * Nếu kiểm tra theo bounding box, bé bấm vào khoảng trống đó sẽ bị tính nhầm
+ * là trúng khối — tệ hơn là che mất một khối khác đang nằm lọt trong khoảng
+ * trống ấy. Duyệt từng ô vuông giúp việc bắt điểm chạm khớp đúng hình dạng.
+ */
+function isPointInPiece(g: GameState, piece: Piece, px: number, py: number): boolean {
+  const origin = pieceOrigin(g, piece);
+  // Khối trên lưới vẽ ở cỡ ô lưới; khối trong khay vẽ ở cỡ ô khay.
+  const cell = piece.onGrid ? g.layout.gridCell : g.layout.trayCell;
+  for (const c of piece.cells) {
+    const cx = origin.x + c.x * cell;
+    const cy = origin.y + c.y * cell;
+    // Trúng nếu điểm nằm trong phạm vi của riêng ô vuông này.
+    if (px >= cx && px <= cx + cell && py >= cy && py <= cy + cell) return true;
+  }
+  return false;
+}
+
 /** Tìm khối nằm dưới điểm (px, py) trên canvas — null nếu không trúng khối nào. */
 function hitTestPiece(g: GameState, px: number, py: number): Piece | null {
   for (const p of g.pieces) {
     // Bỏ qua khối đang được kéo (nó được xử lý riêng).
     if (g.drag && g.drag.moved && g.drag.pieceId === p.id) continue;
-    const origin = pieceOrigin(g, p);
-    const cell = p.onGrid ? g.layout.gridCell : g.layout.trayCell;
-    for (const c of p.cells) {
-      const cx = origin.x + c.x * cell;
-      const cy = origin.y + c.y * cell;
-      if (px >= cx && px <= cx + cell && py >= cy && py <= cy + cell) return p;
-    }
+    if (isPointInPiece(g, p, px, py)) return p;
   }
   return null;
 }
@@ -955,6 +972,21 @@ export default function MarsPackingView({ onBack }: Props) {
             ctx.strokeStyle = valid ? '#34d399' : '#f87171';
             ctx.stroke();
           }
+          ctx.restore();
+
+          // Preview mờ (opacity 0.3) của chính khối hình tại ô lưới gần nhất —
+          // vẽ ngay trong lúc kéo (mousemove) để bé hình dung khối sẽ "hút" vào
+          // đâu nếu thả tay ngay bây giờ.
+          ctx.save();
+          ctx.globalAlpha = 0.3;
+          drawPiece(
+            ctx,
+            piece,
+            gridX + anchorCol * gridCell,
+            gridY + anchorRow * gridCell,
+            gridCell,
+            { selected: false, lifted: false, time },
+          );
           ctx.restore();
         }
 
