@@ -40,6 +40,7 @@ import EcoBalanceView from './views/EcoBalanceView';
 import LightEngineerView from './views/LightEngineerView';
 import MagicIsland2048View from './views/MagicIsland2048View';
 import MarsPackingView from './views/MarsPackingView';
+import DetectiveCluesView from './views/DetectiveCluesView';
 const ColoringView = lazy(() => import('./views/ColoringView'));
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
@@ -82,6 +83,7 @@ type View =
   | 'lightengineer'
   | 'magicisland'
   | 'marspack'
+  | 'detective'
   | 'gameisland'
   | 'knowledge';
 
@@ -104,6 +106,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'lightengineer',
   'magicisland',
   'marspack',
+  'detective',
   'challenge',
 ]);
 
@@ -232,6 +235,9 @@ export default function App() {
       case 'marspack':
         setView('marspack');
         break;
+      case 'detective':
+        setView('detective');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -276,6 +282,7 @@ export default function App() {
         {view === 'lightengineer' && <LightEngineerView onBack={goGameIsland} />}
         {view === 'magicisland' && <MagicIsland2048View onBack={goGameIsland} />}
         {view === 'marspack' && <MarsPackingView onBack={goGameIsland} />}
+        {view === 'detective' && <DetectiveCluesView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

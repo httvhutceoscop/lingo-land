@@ -17,6 +17,7 @@ type GameKey =
   | 'lightengineer'
   | 'magicisland'
   | 'marspack'
+  | 'detective'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -195,6 +196,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Xếp khối hành lý lấp đầy khoang tàu vũ trụ',
     gradient: 'from-slate-700 via-indigo-700 to-orange-600',
     shadow: 'shadow-indigo-200',
+    age: 'primary',
+  },
+  {
+    key: 'detective',
+    emoji: '🔍',
+    title: 'Thám tử nhí',
+    subtitle: 'Đọc manh mối, suy luận ai sống ở đâu, thích ăn gì',
+    gradient: 'from-amber-600 via-orange-600 to-yellow-500',
+    shadow: 'shadow-amber-200',
     age: 'primary',
   },
   {
