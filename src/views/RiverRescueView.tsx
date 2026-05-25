@@ -724,6 +724,34 @@ export default function RiverRescueView({ onBack }: Props) {
     }
     ctx.restore();
 
+    // ── Đường cong lượn sóng (mặt nước đang chảy nhẹ) ──────────────────
+    // Vẽ vài đường sin uốn lượn trên mặt sông. Tâm Y của mỗi đường cũng
+    // dao động lên xuống theo Date.now()*0.005 → cảm giác dòng nước đang
+    // CHẢY chứ không chỉ ngấn nước đứng yên một chỗ.
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+    ctx.lineWidth = 2;
+    const tFlow = Date.now() * 0.005;
+    const curves = [
+      { baseY: 120, amp: 7, freq: 0.018, phase: 0 },
+      { baseY: 220, amp: 9, freq: 0.022, phase: 1.3 },
+      { baseY: 360, amp: 8, freq: 0.020, phase: 2.4 },
+      { baseY: 500, amp: 10, freq: 0.024, phase: 3.6 },
+    ];
+    for (const { baseY, amp, freq, phase } of curves) {
+      // Tâm Y của đường cong nhúc nhích theo thời gian.
+      const yMid = baseY + Math.sin(tFlow + phase) * 10;
+      ctx.beginPath();
+      for (let x = RIVER_X1 + 6; x <= RIVER_X2 - 6; x += 6) {
+        // Bản thân đường cũng là một sóng sin lan ngang theo thời gian.
+        const y = yMid + Math.sin(x * freq + tFlow * 1.6 + phase) * amp;
+        if (x === RIVER_X1 + 6) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+
     // ── TIÊU ĐỀ ─────────────────────────────────────────────────────────
     ctx.fillStyle = '#0f172a';
     ctx.textAlign = 'center';
@@ -733,6 +761,29 @@ export default function RiverRescueView({ onBack }: Props) {
 
     // ── THUYỀN ─────────────────────────────────────────────────────────
     drawBoat(ctx, r.boatX);
+
+    // ── Bọt nước sau đuôi thuyền (chỉ khi đang sang sông) ──────────────
+    // Đuôi thuyền nằm ở phía NGƯỢC chiều di chuyển. Vẽ một chuỗi vòng tròn
+    // trắng nhỏ dần & mờ dần trải về phía sau đuôi → cảm giác wake (sóng
+    // nước thuyền vừa đi qua).
+    if (r.isAnimating) {
+      const movingRight = r.animTo > r.animFrom;
+      const sternX = movingRight ? r.boatX - BOAT_W / 2 : r.boatX + BOAT_W / 2;
+      const trailSign = movingRight ? -1 : 1; // hướng bọt trải về sau
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      const tBubble = Date.now() * 0.012;
+      for (let i = 1; i <= 7; i++) {
+        const dx = trailSign * (10 + i * 14); // càng xa đuôi càng cách thưa
+        const dy = Math.sin(tBubble + i) * 4; // bọt nhúc nhích lên xuống
+        const rr = Math.max(2, 7 - i * 0.7); // bọt càng xa càng nhỏ
+        ctx.globalAlpha = Math.max(0.05, 0.7 - i * 0.09);
+        ctx.beginPath();
+        ctx.arc(sternX + dx, BOAT_Y + dy, rr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
 
     // ── NHÂN VẬT (trên bờ + trên thuyền) ───────────────────────────────
     for (const c of r.level.characters) {

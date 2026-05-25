@@ -1,0 +1,340 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <defs>
+    <radialGradient id="nSkinGrad" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" class="n-skin-light"/>
+      <stop offset="70%" class="n-skin-base"/>
+      <stop offset="100%" class="n-skin-shadow"/>
+    </radialGradient>
+    <linearGradient id="nHairGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="n-hair-light"/>
+      <stop offset="50%" class="n-hair-base"/>
+      <stop offset="100%" class="n-hair-shadow"/>
+    </linearGradient>
+    <linearGradient id="nBraidGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" class="n-hair-shadow"/>
+      <stop offset="50%" class="n-hair-base"/>
+      <stop offset="100%" class="n-hair-shadow"/>
+    </linearGradient>
+    <linearGradient id="nCloakGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" class="n-cloak-light"/>
+      <stop offset="100%" class="n-cloak-base"/>
+    </linearGradient>
+    <linearGradient id="nBlouseGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="n-blouse-light"/>
+      <stop offset="100%" class="n-blouse-base"/>
+    </linearGradient>
+    <radialGradient id="nCheekGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" class="n-cheek-base" stop-opacity="0.6"/>
+      <stop offset="100%" class="n-cheek-base" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .n-skin-light  { stop-color: #FFEEDD; }
+    .n-skin-base   { stop-color: #FAD0B0; }
+    .n-skin-shadow { stop-color: #D89868; }
+    .n-hair-light  { stop-color: #E8884A; }
+    .n-hair-base   { stop-color: #C45A20; }
+    .n-hair-shadow { stop-color: #7A3010; }
+    .n-cloak-light { stop-color: #6FA8C8; }
+    .n-cloak-base  { stop-color: #2E5A7A; }
+    .n-blouse-light { stop-color: #FFFFFF; }
+    .n-blouse-base  { stop-color: #D8D0BC; }
+    .n-cheek-base  { stop-color: #E88080; }
+    .n-eye-white   { fill: #FFFFFF; }
+    .n-eye-iris    { fill: #4A8A6E; }
+    .n-eye-iris-dark { fill: #2A5A48; }
+    .n-eye-pupil   { fill: #1A1A1A; }
+    .n-eye-highlight { fill: #FFFFFF; }
+    .n-eyebrow     { fill: #7A3010; }
+    .n-eyelash     { fill: none; stroke: #1A1A1A; stroke-width: 1.5; stroke-linecap: round; }
+    .n-lips        { fill: #C04040; }
+    .n-lips-light  { fill: #E8807A; }
+    .n-freckle     { fill: #B86840; opacity: 0.6; }
+    .n-snowflake   { fill: #B8DDEE; opacity: 0.85; }
+    .n-cloak-trim  { fill: #E8C870; }
+    .n-cloak-pattern { fill: none; stroke: #E8C870; stroke-width: 1.5; opacity: 0.7; }
+    .n-braid-strand { fill: none; stroke: #7A3010; stroke-width: 1; opacity: 0.6; }
+    .n-hair-detail { fill: none; stroke: #7A3010; stroke-width: 0.8; opacity: 0.4; }
+  </style>
+
+  <!-- ============ SNOWFLAKES (background atmosphere) ============ -->
+  <g class="snowflakes">
+    <!-- Snowflake top-left -->
+    <g transform="translate(60,80) scale(0.7)">
+      <path class="n-snowflake" d="M0,-20 L0,20 M-20,0 L20,0 M-14,-14 L14,14 M-14,14 L14,-14"
+            stroke="#B8DDEE" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle class="n-snowflake" cx="0" cy="0" r="3"/>
+    </g>
+    <!-- Snowflake top-right -->
+    <g transform="translate(340,130) scale(0.5)">
+      <path class="n-snowflake" d="M0,-20 L0,20 M-20,0 L20,0 M-14,-14 L14,14 M-14,14 L14,-14"
+            stroke="#B8DDEE" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle class="n-snowflake" cx="0" cy="0" r="3"/>
+    </g>
+    <!-- Snowflake bottom-left -->
+    <g transform="translate(50,440) scale(0.9)">
+      <path class="n-snowflake" d="M0,-20 L0,20 M-20,0 L20,0 M-14,-14 L14,14 M-14,14 L14,-14"
+            stroke="#B8DDEE" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle class="n-snowflake" cx="0" cy="0" r="3.5"/>
+    </g>
+    <!-- Snowflake bottom-right -->
+    <g transform="translate(355,470) scale(0.6)">
+      <path class="n-snowflake" d="M0,-20 L0,20 M-20,0 L20,0 M-14,-14 L14,14 M-14,14 L14,-14"
+            stroke="#B8DDEE" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle class="n-snowflake" cx="0" cy="0" r="3"/>
+    </g>
+    <!-- Small dot snowflakes -->
+    <circle class="n-snowflake" cx="30" cy="200" r="2"/>
+    <circle class="n-snowflake" cx="370" cy="280" r="2"/>
+    <circle class="n-snowflake" cx="80" cy="320" r="2.5"/>
+    <circle class="n-snowflake" cx="350" cy="380" r="2"/>
+  </g>
+
+  <!-- ============ CLOAK BACK (áo choàng phía sau) ============ -->
+  <path class="n-cloak-back" fill="url(#nCloakGrad)"
+        d="M 70,400
+           C 50,440 40,500 60,560
+           L 340,560
+           C 360,500 350,440 330,400
+           Q 200,440 70,400 Z"/>
+
+  <!-- ============ BRAIDS (2 bím tóc dài trước vai) ============ -->
+  <!-- Left braid -->
+  <g class="braid-left">
+    <!-- Braid segments (xếp lớp tạo hiệu ứng đan) -->
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 115,290 Q 100,310 105,335 Q 130,340 130,315 Q 130,295 115,290 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 100,330 Q 95,355 105,380 Q 130,378 125,355 Q 120,335 100,330 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 105,375 Q 95,400 105,425 Q 128,420 125,398 Q 120,378 105,375 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 105,420 Q 100,445 110,468 Q 130,463 128,442 Q 122,422 105,420 Z"/>
+    <!-- Braid weave lines -->
+    <path class="n-braid-strand"
+          d="M 110,300 Q 120,310 115,320 Q 105,330 115,340 Q 125,350 115,360 Q 105,370 115,380
+             Q 125,390 115,400 Q 105,410 115,420 Q 125,430 115,440 Q 110,455 115,465"/>
+    <!-- Braid tip (tuft at end) -->
+    <path class="braid-tip" fill="url(#nHairGrad)"
+          d="M 108,465 Q 100,475 105,485 Q 115,490 120,485 Q 125,475 118,465 Z"/>
+    <!-- Hair tie -->
+    <ellipse class="n-hairtie" cx="113" cy="463" rx="11" ry="5" fill="#7A3010"/>
+  </g>
+
+  <!-- Right braid (mirror) -->
+  <g class="braid-right">
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 285,290 Q 300,310 295,335 Q 270,340 270,315 Q 270,295 285,290 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 300,330 Q 305,355 295,380 Q 270,378 275,355 Q 280,335 300,330 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 295,375 Q 305,400 295,425 Q 272,420 275,398 Q 280,378 295,375 Z"/>
+    <path class="braid-seg" fill="url(#nBraidGrad)"
+          d="M 295,420 Q 300,445 290,468 Q 270,463 272,442 Q 278,422 295,420 Z"/>
+    <path class="n-braid-strand"
+          d="M 290,300 Q 280,310 285,320 Q 295,330 285,340 Q 275,350 285,360 Q 295,370 285,380
+             Q 275,390 285,400 Q 295,410 285,420 Q 275,430 285,440 Q 290,455 285,465"/>
+    <path class="braid-tip" fill="url(#nHairGrad)"
+          d="M 292,465 Q 300,475 295,485 Q 285,490 280,485 Q 275,475 282,465 Z"/>
+    <ellipse class="n-hairtie" cx="287" cy="463" rx="11" ry="5" fill="#7A3010"/>
+  </g>
+
+  <!-- ============ NECK ============ -->
+  <path class="n-neck" fill="url(#nSkinGrad)"
+        d="M 175,300
+           L 173,355
+           L 227,355
+           L 225,300 Z"/>
+  <!-- Neck shadow under jaw -->
+  <ellipse cx="200" cy="305" rx="28" ry="6" fill="#D89868" opacity="0.3"/>
+
+  <!-- ============ BLOUSE/SHIRT (áo trắng cổ cao bên trong) ============ -->
+  <path class="n-blouse" fill="url(#nBlouseGrad)"
+        d="M 150,355
+           Q 200,365 250,355
+           L 260,400
+           Q 200,415 140,400 Z"/>
+  <!-- Blouse collar trim -->
+  <path class="n-blouse-trim" fill="#E8C870"
+        d="M 175,358 Q 200,365 225,358 L 222,368 Q 200,374 178,368 Z"/>
+  <!-- Decorative buttons on blouse -->
+  <circle cx="200" cy="375" r="2" fill="#E8C870"/>
+  <circle cx="200" cy="385" r="2" fill="#E8C870"/>
+  <circle cx="200" cy="395" r="2" fill="#E8C870"/>
+
+  <!-- ============ CLOAK FRONT (áo choàng phía trước có viền vàng) ============ -->
+  <path class="n-cloak-front" fill="url(#nCloakGrad)"
+        d="M 130,380
+           C 110,395 95,420 88,455
+           L 80,560
+           L 140,560
+           Q 145,470 150,400 Z
+           M 270,380
+           C 290,395 305,420 312,455
+           L 320,560
+           L 260,560
+           Q 255,470 250,400 Z"/>
+  <!-- Cloak gold trim along front edges -->
+  <path class="n-cloak-trim"
+        d="M 130,380 L 150,400 L 145,470 L 138,560 L 132,560 L 142,470 L 145,395 Z
+           M 270,380 L 250,400 L 255,470 L 262,560 L 268,560 L 258,470 L 255,395 Z"/>
+
+  <!-- Cloak Nordic pattern (zigzag/diamond motif) -->
+  <path class="n-cloak-pattern"
+        d="M 95,470 L 105,460 L 115,470 L 125,460 L 135,470
+           M 95,490 L 105,480 L 115,490 L 125,480 L 135,490
+           M 265,470 L 275,460 L 285,470 L 295,460 L 305,470
+           M 265,490 L 275,480 L 285,490 L 295,480 L 305,490"/>
+
+  <!-- ============ FACE (gương mặt với gradient da) ============ -->
+  <path class="n-face" fill="url(#nSkinGrad)"
+        d="M 200,110
+           C 152,112 122,148 122,200
+           C 122,235 128,265 142,290
+           C 155,308 175,318 200,320
+           C 225,318 245,308 258,290
+           C 272,265 278,235 278,200
+           C 278,148 248,112 200,110 Z"/>
+
+  <!-- ============ EARS ============ -->
+  <path class="n-ear-left" fill="url(#nSkinGrad)"
+        d="M 122,215 C 112,215 106,228 110,243 C 114,255 122,258 126,250 Z"/>
+  <path class="n-ear-right" fill="url(#nSkinGrad)"
+        d="M 278,215 C 288,215 294,228 290,243 C 286,255 278,258 274,250 Z"/>
+
+  <!-- ============ HAIR BACK (lớp tóc đỉnh đầu phía sau, ôm đầu) ============ -->
+  <path class="n-hair-back" fill="url(#nHairGrad)"
+        d="M 122,200
+           C 118,160 138,115 200,108
+           C 262,115 282,160 278,200
+           C 280,210 280,225 277,235
+           C 270,210 258,180 240,170
+           Q 200,162 160,170
+           C 142,180 130,210 123,235
+           C 120,225 120,210 122,200 Z"/>
+
+  <!-- ============ HAIR FRONT (mái tóc, kiểu chia ngôi giữa) ============ -->
+  <path class="n-hair-front" fill="url(#nHairGrad)"
+        d="M 135,165
+           C 145,130 170,108 200,105
+           C 230,108 255,130 265,165
+           C 268,180 265,195 258,200
+           C 250,180 235,165 218,160
+           Q 210,165 205,180
+           Q 200,165 200,158
+           Q 200,165 195,180
+           Q 190,165 182,160
+           C 165,165 150,180 142,200
+           C 135,195 132,180 135,165 Z"/>
+
+  <!-- Side hair locks (lọn tóc 2 bên ôm má) -->
+  <path class="n-hair-lock-left" fill="url(#nHairGrad)"
+        d="M 130,180 C 122,210 120,250 124,285 C 132,290 138,275 138,250 C 138,225 138,205 142,185 Z"/>
+  <path class="n-hair-lock-right" fill="url(#nHairGrad)"
+        d="M 270,180 C 278,210 280,250 276,285 C 268,290 262,275 262,250 C 262,225 262,205 258,185 Z"/>
+
+  <!-- Hair detail strands -->
+  <path class="n-hair-detail"
+        d="M 155,135 Q 160,160 158,185
+           M 175,120 Q 178,150 176,180
+           M 200,115 Q 200,150 200,180
+           M 225,120 Q 222,150 224,180
+           M 245,135 Q 240,160 242,185"/>
+
+  <!-- Small fringe wisp on forehead -->
+  <path class="n-fringe-wisp" fill="url(#nHairGrad)"
+        d="M 190,160 Q 195,175 192,190 Q 200,178 205,190 Q 208,175 210,160 Z"/>
+
+  <!-- ============ EYEBROWS ============ -->
+  <path class="n-eyebrow"
+        d="M 158,195
+           Q 170,188 185,194
+           Q 180,196 168,196
+           Q 160,197 158,195 Z"/>
+  <path class="n-eyebrow"
+        d="M 242,195
+           Q 230,188 215,194
+           Q 220,196 232,196
+           Q 240,197 242,195 Z"/>
+
+  <!-- ============ EYELASHES upper (lông mi trên dày) ============ -->
+  <path class="n-eyelash" stroke-width="2.5"
+        d="M 152,213 Q 170,205 188,213"/>
+  <path class="n-eyelash" stroke-width="2.5"
+        d="M 212,213 Q 230,205 248,213"/>
+  <!-- Lash side flicks -->
+  <path class="n-eyelash" d="M 152,213 L 146,210 M 154,215 L 148,215 M 188,213 L 192,210"/>
+  <path class="n-eyelash" d="M 248,213 L 254,210 M 246,215 L 252,215 M 212,213 L 208,210"/>
+
+  <!-- ============ EYES ============ -->
+  <ellipse class="n-eye-white" cx="170" cy="220" rx="14" ry="9"/>
+  <ellipse class="n-eye-white" cx="230" cy="220" rx="14" ry="9"/>
+
+  <!-- Iris (green Nordic eyes) -->
+  <circle class="n-eye-iris" cx="170" cy="220" r="8"/>
+  <circle class="n-eye-iris" cx="230" cy="220" r="8"/>
+  <!-- Iris darker ring -->
+  <circle cx="170" cy="220" r="8" fill="none" stroke="#2A5A48" stroke-width="1.5"/>
+  <circle cx="230" cy="220" r="8" fill="none" stroke="#2A5A48" stroke-width="1.5"/>
+  <!-- Iris inner radial streaks -->
+  <path class="n-eye-iris-dark" opacity="0.5"
+        d="M 170,213 L 170,217 M 175,215 L 173,218 M 165,215 L 167,218
+           M 170,227 L 170,223 M 175,225 L 173,222 M 165,225 L 167,222"
+        stroke="#2A5A48" stroke-width="1" fill="none"/>
+
+  <!-- Pupils -->
+  <circle class="n-eye-pupil" cx="170" cy="220" r="4"/>
+  <circle class="n-eye-pupil" cx="230" cy="220" r="4"/>
+
+  <!-- Eye highlights -->
+  <circle class="n-eye-highlight" cx="172" cy="217" r="2.2"/>
+  <circle class="n-eye-highlight" cx="168" cy="222" r="1"/>
+  <circle class="n-eye-highlight" cx="232" cy="217" r="2.2"/>
+  <circle class="n-eye-highlight" cx="228" cy="222" r="1"/>
+
+  <!-- Lower lash hint -->
+  <path class="n-eyelash" stroke-width="1"
+        d="M 158,228 L 156,231 M 168,229 L 168,232 M 178,228 L 180,231
+           M 222,228 L 220,231 M 232,229 L 232,232 M 242,228 L 244,231"/>
+
+  <!-- ============ FRECKLES (tàn nhang trên mũi và má) ============ -->
+  <circle class="n-freckle" cx="180" cy="245" r="1"/>
+  <circle class="n-freckle" cx="186" cy="248" r="1"/>
+  <circle class="n-freckle" cx="192" cy="250" r="1"/>
+  <circle class="n-freckle" cx="208" cy="250" r="1"/>
+  <circle class="n-freckle" cx="214" cy="248" r="1"/>
+  <circle class="n-freckle" cx="220" cy="245" r="1"/>
+  <circle class="n-freckle" cx="175" cy="252" r="0.8"/>
+  <circle class="n-freckle" cx="225" cy="252" r="0.8"/>
+
+  <!-- ============ NOSE ============ -->
+  <path class="n-nose" fill="none" stroke="#D89868" stroke-width="1.3" stroke-linecap="round" opacity="0.7"
+        d="M 196,240 Q 193,255 195,265 Q 200,268 205,265 Q 207,255 204,240"/>
+  <ellipse cx="197" cy="265" rx="1.3" ry="0.7" fill="#D89868" opacity="0.5"/>
+  <ellipse cx="203" cy="265" rx="1.3" ry="0.7" fill="#D89868" opacity="0.5"/>
+
+  <!-- ============ BLUSH (má hồng nhẹ kiểu lạnh) ============ -->
+  <ellipse class="n-blush-left" cx="155" cy="258" rx="14" ry="8" fill="url(#nCheekGrad)"/>
+  <ellipse class="n-blush-right" cx="245" cy="258" rx="14" ry="8" fill="url(#nCheekGrad)"/>
+
+  <!-- ============ LIPS ============ -->
+  <!-- Upper lip -->
+  <path class="n-lips"
+        d="M 185,283
+           Q 192,277 200,280
+           Q 208,277 215,283
+           Q 210,287 200,287
+           Q 190,287 185,283 Z"/>
+  <!-- Lower lip -->
+  <path class="n-lips"
+        d="M 187,287
+           Q 200,297 213,287
+           Q 208,293 200,294
+           Q 192,293 187,287 Z"/>
+  <!-- Lip highlight -->
+  <ellipse class="n-lips-light" cx="200" cy="283" rx="3" ry="0.8" opacity="0.6"/>
+  <!-- Cupid's bow detail -->
+  <path fill="none" stroke="#A03838" stroke-width="0.8" opacity="0.5"
+        d="M 196,280 Q 200,277 204,280"/>
+</svg>

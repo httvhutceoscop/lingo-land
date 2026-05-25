@@ -58,11 +58,15 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
 
   const filteredPictures = useMemo(() => {
     const q = normalizeForSearch(search);
-    if (!q) return COLORING_PICTURES;
-    return COLORING_PICTURES.filter((p) =>
-      normalizeForSearch(p.vi).includes(q)
-    );
-  }, [search]);
+    const base = q
+      ? COLORING_PICTURES.filter((p) => normalizeForSearch(p.vi).includes(q))
+      : COLORING_PICTURES;
+    return [...base].sort((a, b) => {
+      const aFilled = Object.keys(allFills[a.id] ?? {}).length > 0 ? 1 : 0;
+      const bFilled = Object.keys(allFills[b.id] ?? {}).length > 0 ? 1 : 0;
+      return aFilled - bFilled;
+    });
+  }, [search, allFills]);
 
   useLayoutEffect(() => {
     const main = document.querySelector('main');

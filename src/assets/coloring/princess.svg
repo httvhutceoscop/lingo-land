@@ -1,0 +1,259 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <defs>
+    <!-- Skin gradient: da sáng có blush ở má -->
+    <radialGradient id="skinGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" class="skin-light"/>
+      <stop offset="70%" class="skin-base"/>
+      <stop offset="100%" class="skin-shadow"/>
+    </radialGradient>
+    <!-- Hair gradient: highlight ở đỉnh đầu, tối ở chân tóc -->
+    <linearGradient id="hairGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="hair-highlight"/>
+      <stop offset="50%" class="hair-base"/>
+      <stop offset="100%" class="hair-shadow"/>
+    </linearGradient>
+    <!-- Dress gradient: bodice sang skirt -->
+    <linearGradient id="dressGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="dress-light"/>
+      <stop offset="60%" class="dress-base"/>
+      <stop offset="100%" class="dress-shadow"/>
+    </linearGradient>
+    <!-- Crown gold gradient -->
+    <linearGradient id="crownGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="crown-light"/>
+      <stop offset="100%" class="crown-base"/>
+    </linearGradient>
+    <!-- Lips gradient -->
+    <linearGradient id="lipsGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="lips-light"/>
+      <stop offset="100%" class="lips-base"/>
+    </linearGradient>
+    <!-- Cheek blush soft -->
+    <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" class="blush-base" stop-opacity="0.7"/>
+      <stop offset="100%" class="blush-base" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .skin-light  { stop-color: #FFE0CC; }
+    .skin-base   { stop-color: #F5C9A8; }
+    .skin-shadow { stop-color: #D49870; }
+    .hair-highlight { stop-color: #E0B070; }
+    .hair-base      { stop-color: #B07840; }
+    .hair-shadow    { stop-color: #6B4520; }
+    .dress-light  { stop-color: #E89AC8; }
+    .dress-base   { stop-color: #C25890; }
+    .dress-shadow { stop-color: #7A2A55; }
+    .crown-light { stop-color: #FFE89A; }
+    .crown-base  { stop-color: #D4A535; }
+    .lips-light  { stop-color: #E8627A; }
+    .lips-base   { stop-color: #B23048; }
+    .blush-base  { stop-color: #E88AA0; }
+    .eye-white   { fill: #FFFFFF; }
+    .eye-iris    { fill: #4A8FBE; }
+    .eye-pupil   { fill: #1A1A1A; }
+    .eye-highlight { fill: #FFFFFF; }
+    .eyebrow     { fill: #6B4520; }
+    .eyelash     { fill: none; stroke: #1A1A1A; stroke-width: 2; stroke-linecap: round; }
+    .gem         { fill: #4A8FBE; }
+    .gem-highlight { fill: #B8DFF0; }
+    .neck-shadow { fill: #D49870; opacity: 0.4; }
+    .hair-strand { fill: none; stroke: #6B4520; stroke-width: 1.2; stroke-linecap: round; opacity: 0.5; }
+    .dress-detail { fill: none; stroke: #FFE89A; stroke-width: 1.5; stroke-linecap: round; opacity: 0.8; }
+  </style>
+
+  <!-- ============ HAIR BACK (lớp tóc phía sau, đổ xuống vai) ============ -->
+  <path class="hair-back" fill="url(#hairGrad)"
+        d="M 95,180
+           C 70,210 55,260 60,310
+           C 65,355 75,385 90,400
+           Q 110,395 130,395
+           L 130,310
+           C 135,280 145,250 160,225
+           Z
+           M 305,180
+           C 330,210 345,260 340,310
+           C 335,355 325,385 310,400
+           Q 290,395 270,395
+           L 270,310
+           C 265,280 255,250 240,225
+           Z"/>
+
+  <!-- ============ NECK ============ -->
+  <path class="neck" fill="url(#skinGrad)"
+        d="M 175,305
+           C 173,330 172,355 170,380
+           L 230,380
+           C 228,355 227,330 225,305
+           Z"/>
+  <!-- Neck shadow under jaw -->
+  <path class="neck-shadow"
+        d="M 175,305 L 178,330 L 222,330 L 225,305 Z" opacity="0.25"/>
+
+  <!-- ============ FACE (mặt với gradient da) ============ -->
+  <path class="face" fill="url(#skinGrad)"
+        d="M 200,90
+           C 155,90 120,125 118,180
+           C 117,215 122,245 135,270
+           C 145,290 165,308 200,312
+           C 235,308 255,290 265,270
+           C 278,245 283,215 282,180
+           C 280,125 245,90 200,90 Z"/>
+
+  <!-- ============ EARS ============ -->
+  <path class="ear-left" fill="url(#skinGrad)"
+        d="M 118,195 C 108,195 102,210 105,225 C 108,238 118,242 122,235 Z"/>
+  <path class="ear-right" fill="url(#skinGrad)"
+        d="M 282,195 C 292,195 298,210 295,225 C 292,238 282,242 278,235 Z"/>
+
+  <!-- ============ HAIR FRONT (bangs - tóc mái xếp lớp) ============ -->
+  <path class="hair-front" fill="url(#hairGrad)"
+        d="M 130,150
+           C 140,110 170,85 200,82
+           C 230,85 260,110 270,150
+           C 273,165 271,178 266,185
+           C 258,170 245,160 230,155
+           C 218,158 210,168 205,180
+           C 200,168 192,160 180,156
+           C 165,158 152,168 144,180
+           C 138,175 132,168 130,160 Z"/>
+  <!-- Side hair strands framing face -->
+  <path class="hair-side-left" fill="url(#hairGrad)"
+        d="M 130,150
+           C 122,170 115,195 113,225
+           C 113,240 118,250 125,252
+           C 130,225 138,200 148,180 Z"/>
+  <path class="hair-side-right" fill="url(#hairGrad)"
+        d="M 270,150
+           C 278,170 285,195 287,225
+           C 287,240 282,250 275,252
+           C 270,225 262,200 252,180 Z"/>
+
+  <!-- Hair strand detail lines -->
+  <path class="hair-strand"
+        d="M 150,120 C 155,140 158,165 156,185
+           M 175,105 C 178,130 180,160 178,185
+           M 200,100 C 200,130 200,160 200,185
+           M 225,105 C 222,130 220,160 222,185
+           M 250,120 C 245,140 242,165 244,185"/>
+
+  <!-- ============ CROWN (vương miện vàng có ngọc) ============ -->
+  <path class="crown" fill="url(#crownGrad)" stroke="#8B6914" stroke-width="1.5"
+        d="M 145,100
+           L 160,70 L 170,90
+           L 185,55 L 195,85
+           L 200,40 L 205,85
+           L 215,55 L 230,90
+           L 240,70 L 255,100
+           Z"/>
+  <!-- Crown band -->
+  <rect class="crown-band" x="145" y="100" width="110" height="8" rx="2"
+        fill="url(#crownGrad)" stroke="#8B6914" stroke-width="1.5"/>
+  <!-- Crown gems -->
+  <circle class="gem" cx="200" cy="60" r="5"/>
+  <circle class="gem-highlight" cx="198" cy="58" r="1.8" opacity="0.8"/>
+  <circle class="gem" cx="170" cy="95" r="3"/>
+  <circle class="gem" cx="230" cy="95" r="3"/>
+
+  <!-- ============ EYES ============ -->
+  <!-- Eyebrows (thin arched, raised friendly) -->
+  <path class="eyebrow" fill="none" stroke="#6B4520" stroke-width="2.5" stroke-linecap="round"
+        d="M 152,178 Q 168,170 184,176"/>
+  <path class="eyebrow" fill="none" stroke="#6B4520" stroke-width="2.5" stroke-linecap="round"
+        d="M 248,178 Q 232,170 216,176"/>
+
+  <!-- Upper eyelashes (curved lines) -->
+  <path class="eyelash" d="M 152,195 Q 168,188 184,195"/>
+  <path class="eyelash" d="M 216,195 Q 232,188 248,195"/>
+
+  <!-- Eye whites -->
+  <ellipse class="eye-white" cx="168" cy="200" rx="13" ry="9"/>
+  <ellipse class="eye-white" cx="232" cy="200" rx="13" ry="9"/>
+
+  <!-- Iris -->
+  <circle class="eye-iris" cx="168" cy="200" r="7"/>
+  <circle class="eye-iris" cx="232" cy="200" r="7"/>
+  <!-- Iris inner darker ring -->
+  <circle class="eye-iris" cx="168" cy="200" r="7" fill="none" stroke="#2A5A7E" stroke-width="1.5"/>
+  <circle class="eye-iris" cx="232" cy="200" r="7" fill="none" stroke="#2A5A7E" stroke-width="1.5"/>
+
+  <!-- Pupils -->
+  <circle class="eye-pupil" cx="168" cy="200" r="3.5"/>
+  <circle class="eye-pupil" cx="232" cy="200" r="3.5"/>
+
+  <!-- Eye highlights (sparkle) -->
+  <circle class="eye-highlight" cx="170" cy="197" r="1.8"/>
+  <circle class="eye-highlight" cx="166" cy="202" r="1"/>
+  <circle class="eye-highlight" cx="234" cy="197" r="1.8"/>
+  <circle class="eye-highlight" cx="230" cy="202" r="1"/>
+
+  <!-- Lower eyelash hint -->
+  <path class="eyelash" stroke-width="1.2" d="M 158,206 L 156,209 M 168,208 L 168,211 M 178,206 L 180,209"/>
+  <path class="eyelash" stroke-width="1.2" d="M 222,206 L 220,209 M 232,208 L 232,211 M 242,206 L 244,209"/>
+
+  <!-- ============ NOSE ============ -->
+  <path class="nose" fill="none" stroke="#D49870" stroke-width="1.5" stroke-linecap="round" opacity="0.7"
+        d="M 195,225 C 192,235 190,245 193,252 Q 200,256 207,252 C 210,245 208,235 205,225"/>
+  <!-- Nostril hint -->
+  <ellipse class="nose-shadow" cx="196" cy="252" rx="1.5" ry="0.8" fill="#D49870" opacity="0.5"/>
+  <ellipse class="nose-shadow" cx="204" cy="252" rx="1.5" ry="0.8" fill="#D49870" opacity="0.5"/>
+
+  <!-- ============ BLUSH (má hồng) ============ -->
+  <ellipse class="blush-left" cx="150" cy="245" rx="14" ry="9" fill="url(#blushGrad)"/>
+  <ellipse class="blush-right" cx="250" cy="245" rx="14" ry="9" fill="url(#blushGrad)"/>
+
+  <!-- ============ MOUTH ============ -->
+  <!-- Upper lip -->
+  <path class="lips-upper" fill="url(#lipsGrad)"
+        d="M 182,278
+           Q 190,272 200,275
+           Q 210,272 218,278
+           Q 212,284 200,283
+           Q 188,284 182,278 Z"/>
+  <!-- Lower lip -->
+  <path class="lips-lower" fill="url(#lipsGrad)"
+        d="M 184,282
+           Q 200,294 216,282
+           Q 210,290 200,291
+           Q 190,290 184,282 Z"/>
+  <!-- Lip highlight -->
+  <ellipse class="lips-highlight" cx="200" cy="278" rx="4" ry="1" fill="#FFE0E5" opacity="0.6"/>
+
+  <!-- ============ SHOULDERS & DRESS BODICE ============ -->
+  <!-- Skin shoulders/chest area - rộng, ôm cổ -->
+  <path class="shoulders" fill="url(#skinGrad)"
+        d="M 175,378
+           Q 200,388 225,378
+           Q 260,395 285,420
+           L 115,420
+           Q 140,395 175,378 Z"/>
+
+  <!-- Dress bodice (heart-shaped neckline) -->
+  <path class="dress-bodice" fill="url(#dressGrad)"
+        d="M 115,420
+           C 95,440 80,475 75,510
+           L 70,580
+           L 330,580
+           L 325,510
+           C 320,475 305,440 285,420
+           Q 270,432 240,442
+           Q 220,450 200,452
+           Q 180,450 160,442
+           Q 130,432 115,420 Z"/>
+
+  <!-- Heart neckline highlight -->
+  <path class="dress-neckline" fill="none" stroke="#FFE89A" stroke-width="2.5" stroke-linecap="round"
+        d="M 115,420 Q 130,432 160,442 Q 180,450 200,452 Q 220,450 240,442 Q 270,432 285,420"/>
+
+  <!-- Dress decorative pattern (swirls) -->
+  <path class="dress-detail"
+        d="M 130,490 Q 150,500 145,520 Q 140,535 155,530
+           M 270,490 Q 250,500 255,520 Q 260,535 245,530
+           M 175,510 Q 200,520 225,510
+           M 180,545 Q 200,555 220,545"/>
+
+  <!-- Center gem on dress -->
+  <ellipse class="dress-gem" cx="200" cy="475" rx="6" ry="8" fill="url(#crownGrad)" stroke="#8B6914" stroke-width="1"/>
+  <ellipse class="dress-gem-highlight" cx="198" cy="472" rx="2" ry="3" fill="#FFFFFF" opacity="0.7"/>
+</svg>

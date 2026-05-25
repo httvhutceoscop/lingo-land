@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <defs>
+    <radialGradient id="chibiSkinGrad" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" class="c-skin-light"/>
+      <stop offset="75%" class="c-skin-base"/>
+      <stop offset="100%" class="c-skin-shadow"/>
+    </radialGradient>
+    <linearGradient id="chibiHairGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="c-hair-light"/>
+      <stop offset="60%" class="c-hair-base"/>
+      <stop offset="100%" class="c-hair-shadow"/>
+    </linearGradient>
+    <linearGradient id="chibiDressGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" class="c-dress-light"/>
+      <stop offset="100%" class="c-dress-base"/>
+    </linearGradient>
+    <radialGradient id="chibiCheekGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" class="c-cheek-base" stop-opacity="0.8"/>
+      <stop offset="100%" class="c-cheek-base" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="chibiEyeGrad" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#A8D8E8"/>
+      <stop offset="60%" stop-color="#5BAFD0"/>
+      <stop offset="100%" stop-color="#2A6A8E"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .c-skin-light  { stop-color: #FFF0E0; }
+    .c-skin-base   { stop-color: #FFD6B8; }
+    .c-skin-shadow { stop-color: #E8A878; }
+    .c-hair-light  { stop-color: #FFE070; }
+    .c-hair-base   { stop-color: #F0B040; }
+    .c-hair-shadow { stop-color: #B07820; }
+    .c-dress-light { stop-color: #FF9AC8; }
+    .c-dress-base  { stop-color: #E04A8A; }
+    .c-cheek-base  { stop-color: #FF8AA8; }
+    .c-bow         { fill: #E04A8A; }
+    .c-bow-light   { fill: #FF9AC8; }
+    .c-eye-white   { fill: #FFFFFF; }
+    .c-eye-pupil   { fill: #1A1A1A; }
+    .c-eye-highlight { fill: #FFFFFF; }
+    .c-mouth       { fill: #E04A8A; }
+    .c-mouth-inner { fill: #FFFFFF; }
+    .c-eyebrow     { fill: none; stroke: #B07820; stroke-width: 3; stroke-linecap: round; }
+    .c-eyelash     { fill: #1A1A1A; }
+    .c-button      { fill: #FFFFFF; }
+    .c-leg         { fill: #FFD6B8; }
+    .c-shoe        { fill: #6B2A55; }
+    .c-shoe-light  { fill: #B85090; }
+    .c-arm         { fill: #FFD6B8; }
+    .c-collar      { fill: #FFFFFF; }
+    .c-hairshine   { fill: #FFF9D0; opacity: 0.6; }
+  </style>
+
+  <!-- ============ LEGS ============ -->
+  <ellipse class="c-leg" cx="170" cy="500" rx="20" ry="40" fill="url(#chibiSkinGrad)"/>
+  <ellipse class="c-leg" cx="230" cy="500" rx="20" ry="40" fill="url(#chibiSkinGrad)"/>
+
+  <!-- ============ SHOES (Mary Janes) ============ -->
+  <ellipse class="c-shoe" cx="170" cy="545" rx="24" ry="14"/>
+  <ellipse class="c-shoe" cx="230" cy="545" rx="24" ry="14"/>
+  <!-- Shoe highlights -->
+  <ellipse class="c-shoe-light" cx="165" cy="540" rx="10" ry="3" opacity="0.6"/>
+  <ellipse class="c-shoe-light" cx="225" cy="540" rx="10" ry="3" opacity="0.6"/>
+  <!-- Shoe straps -->
+  <path fill="none" stroke="#6B2A55" stroke-width="3" stroke-linecap="round"
+        d="M 152,540 Q 170,536 188,540 M 212,540 Q 230,536 248,540"/>
+
+  <!-- ============ DRESS (váy xòe) ============ -->
+  <path class="c-dress" fill="url(#chibiDressGrad)"
+        d="M 130,380
+           C 100,420 85,470 80,510
+           Q 200,540 320,510
+           C 315,470 300,420 270,380
+           Z"/>
+
+  <!-- Dress frill (viền váy gợn sóng) -->
+  <path class="c-dress-frill" fill="#FFFFFF" opacity="0.9"
+        d="M 80,510 Q 100,525 120,510 Q 140,525 160,510 Q 180,525 200,510
+           Q 220,525 240,510 Q 260,525 280,510 Q 300,525 320,510
+           L 322,520 Q 300,538 280,520 Q 260,538 240,520 Q 220,538 200,520
+           Q 180,538 160,520 Q 140,538 120,520 Q 100,538 80,520 Z"/>
+
+  <!-- Dress buttons -->
+  <circle class="c-button" cx="200" cy="410" r="5" stroke="#B03050" stroke-width="1"/>
+  <circle class="c-button" cx="200" cy="440" r="5" stroke="#B03050" stroke-width="1"/>
+  <circle class="c-button" cx="200" cy="470" r="5" stroke="#B03050" stroke-width="1"/>
+
+  <!-- ============ ARMS ============ -->
+  <ellipse class="c-arm" cx="115" cy="410" rx="15" ry="32" fill="url(#chibiSkinGrad)" transform="rotate(15 115 410)"/>
+  <ellipse class="c-arm" cx="285" cy="410" rx="15" ry="32" fill="url(#chibiSkinGrad)" transform="rotate(-15 285 410)"/>
+  <!-- Hands (mittens style) -->
+  <circle class="c-hand" cx="100" cy="445" r="14" fill="url(#chibiSkinGrad)"/>
+  <circle class="c-hand" cx="300" cy="445" r="14" fill="url(#chibiSkinGrad)"/>
+
+  <!-- ============ COLLAR (cổ áo trắng) ============ -->
+  <path class="c-collar"
+        d="M 155,380
+           Q 200,395 245,380
+           L 240,395
+           Q 200,405 160,395 Z"/>
+
+  <!-- ============ HEAD (chibi: đầu rất to so với thân) ============ -->
+  <!-- Hair back (lớp tóc sau, lớn hơn đầu một chút) -->
+  <path class="c-hair-back" fill="url(#chibiHairGrad)"
+        d="M 100,200
+           C 90,140 130,75 200,70
+           C 270,75 310,140 300,200
+           C 310,260 305,310 290,360
+           Q 270,375 260,360
+           C 265,310 260,260 250,220
+           L 150,220
+           C 140,260 135,310 140,360
+           Q 130,375 110,360
+           C 95,310 90,260 100,200 Z"/>
+
+  <!-- Face (chibi: tròn, to) -->
+  <ellipse class="c-face" cx="200" cy="220" rx="92" ry="100" fill="url(#chibiSkinGrad)"/>
+
+  <!-- Hair front bangs (mái tóc - kiểu chibi side-swept) -->
+  <path class="c-hair-front" fill="url(#chibiHairGrad)"
+        d="M 115,180
+           C 115,130 145,90 200,85
+           C 255,90 285,130 285,180
+           C 285,195 280,205 270,210
+           C 260,180 240,165 220,168
+           C 210,178 200,195 195,210
+           C 185,195 175,180 160,172
+           C 140,170 125,180 115,200
+           C 110,195 110,185 115,180 Z"/>
+
+  <!-- Hair shine (đường sáng phản chiếu trên tóc) -->
+  <path class="c-hairshine"
+        d="M 145,130 Q 175,115 205,118 Q 195,130 175,138 Q 155,140 145,130 Z"/>
+
+  <!-- ============ EARS (chibi: tai nhỏ, kín) ============ -->
+  <ellipse class="c-ear" cx="113" cy="230" rx="8" ry="14" fill="url(#chibiSkinGrad)"/>
+  <ellipse class="c-ear" cx="287" cy="230" rx="8" ry="14" fill="url(#chibiSkinGrad)"/>
+
+  <!-- ============ EYEBROWS (chibi: ngắn, cong) ============ -->
+  <path class="c-eyebrow" d="M 145,195 Q 165,188 180,195"/>
+  <path class="c-eyebrow" d="M 255,195 Q 235,188 220,195"/>
+
+  <!-- ============ EYES (chibi: HUGE, sparkly) ============ -->
+  <!-- Eye base (large oval) -->
+  <ellipse class="c-eye-shape-left" cx="160" cy="235" rx="22" ry="28" fill="#1A1A1A"/>
+  <ellipse class="c-eye-shape-right" cx="240" cy="235" rx="22" ry="28" fill="#1A1A1A"/>
+
+  <!-- Iris (filling most of eye) -->
+  <ellipse class="c-eye-iris-left" cx="160" cy="237" rx="18" ry="24" fill="url(#chibiEyeGrad)"/>
+  <ellipse class="c-eye-iris-right" cx="240" cy="237" rx="18" ry="24" fill="url(#chibiEyeGrad)"/>
+
+  <!-- Pupil -->
+  <ellipse class="c-eye-pupil" cx="160" cy="240" rx="9" ry="14"/>
+  <ellipse class="c-eye-pupil" cx="240" cy="240" rx="9" ry="14"/>
+
+  <!-- Big eye highlight (chibi signature) -->
+  <ellipse class="c-eye-highlight" cx="166" cy="225" rx="6" ry="8"/>
+  <ellipse class="c-eye-highlight" cx="246" cy="225" rx="6" ry="8"/>
+  <!-- Small highlights below -->
+  <circle class="c-eye-highlight" cx="153" cy="248" r="3"/>
+  <circle class="c-eye-highlight" cx="233" cy="248" r="3"/>
+
+  <!-- Upper eyelashes (thick chibi style) -->
+  <path class="c-eyelash"
+        d="M 138,218 Q 160,205 182,218 Q 178,214 160,210 Q 142,214 138,218 Z"/>
+  <path class="c-eyelash"
+        d="M 218,218 Q 240,205 262,218 Q 258,214 240,210 Q 222,214 218,218 Z"/>
+  <!-- Side lashes -->
+  <path class="c-eyelash" d="M 140,222 L 132,218 L 134,224 Z"/>
+  <path class="c-eyelash" d="M 260,222 L 268,218 L 266,224 Z"/>
+
+  <!-- ============ BLUSH (chibi: tròn, rõ ràng) ============ -->
+  <ellipse class="c-blush-left" cx="135" cy="275" rx="16" ry="10" fill="url(#chibiCheekGrad)"/>
+  <ellipse class="c-blush-right" cx="265" cy="275" rx="16" ry="10" fill="url(#chibiCheekGrad)"/>
+
+  <!-- ============ NOSE (chibi: chấm tròn nhỏ) ============ -->
+  <ellipse class="c-nose" cx="200" cy="265" rx="3" ry="2" fill="#E8A878" opacity="0.7"/>
+
+  <!-- ============ MOUTH (chibi: nhỏ, cười dễ thương) ============ -->
+  <path class="c-mouth"
+        d="M 188,290
+           Q 200,302 212,290
+           Q 200,308 188,290 Z"/>
+  <!-- Inner mouth (small white tooth/tongue area) -->
+  <path class="c-mouth-inner"
+        d="M 194,295 Q 200,300 206,295 Q 200,302 194,295 Z" opacity="0.8"/>
+
+  <!-- ============ HAIR BOW (nơ trên đầu) ============ -->
+  <path class="c-bow"
+        d="M 195,95
+           L 165,75 L 165,115 Z
+           M 205,95
+           L 235,75 L 235,115 Z"/>
+  <!-- Bow center knot -->
+  <ellipse class="c-bow" cx="200" cy="95" rx="8" ry="10"/>
+  <!-- Bow highlights -->
+  <ellipse class="c-bow-light" cx="178" cy="90" rx="6" ry="3" opacity="0.7"/>
+  <ellipse class="c-bow-light" cx="222" cy="90" rx="6" ry="3" opacity="0.7"/>
+
+  <!-- ============ PIGTAILS (2 chùm tóc 2 bên) ============ -->
+  <path class="c-pigtail-left" fill="url(#chibiHairGrad)"
+        d="M 105,225
+           C 80,245 70,290 80,335
+           C 85,345 95,348 100,340
+           C 105,300 110,275 115,250 Z"/>
+  <path class="c-pigtail-right" fill="url(#chibiHairGrad)"
+        d="M 295,225
+           C 320,245 330,290 320,335
+           C 315,345 305,348 300,340
+           C 295,300 290,275 285,250 Z"/>
+  <!-- Hair ties -->
+  <ellipse class="c-hairtie" cx="100" cy="245" rx="12" ry="6" fill="#E04A8A"/>
+  <ellipse class="c-hairtie" cx="300" cy="245" rx="12" ry="6" fill="#E04A8A"/>
+</svg>
