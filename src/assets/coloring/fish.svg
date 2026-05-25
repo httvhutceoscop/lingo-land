@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #5BB8E0; color: #5BB8E0; }
+    .belly { fill: #BFE6F5; color: #BFE6F5; }
+    .fin-top { fill: #3F95BD; color: #3F95BD; }
+    .fin-bottom { fill: #3F95BD; color: #3F95BD; }
+    .tail { fill: #3F95BD; color: #3F95BD; }
+    .eye { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-white { fill: #FFFFFF; color: #FFFFFF; }
+    .gill { fill: #3F95BD; color: #3F95BD; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-fish">
+<!-- Tail -->
+    <path class="tail" d="M155,100 L185,75 L185,125 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="95" cy="100" rx="65" ry="38"/>
+    <!-- Belly -->
+    <path class="belly" d="M40,110 Q95,140 150,110 Q95,130 40,110 Z"/>
+    <!-- Top fin -->
+    <path class="fin-top" d="M70,65 Q95,40 120,65 Q95,72 70,65 Z"/>
+    <!-- Bottom fin -->
+    <path class="fin-bottom" d="M70,135 Q95,160 120,135 Q95,128 70,135 Z"/>
+    <!-- Gill -->
+    <path class="gill" d="M115,85 Q108,100 115,115" fill="none" stroke="currentColor" stroke-width="2"/>
+    <!-- Eye -->
+    <circle class="eye-white" cx="55" cy="92" r="8"/>
+    <circle class="eye"       cx="55" cy="92" r="4"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M32,105 Q38,110 32,115" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

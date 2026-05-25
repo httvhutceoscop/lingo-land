@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #FFFFFF; color: #FFFFFF; }
+    .belly { fill: #FFF3DC; color: #FFF3DC; }
+    .head { fill: #FFFFFF; color: #FFFFFF; }
+    .spot-1 { fill: #2B2B2B; color: #2B2B2B; }
+    .spot-2 { fill: #2B2B2B; color: #2B2B2B; }
+    .spot-3 { fill: #2B2B2B; color: #2B2B2B; }
+    .ear-left { fill: #FFFFFF; color: #FFFFFF; }
+    .ear-right { fill: #FFFFFF; color: #FFFFFF; }
+    .horn-left { fill: #E6D6A8; color: #E6D6A8; }
+    .horn-right { fill: #E6D6A8; color: #E6D6A8; }
+    .snout { fill: #F4C8C0; color: #F4C8C0; }
+    .udder { fill: #F4C8C0; color: #F4C8C0; }
+    .tail { fill: #FFFFFF; color: #FFFFFF; }
+    .tail-tip { fill: #2B2B2B; color: #2B2B2B; }
+    .leg-front { fill: #FFFFFF; color: #FFFFFF; }
+    .leg-back { fill: #FFFFFF; color: #FFFFFF; }
+    .hoof-front { fill: #2B2B2B; color: #2B2B2B; }
+    .hoof-back { fill: #2B2B2B; color: #2B2B2B; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nostril-left { fill: #9C5666; color: #9C5666; }
+    .nostril-right { fill: #9C5666; color: #9C5666; }
+  </style>
+  
+  <g class="animal animal-cow">
+<!-- Tail -->
+    <path class="tail" d="M155,135 q22,5 22,30" fill="none" stroke="currentColor" stroke-width="3"/>
+    <path class="tail-tip" d="M174,160 q4,4 0,10 q-6,-2 -4,-10 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q2,18 0,26 h14 q0,-15 0,-26 Z"/>
+    <path class="leg-back" d="M140,160 q2,18 0,26 h14 q0,-15 0,-26 Z"/>
+    <rect class="hoof-back" x="55" y="182" width="14" height="5"/>
+    <rect class="hoof-back" x="140" y="182" width="14" height="5"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="130" rx="58" ry="33"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="35" ry="14"/>
+    <!-- Udder -->
+    <ellipse class="udder" cx="100" cy="160" rx="10" ry="6"/>
+    <!-- Spots -->
+    <ellipse class="spot-1" cx="75"  cy="120" rx="12" ry="9"/>
+    <ellipse class="spot-2" cx="125" cy="135" rx="14" ry="10"/>
+    <ellipse class="spot-3" cx="105" cy="115" rx="9"  ry="6"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <rect class="hoof-front" x="75"  y="178" width="14" height="5"/>
+    <rect class="hoof-front" x="115" y="178" width="14" height="5"/>
+    <!-- Head -->
+    <ellipse class="head" cx="100" cy="78" rx="36" ry="34"/>
+    <!-- Horns -->
+    <path class="horn-left"  d="M72,52 q-8,-10 -4,-18 q6,2 10,14 Z"/>
+    <path class="horn-right" d="M128,52 q8,-10 4,-18 q-6,2 -10,14 Z"/>
+    <!-- Ears -->
+    <ellipse class="ear-left"  cx="68"  cy="68" rx="9"  ry="6" transform="rotate(-30 68 68)"/>
+    <ellipse class="ear-right" cx="132" cy="68" rx="9"  ry="6" transform="rotate(30 132 68)"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="92" rx="20" ry="13"/>
+    <!-- Nostrils -->
+    <ellipse class="nostril-left"  cx="93"  cy="93" rx="2" ry="3"/>
+    <ellipse class="nostril-right" cx="107" cy="93" rx="2" ry="3"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="88"  cy="72" r="3.5"/>
+    <circle class="eye-right" cx="112" cy="72" r="3.5"/>
+  </g>
+</svg>

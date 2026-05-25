@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #E8E8E8; color: #E8E8E8; }
+    .belly { fill: #FFFFFF; color: #FFFFFF; }
+    .head { fill: #E8E8E8; color: #E8E8E8; }
+    .ear-left { fill: #E8E8E8; color: #E8E8E8; }
+    .ear-right { fill: #E8E8E8; color: #E8E8E8; }
+    .ear-inner-left { fill: #F5BFCB; color: #F5BFCB; }
+    .ear-inner-right { fill: #F5BFCB; color: #F5BFCB; }
+    .tail { fill: #FFFFFF; color: #FFFFFF; }
+    .leg-front { fill: #E8E8E8; color: #E8E8E8; }
+    .leg-back { fill: #E8E8E8; color: #E8E8E8; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #F5BFCB; color: #F5BFCB; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-rabbit">
+<!-- Tail (puff) -->
+    <circle class="tail" cx="40" cy="135" r="10"/>
+    <!-- Back legs -->
+    <ellipse class="leg-back" cx="65"  cy="170" rx="14" ry="10"/>
+    <ellipse class="leg-back" cx="135" cy="170" rx="14" ry="10"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="140" rx="45" ry="30"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="152" rx="28" ry="14"/>
+    <!-- Front legs -->
+    <ellipse class="leg-front" cx="85"  cy="172" rx="7" ry="10"/>
+    <ellipse class="leg-front" cx="115" cy="172" rx="7" ry="10"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="85" r="30"/>
+    <!-- Long ears -->
+    <ellipse class="ear-left"  cx="86"  cy="38" rx="7" ry="25" transform="rotate(-10 86 38)"/>
+    <ellipse class="ear-right" cx="114" cy="38" rx="7" ry="25" transform="rotate(10 114 38)"/>
+    <!-- Inner ears -->
+    <ellipse class="ear-inner-left"  cx="86"  cy="40" rx="3" ry="18" transform="rotate(-10 86 40)"/>
+    <ellipse class="ear-inner-right" cx="114" cy="40" rx="3" ry="18" transform="rotate(10 114 40)"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="90"  cy="82" r="3"/>
+    <circle class="eye-right" cx="110" cy="82" r="3"/>
+    <!-- Nose -->
+    <path class="nose" d="M97,92 L103,92 L100,96 Z"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,96 L100,100 M100,100 Q96,103 93,101 M100,100 Q104,103 107,101"
+          fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</svg>

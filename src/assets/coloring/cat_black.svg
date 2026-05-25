@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #2B2B2B; color: #2B2B2B; }
+    .belly { fill: #3A3A3A; color: #3A3A3A; }
+    .head { fill: #2B2B2B; color: #2B2B2B; }
+    .ear-left { fill: #2B2B2B; color: #2B2B2B; }
+    .ear-right { fill: #2B2B2B; color: #2B2B2B; }
+    .ear-inner-left { fill: #E68A8A; color: #E68A8A; }
+    .ear-inner-right { fill: #E68A8A; color: #E68A8A; }
+    .tail { fill: #2B2B2B; color: #2B2B2B; }
+    .leg-front { fill: #2B2B2B; color: #2B2B2B; }
+    .leg-back { fill: #2B2B2B; color: #2B2B2B; }
+    .eye-left { fill: #F4C430; color: #F4C430; }
+    .eye-right { fill: #F4C430; color: #F4C430; }
+    .nose { fill: #E68A8A; color: #E68A8A; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+    .whisker { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-cat">
+<!-- Tail -->
+    <path class="tail" d="M40,140 Q15,120 25,90 Q30,80 40,85 Q35,105 50,130 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q5,15 0,25 h15 q-2,-15 -2,-25 Z"/>
+    <path class="leg-back" d="M135,160 q5,15 0,25 h15 q-2,-15 -2,-25 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="35"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="150" rx="35" ry="18"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-3,15 0,22 h14 q-1,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-3,15 0,22 h14 q-1,-12 0,-22 Z"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="75" r="38"/>
+    <!-- Ears outer -->
+    <path class="ear-left"  d="M68,55 L62,20 L92,45 Z"/>
+    <path class="ear-right" d="M132,55 L138,20 L108,45 Z"/>
+    <!-- Ears inner -->
+    <path class="ear-inner-left"  d="M72,48 L70,30 L86,46 Z"/>
+    <path class="ear-inner-right" d="M128,48 L130,30 L114,46 Z"/>
+    <!-- Eyes -->
+    <ellipse class="eye-left"  cx="85"  cy="72" rx="4" ry="6"/>
+    <ellipse class="eye-right" cx="115" cy="72" rx="4" ry="6"/>
+    <!-- Nose -->
+    <path class="nose" d="M95,85 L105,85 L100,92 Z"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,92 Q95,98 90,95 M100,92 Q105,98 110,95"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Whiskers -->
+    <path class="whisker" d="M75,88 L60,85 M75,92 L60,94 M125,88 L140,85 M125,92 L140,94"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+  </g>
+</svg>

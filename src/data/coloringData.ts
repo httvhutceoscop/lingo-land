@@ -24,6 +24,61 @@ export const COLOR_PALETTE: string[] = [
 export const DEFAULT_FILL = '#ffffff';
 export const OUTLINE_COLOR = '#1f2937';
 
+function readAttr(attrs: string, name: string): string | undefined {
+  const re = new RegExp(`\\s${name}\\s*=\\s*["']([^"']*)["']`);
+  return attrs.match(re)?.[1];
+}
+
+function readNum(attrs: string, name: string, fallback = 0): number {
+  const v = readAttr(attrs, name);
+  if (v === undefined) return fallback;
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function shapeToPathD(tag: string, attrs: string): string | null {
+  switch (tag) {
+    case 'path':
+      return readAttr(attrs, 'd') ?? null;
+    case 'circle': {
+      const cx = readNum(attrs, 'cx');
+      const cy = readNum(attrs, 'cy');
+      const r = readNum(attrs, 'r', NaN);
+      if (!Number.isFinite(r) || r <= 0) return null;
+      return `M ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} Z`;
+    }
+    case 'ellipse': {
+      const cx = readNum(attrs, 'cx');
+      const cy = readNum(attrs, 'cy');
+      const rx = readNum(attrs, 'rx', NaN);
+      const ry = readNum(attrs, 'ry', NaN);
+      if (!Number.isFinite(rx) || !Number.isFinite(ry) || rx <= 0 || ry <= 0) return null;
+      return `M ${cx - rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx + rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx - rx} ${cy} Z`;
+    }
+    case 'rect': {
+      const x = readNum(attrs, 'x');
+      const y = readNum(attrs, 'y');
+      const w = readNum(attrs, 'width', NaN);
+      const h = readNum(attrs, 'height', NaN);
+      if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return null;
+      return `M ${x} ${y} H ${x + w} V ${y + h} H ${x} Z`;
+    }
+    case 'polygon': {
+      const pts = readAttr(attrs, 'points');
+      if (!pts) return null;
+      const nums = pts.trim().split(/[\s,]+/).map(parseFloat).filter((n) => Number.isFinite(n));
+      if (nums.length < 4 || nums.length % 2 !== 0) return null;
+      let d = `M ${nums[0]} ${nums[1]}`;
+      for (let i = 2; i < nums.length; i += 2) {
+        d += ` L ${nums[i]} ${nums[i + 1]}`;
+      }
+      return d + ' Z';
+    }
+    default:
+      return null;
+  }
+}
+
 function parseSvgAsset(svg: string): {
   viewBox: string;
   transform?: string;
@@ -32,10 +87,11 @@ function parseSvgAsset(svg: string): {
   const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
   const transformMatch = svg.match(/<g[^>]*\stransform="([^"]+)"/);
   const paths: string[] = [];
-  const pathRe = /<path[^>]*\sd="([^"]+)"/g;
+  const shapeRe = /<(path|circle|ellipse|rect|polygon)\b([^>]*)>/g;
   let m: RegExpExecArray | null;
-  while ((m = pathRe.exec(svg)) !== null) {
-    paths.push(m[1]);
+  while ((m = shapeRe.exec(svg)) !== null) {
+    const d = shapeToPathD(m[1], m[2]);
+    if (d) paths.push(d);
   }
   return {
     viewBox: viewBoxMatch?.[1] ?? '0 0 100 100',

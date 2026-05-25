@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #F5B6C2; color: #F5B6C2; }
+    .belly { fill: #FBD9DF; color: #FBD9DF; }
+    .head { fill: #F5B6C2; color: #F5B6C2; }
+    .ear-left { fill: #E89AAA; color: #E89AAA; }
+    .ear-right { fill: #E89AAA; color: #E89AAA; }
+    .snout { fill: #E89AAA; color: #E89AAA; }
+    .nostril-left { fill: #9C5666; color: #9C5666; }
+    .nostril-right { fill: #9C5666; color: #9C5666; }
+    .tail { fill: #F5B6C2; color: #F5B6C2; }
+    .leg-front { fill: #E89AAA; color: #E89AAA; }
+    .leg-back { fill: #E89AAA; color: #E89AAA; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #9C5666; color: #9C5666; }
+  </style>
+  
+  <g class="animal animal-pig">
+<!-- Curly tail -->
+    <path class="tail" d="M155,125 q12,-2 12,-12 q0,-8 -8,-6 q-4,1 -3,6"
+          fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <path class="leg-back" d="M140,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="130" rx="55" ry="35"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="32" ry="15"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <!-- Head -->
+    <ellipse class="head" cx="100" cy="78" rx="38" ry="34"/>
+    <!-- Ears (triangle floppy) -->
+    <path class="ear-left"  d="M70,50 L62,30 L88,48 Z"/>
+    <path class="ear-right" d="M130,50 L138,30 L112,48 Z"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="90" rx="18" ry="12"/>
+    <!-- Nostrils -->
+    <ellipse class="nostril-left"  cx="93"  cy="90" rx="2.5" ry="3.5"/>
+    <ellipse class="nostril-right" cx="107" cy="90" rx="2.5" ry="3.5"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="88"  cy="72" r="3"/>
+    <circle class="eye-right" cx="112" cy="72" r="3"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M90,100 Q100,106 110,100"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

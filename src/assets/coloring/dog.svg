@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #C58B5C; color: #C58B5C; }
+    .belly { fill: #F3D8B8; color: #F3D8B8; }
+    .head { fill: #C58B5C; color: #C58B5C; }
+    .ear-left { fill: #7A4A2B; color: #7A4A2B; }
+    .ear-right { fill: #7A4A2B; color: #7A4A2B; }
+    .tail { fill: #C58B5C; color: #C58B5C; }
+    .leg-front { fill: #C58B5C; color: #C58B5C; }
+    .leg-back { fill: #C58B5C; color: #C58B5C; }
+    .snout { fill: #F3D8B8; color: #F3D8B8; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+    .tongue { fill: #E86A6A; color: #E86A6A; }
+  </style>
+  
+  <g class="animal animal-dog">
+<!-- Tail -->
+    <path class="tail" d="M155,130 Q180,115 178,95 Q172,92 170,108 Q160,118 150,125 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q3,18 0,26 h16 q0,-15 -2,-26 Z"/>
+    <path class="leg-back" d="M140,160 q3,18 0,26 h16 q0,-15 -2,-26 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="32"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="35" ry="15"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <!-- Head -->
+    <ellipse class="head" cx="100" cy="78" rx="40" ry="36"/>
+    <!-- Floppy ears -->
+    <path class="ear-left"  d="M65,55 Q50,85 60,100 Q72,98 75,80 Q70,68 65,55 Z"/>
+    <path class="ear-right" d="M135,55 Q150,85 140,100 Q128,98 125,80 Q130,68 135,55 Z"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="92" rx="20" ry="14"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="88"  cy="72" r="4"/>
+    <circle class="eye-right" cx="112" cy="72" r="4"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="86" rx="5" ry="4"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,90 L100,98 Q95,103 90,100 M100,98 Q105,103 110,100"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Tongue -->
+    <path class="tongue" d="M96,100 Q100,108 104,100 Z"/>
+  </g>
+</svg>

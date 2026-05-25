@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #F2C94C; color: #F2C94C; }
+    .belly { fill: #FFE9A8; color: #FFE9A8; }
+    .head { fill: #F2C94C; color: #F2C94C; }
+    .wing { fill: #D9A93A; color: #D9A93A; }
+    .tail { fill: #D9A93A; color: #D9A93A; }
+    .beak { fill: #E86A2C; color: #E86A2C; }
+    .leg-left { fill: #E86A2C; color: #E86A2C; }
+    .leg-right { fill: #E86A2C; color: #E86A2C; }
+    .eye { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-white { fill: #FFFFFF; color: #FFFFFF; }
+  </style>
+  
+  <g class="animal animal-bird">
+<!-- Tail -->
+    <path class="tail" d="M40,115 L15,105 L15,135 L40,130 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="95" cy="115" rx="55" ry="42"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="95" cy="128" rx="35" ry="22"/>
+    <!-- Wing -->
+    <path class="wing" d="M85,100 Q120,95 130,125 Q105,140 80,130 Q75,115 85,100 Z"/>
+    <!-- Head -->
+    <circle class="head" cx="130" cy="80" r="28"/>
+    <!-- Beak -->
+    <path class="beak" d="M158,80 L175,85 L158,90 Z"/>
+    <!-- Eye -->
+    <circle class="eye-white" cx="138" cy="75" r="6"/>
+    <circle class="eye"       cx="139" cy="75" r="3"/>
+    <!-- Legs -->
+    <path class="leg-left"  d="M85,155 L82,180 M82,180 L75,182 M82,180 L82,182 M82,180 L89,182"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="leg-right" d="M110,155 L113,180 M113,180 L106,182 M113,180 L113,182 M113,180 L120,182"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>
