@@ -67,3 +67,8 @@ https://chatgpt.com/s/t_6a042cbb046881918b2f6b62be7d67af
 ---
 Thêm dữ liệu tô màu: búp bê, elsa
 https://www.svgrepo.com/svg/415005/rc-car-control
+
+---
+Hiệu ứng sóng nước và khói thuyền: Để game không bị "tĩnh", hãy bảo Claude vẽ thêm một vài đường cong lượn sóng trên mặt nước Canvas và thay đổi tọa độ Y của chúng theo thời gian (Date.now() * 0.005) để tạo hiệu ứng dòng nước đang chảy nhẹ. Khi thuyền di chuyển, có thể vẽ thêm vài vòng tròn nhỏ màu trắng phía sau đuôi thuyền làm bọt nước.
+
+Trực quan hóa đồ thị trạng thái (Tùy chọn nâng cao): Nếu muốn game đậm chất "Tư duy máy tính" (Computational Thinking), bạn có thể thiết kế một góc nhỏ trên màn hình (UI React) hiển thị các bước đi trước đó của bé dưới dạng một chuỗi các node (Ví dụ: Bờ Trái (4) -> Thuyền -> Bờ Phải (0)). Điều này giúp các bé tự nhìn lại được lộ trình bắc cầu logic của mình để tự rút kinh nghiệm cho những lần thử sau.

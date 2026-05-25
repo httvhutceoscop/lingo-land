@@ -18,6 +18,7 @@ type GameKey =
   | 'magicisland'
   | 'marspack'
   | 'detective'
+  | 'riverrescue'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -205,6 +206,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Đọc manh mối, suy luận ai sống ở đâu, thích ăn gì',
     gradient: 'from-amber-600 via-orange-600 to-yellow-500',
     shadow: 'shadow-amber-200',
+    age: 'primary',
+  },
+  {
+    key: 'riverrescue',
+    emoji: '🚢',
+    title: 'Cứu hộ sông sâu',
+    subtitle: 'Đưa cả đội qua sông an toàn — đừng để ai bị ăn hay bị bắt',
+    gradient: 'from-sky-500 via-cyan-500 to-emerald-500',
+    shadow: 'shadow-sky-200',
     age: 'primary',
   },
   {
