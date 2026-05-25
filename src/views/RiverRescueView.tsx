@@ -46,6 +46,20 @@ type CharDef = {
 type Rule = { icon: string; text: string };
 
 /**
+ * Một mục trong "Lộ trình" — ghi lại trạng thái thế giới NGAY SAU khi thuyền
+ * cập bến trong một chuyến. Giúp bé nhìn lại chuỗi nước đi của mình.
+ */
+type HistoryStep = {
+  /** Bờ mà thuyền VỪA CẬP — quyết định mũi tên hiển thị (→ hay ←). */
+  direction: Side;
+  /** Các emoji nhân vật đang ngồi trên thuyền tại thời điểm cập bến. */
+  cargo: string[];
+  /** Số nhân vật đang ở bờ trái / phải sau chuyến này (bao gồm trên thuyền tính theo bờ thuyền đang đậu để bé trực quan). */
+  leftCount: number;
+  rightCount: number;
+};
+
+/**
  * Hàm kiểm tra trạng thái: trả về NULL nếu an toàn, hoặc CHUỖI lý do vi phạm.
  * Chỉ được gọi sau mỗi lần thuyền cập bến (xong animation).
  */
@@ -350,6 +364,8 @@ export default function RiverRescueView({ onBack }: Props) {
   const bumpUi = useCallback(() => setUiVersion((v) => v + 1), []);
   // Khi có lý do thua → hiện popup "BÁO ĐỘNG".
   const [gameOverReason, setGameOverReason] = useState<string | null>(null);
+  // Lộ trình các chuyến đò mà bé đã thực hiện trong màn hiện tại.
+  const [history, setHistory] = useState<HistoryStep[]>([]);
   const [completed, setCompleted] = useState<string[]>(() => {
     try {
       const raw = localStorage.getItem(STORE_KEY);
@@ -370,6 +386,8 @@ export default function RiverRescueView({ onBack }: Props) {
   const gameRef = useRef<Runtime | null>(null);
   const phaseRef = useRef<Phase>('idle');
   const rafRef = useRef<number | null>(null);
+  // Ref tới khung lộ trình — dùng để tự cuộn sang chuyến mới nhất khi thêm bước.
+  const historyRef = useRef<HTMLDivElement | null>(null);
   // Ref chứa các callback có "vòng đời React" để RAF luôn dùng bản mới nhất
   // mà không phải tái-tạo vòng lặp vẽ.
   const handleWinRef = useRef<() => void>(() => {});
@@ -383,6 +401,7 @@ export default function RiverRescueView({ onBack }: Props) {
     gameRef.current = buildRuntime(level);
     setLevelIdx(idx);
     setGameOverReason(null);
+    setHistory([]); // mỗi màn bắt đầu với lộ trình trống
     phaseRef.current = 'playing';
     setPhase('playing');
     bumpUi();
@@ -470,6 +489,18 @@ export default function RiverRescueView({ onBack }: Props) {
     r.isAnimating = false;
     r.animStart = null;
     r.moves += 1;
+
+    // Ghi vào "Lộ trình" — ghi TRƯỚC khi kiểm tra an toàn để chuyến đò gây
+    // thua cũng được lưu lại cho bé nhìn lại và "rút kinh nghiệm".
+    const cargoEmojis = r.boatSeats
+      .filter((s): s is string => s !== null)
+      .map((id) => r.level.characters.find((c) => c.id === id)?.emoji ?? '');
+    const leftCount = r.level.characters.filter((c) => r.charLoc.get(c.id) === 'left').length;
+    const rightCount = r.level.characters.filter((c) => r.charLoc.get(c.id) === 'right').length;
+    setHistory((prev) => [
+      ...prev,
+      { direction: r.boatSide, cargo: cargoEmojis, leftCount, rightCount },
+    ]);
 
     // Kiểm tra an toàn — bờ vừa rời đi (hoặc bất kỳ bờ nào theo level).
     const reason = r.level.checkSafety(r.charLoc, r.boatSide, r.level.characters);
@@ -837,6 +868,13 @@ export default function RiverRescueView({ onBack }: Props) {
     return () => window.clearTimeout(t);
   }, [phase, levelIdx]);
 
+  // Khi có thêm 1 bước mới trong lộ trình → tự cuộn khung sang chuyến mới
+  // nhất để bé luôn thấy bước vừa thực hiện.
+  useEffect(() => {
+    const el = historyRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, [history.length]);
+
   /* ─────────────────────────────────────────────────────────────────────
    * 6g. MÀN HÌNH CHỌN CẤP ĐỘ (idle)
    * ───────────────────────────────────────────────────────────────────── */
@@ -1050,6 +1088,59 @@ export default function RiverRescueView({ onBack }: Props) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Lộ trình — chuỗi các node "Bờ Trái (N) → 🚢[cargo] → Bờ Phải (M)"
+          giúp bé nhìn lại các chuyến đò đã đi để tự rút kinh nghiệm. */}
+      <div className="mt-3 bg-white border-2 border-sky-200 rounded-2xl p-3">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-base">📋</span>
+          <h4 className="font-black text-sky-900 text-xs uppercase tracking-widest">
+            Lộ trình
+          </h4>
+          <span className="text-[10px] font-bold text-slate-400 ml-auto">
+            {history.length === 0 ? 'Bắt đầu nào!' : `${history.length} chuyến`}
+          </span>
+        </div>
+        <div
+          ref={historyRef}
+          className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1"
+        >
+          {history.length === 0 ? (
+            <p className="text-[11px] text-slate-400 italic shrink-0 py-1">
+              Cho nhân vật lên thuyền rồi bấm SANG SÔNG để bắt đầu lộ trình…
+            </p>
+          ) : (
+            history.map((step, i) => (
+              <div
+                key={i}
+                className="shrink-0 flex items-center gap-1.5 bg-sky-50 border border-sky-200 rounded-xl px-2 py-1 text-xs"
+              >
+                <span className="text-[10px] text-slate-400 font-black">
+                  B{i + 1}.
+                </span>
+                {/* Node 1 — Bờ Trái với số lượng nhân vật hiện có ở đó */}
+                <span className="bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">
+                  Bờ Trái ({step.leftCount})
+                </span>
+                <span className="text-slate-400 font-black">
+                  {step.direction === 'right' ? '→' : '←'}
+                </span>
+                {/* Node 2 — Thuyền + emoji hành khách trong chuyến này */}
+                <span className="bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                  🚢{step.cargo.join('')}
+                </span>
+                <span className="text-slate-400 font-black">
+                  {step.direction === 'right' ? '→' : '←'}
+                </span>
+                {/* Node 3 — Bờ Phải với số lượng nhân vật hiện có ở đó */}
+                <span className="bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded">
+                  Bờ Phải ({step.rightCount})
+                </span>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Nút điều khiển: SANG SÔNG (chính) + CHƠI LẠI + ĐỔI MÀN */}
