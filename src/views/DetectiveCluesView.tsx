@@ -39,10 +39,26 @@ type HouseDef = {
 /** Một emoji đạo cụ (con vật hoặc món ăn). */
 type ThingDef = { emoji: string; name: string };
 
+/**
+ * Bảng tra cứu vị trí các item đã đặt — phục vụ cho việc kiểm tra một manh
+ * mối có đang bị vi phạm hay không. (Tính trong lúc "PHÁ ÁN".)
+ */
+type Placement = {
+  animalAt: (house: number) => string | undefined;
+  foodAt: (house: number) => string | undefined;
+  houseOf: (emoji: string) => number | undefined;
+};
+
 /** Một manh mối hiển thị trong "Sổ tay thám tử". */
 type Clue = {
   icons: string[]; // các emoji minh hoạ đứng đầu dòng manh mối
   text: string; // nội dung manh mối bằng tiếng Việt
+  /**
+   * Trả về true nếu cách xếp hiện tại KHÔNG vi phạm manh mối, false nếu vi phạm.
+   * Dùng để "Nhắc nhở thông minh" — chỉ thẳng vào manh mối bé đang xếp sai.
+   * Chỉ được gọi khi bàn chơi đã đầy (mọi house*kind đều có item).
+   */
+  check: (p: Placement) => boolean;
 };
 
 /** Định nghĩa tĩnh một màn chơi. */
@@ -195,10 +211,27 @@ const LEVELS_DATA: LevelDef[] = [
       { animal: '🐰', food: '🥕' },
     ],
     clues: [
-      { icons: ['🐱'], text: 'Chú Mèo sống ở ngôi nhà chính giữa.' },
-      { icons: ['🐶', '🟥'], text: 'Chú Chó sống ở ngôi nhà màu Đỏ.' },
-      { icons: ['🐶', '🦴'], text: 'Chú Chó rất thích gặm Xương.' },
-      { icons: ['🐱', '🐟'], text: 'Chú Mèo thì thích ăn Cá.' },
+      {
+        icons: ['🐱'],
+        text: 'Chú Mèo sống ở ngôi nhà chính giữa.',
+        check: (p) => p.animalAt(1) === '🐱',
+      },
+      {
+        icons: ['🐶', '🟥'],
+        text: 'Chú Chó sống ở ngôi nhà màu Đỏ.',
+        // Nhà màu Đỏ là nhà số 0 trong cấu hình màn này.
+        check: (p) => p.animalAt(0) === '🐶',
+      },
+      {
+        icons: ['🐶', '🦴'],
+        text: 'Chú Chó rất thích gặm Xương.',
+        check: (p) => p.houseOf('🐶') !== undefined && p.houseOf('🐶') === p.houseOf('🦴'),
+      },
+      {
+        icons: ['🐱', '🐟'],
+        text: 'Chú Mèo thì thích ăn Cá.',
+        check: (p) => p.houseOf('🐱') !== undefined && p.houseOf('🐱') === p.houseOf('🐟'),
+      },
     ],
   },
 
@@ -229,10 +262,25 @@ const LEVELS_DATA: LevelDef[] = [
       {
         icons: ['🟥', '➡️', '🐟'],
         text: 'Ngôi nhà màu Đỏ nằm ngay bên trái ngôi nhà của bạn thích ăn Cá.',
+        // Đỏ = nhà 0 → bạn ăn cá phải ở nhà 1.
+        check: (p) => p.houseOf('🐟') === 1,
       },
-      { icons: ['🐶', '🐟'], text: 'Chú Chó thích ăn Cá.' },
-      { icons: ['🐰', '🚫', '🟦'], text: 'Chú Thỏ KHÔNG sống ở ngôi nhà màu Xanh dương.' },
-      { icons: ['🐱', '🦴'], text: 'Chú Mèo thích gặm Xương.' },
+      {
+        icons: ['🐶', '🐟'],
+        text: 'Chú Chó thích ăn Cá.',
+        check: (p) => p.houseOf('🐶') !== undefined && p.houseOf('🐶') === p.houseOf('🐟'),
+      },
+      {
+        icons: ['🐰', '🚫', '🟦'],
+        text: 'Chú Thỏ KHÔNG sống ở ngôi nhà màu Xanh dương.',
+        // Xanh dương = nhà 2.
+        check: (p) => p.houseOf('🐰') !== 2,
+      },
+      {
+        icons: ['🐱', '🦴'],
+        text: 'Chú Mèo thích gặm Xương.',
+        check: (p) => p.houseOf('🐱') !== undefined && p.houseOf('🐱') === p.houseOf('🦴'),
+      },
     ],
   },
 
@@ -263,14 +311,44 @@ const LEVELS_DATA: LevelDef[] = [
       { animal: '🐰', food: '🥕' },
     ],
     clues: [
-      { icons: ['🐵', '🍌'], text: 'Chú Khỉ rất thích ăn Chuối.' },
-      { icons: ['🍌', '🟨'], text: 'Bạn thích ăn Chuối sống ở ngôi nhà màu Vàng.' },
-      { icons: ['🐱', '➡️', '🐵'], text: 'Chú Mèo sống ngay bên trái Chú Khỉ.' },
-      { icons: ['🐶', '🟦'], text: 'Chú Chó sống ở ngôi nhà màu Xanh dương.' },
-      { icons: ['🐱', '🐟'], text: 'Chú Mèo thích ăn Cá.' },
+      {
+        icons: ['🐵', '🍌'],
+        text: 'Chú Khỉ rất thích ăn Chuối.',
+        check: (p) => p.houseOf('🐵') !== undefined && p.houseOf('🐵') === p.houseOf('🍌'),
+      },
+      {
+        icons: ['🍌', '🟨'],
+        text: 'Bạn thích ăn Chuối sống ở ngôi nhà màu Vàng.',
+        // Vàng = nhà 1.
+        check: (p) => p.houseOf('🍌') === 1,
+      },
+      {
+        icons: ['🐱', '➡️', '🐵'],
+        text: 'Chú Mèo sống ngay bên trái Chú Khỉ.',
+        check: (p) => {
+          const c = p.houseOf('🐱');
+          const m = p.houseOf('🐵');
+          return c !== undefined && m !== undefined && c + 1 === m;
+        },
+      },
+      {
+        icons: ['🐶', '🟦'],
+        text: 'Chú Chó sống ở ngôi nhà màu Xanh dương.',
+        // Xanh dương = nhà 2.
+        check: (p) => p.houseOf('🐶') === 2,
+      },
+      {
+        icons: ['🐱', '🐟'],
+        text: 'Chú Mèo thích ăn Cá.',
+        check: (p) => p.houseOf('🐱') !== undefined && p.houseOf('🐱') === p.houseOf('🐟'),
+      },
       {
         icons: ['🐶', '🚫', '🥕', '🐟'],
         text: 'Chú Chó không thích ăn Cà rốt và cũng không thích ăn Cá.',
+        check: (p) => {
+          const d = p.houseOf('🐶');
+          return d !== undefined && d !== p.houseOf('🥕') && d !== p.houseOf('🐟');
+        },
       },
     ],
   },
@@ -369,6 +447,28 @@ function slotOf(layout: Layout, house: number, kind: SlotKind): SlotRect | undef
   return layout.slots.find((s) => s.house === house && s.kind === kind);
 }
 
+/**
+ * Gom toàn bộ vị trí item đã đặt thành bảng tra cứu (animal-at-house,
+ * food-at-house, house-of-emoji) để mỗi hàm `check` của manh mối có thể hỏi
+ * nhanh ai đang ở đâu mà không phải duyệt lại items.
+ */
+function buildPlacement(items: Item[]): Placement {
+  const animalByHouse = new Map<number, string>();
+  const foodByHouse = new Map<number, string>();
+  const houseByEmoji = new Map<string, number>();
+  for (const it of items) {
+    if (it.house < 0) continue;
+    houseByEmoji.set(it.emoji, it.house);
+    if (it.kind === 'animal') animalByHouse.set(it.house, it.emoji);
+    else foodByHouse.set(it.house, it.emoji);
+  }
+  return {
+    animalAt: (h) => animalByHouse.get(h),
+    foodAt: (h) => foodByHouse.get(h),
+    houseOf: (e) => houseByEmoji.get(e),
+  };
+}
+
 /** Tìm item đang nằm trong một slot (house, kind), bỏ qua item `excludeId`. */
 function itemInSlot(items: Item[], house: number, kind: SlotKind, excludeId?: string): Item | undefined {
   return items.find((i) => i.id !== excludeId && i.house === house && i.kind === kind);
@@ -427,6 +527,9 @@ export default function DetectiveCluesView({ onBack }: Props) {
   // Tập chỉ số manh mối đã bị bé gạch ngang (đánh dấu "đã phân tích xong").
   // Reset mỗi khi vào màn mới để không lẫn dữ liệu giữa các vụ án.
   const [struckClues, setStruckClues] = useState<Set<number>>(() => new Set());
+  // Chỉ số manh mối đang "nhấp nháy đỏ" — nhắc nhở thông minh khi PHÁ ÁN sai.
+  // null = không có manh mối nào đang được nhắc.
+  const [flashClue, setFlashClue] = useState<number | null>(null);
   // Thông báo kết quả sau khi bấm "PHÁ ÁN".
   const [checkMsg, setCheckMsg] = useState<string | null>(null);
   const [checkTone, setCheckTone] = useState<'wrong' | 'info'>('info');
@@ -451,6 +554,8 @@ export default function DetectiveCluesView({ onBack }: Props) {
   const gameRef = useRef<GameState | null>(null);
   const phaseRef = useRef<Phase>('idle');
   const rafRef = useRef<number | null>(null);
+  // Bộ đếm thời gian tự tắt hiệu ứng nhấp nháy đỏ (sau vài giây bé đã đọc xong).
+  const flashTimerRef = useRef<number | null>(null);
   // Mây trắng trôi (tạo 1 lần, để vị trí ổn định giữa các frame).
   const cloudsRef = useRef<Array<{ x: number; y: number; scale: number; speed: number }>>([]);
 
@@ -480,8 +585,26 @@ export default function DetectiveCluesView({ onBack }: Props) {
     setHintCount(0);
     setCheckMsg(null);
     setStruckClues(new Set()); // mỗi vụ án bắt đầu với sổ tay sạch
+    setFlashClue(null);
+    if (flashTimerRef.current !== null) {
+      window.clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = null;
+    }
     phaseRef.current = 'playing';
     setPhase('playing');
+  }, []);
+
+  /**
+   * Bật hiệu ứng nhấp nháy đỏ cho một dòng manh mối, tự tắt sau ~3.5 giây.
+   * Gọi lại sẽ huỷ timer cũ — nhấp nháy luôn kéo dài đủ thời gian từ lần cuối.
+   */
+  const flashClueIndex = useCallback((i: number) => {
+    setFlashClue(i);
+    if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = window.setTimeout(() => {
+      setFlashClue(null);
+      flashTimerRef.current = null;
+    }, 3500);
   }, []);
 
   /** Bật/tắt gạch ngang cho một dòng manh mối khi bé chạm vào. */
@@ -499,8 +622,14 @@ export default function DetectiveCluesView({ onBack }: Props) {
     const g = gameRef.current;
     if (!g) return;
     setPlacedCount(g.items.filter((i) => i.house >= 0).length);
-    // Bàn chơi vừa thay đổi → xoá kết quả "PHÁ ÁN" cũ cho khỏi gây hiểu nhầm.
+    // Bàn chơi vừa thay đổi → xoá kết quả "PHÁ ÁN" cũ + manh mối đang nhấp nháy
+    // (lời nhắc cũ có thể không còn đúng với sắp xếp mới).
     setCheckMsg(null);
+    setFlashClue(null);
+    if (flashTimerRef.current !== null) {
+      window.clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = null;
+    }
   }, []);
 
   /* ─────────────────────────────────────────────────────────────────────
@@ -555,12 +684,27 @@ export default function DetectiveCluesView({ onBack }: Props) {
     const wrong = g.items.filter((i) => i.house !== i.correctHouse).length;
     if (wrong === 0) {
       handleWin();
-    } else {
-      setCheckTone('wrong');
-      setCheckMsg(`Chưa đúng rồi! Còn ${wrong} vị trí chưa chính xác — xem lại manh mối nhé.`);
-      playSfx('snd-wrong');
+      return;
     }
-  }, [handleWin]);
+
+    // ── Nhắc nhở thông minh ─────────────────────────────────────────────
+    // Tìm manh mối ĐẦU TIÊN trong sổ tay đang bị cách xếp hiện tại vi phạm
+    // và nhấp nháy đỏ nó — hướng bé đọc lại đúng dòng có gợi ý sửa sai.
+    const placement = buildPlacement(g.items);
+    const violatedIdx = g.level.clues.findIndex((c) => !c.check(placement));
+    setCheckTone('wrong');
+    if (violatedIdx >= 0) {
+      flashClueIndex(violatedIdx);
+      setCheckMsg(
+        `Chưa đúng — còn ${wrong} vị trí sai. Đọc kỹ manh mối số ${violatedIdx + 1} đang sáng đỏ nhé!`,
+      );
+    } else {
+      // Trường hợp lý thuyết không xảy ra (board đầy + còn sai ⇒ phải vi phạm
+      // ít nhất 1 manh mối) — vẫn lỡ rơi vào thì hiện thông báo trung tính.
+      setCheckMsg(`Chưa đúng rồi! Còn ${wrong} vị trí chưa chính xác — xem lại manh mối nhé.`);
+    }
+    playSfx('snd-wrong');
+  }, [handleWin, flashClueIndex]);
 
   /** Nút "GỢI Ý" — đặt đúng giúp bé MỘT vị trí còn sai/còn trống. */
   const handleHint = useCallback(() => {
@@ -948,6 +1092,14 @@ export default function DetectiveCluesView({ onBack }: Props) {
     };
   }, [phase, drawScene]);
 
+  // Dọn timer nhấp nháy khi component unmount để tránh setState sau khi gỡ.
+  useEffect(
+    () => () => {
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current);
+    },
+    [],
+  );
+
   // Lời nhắc bằng giọng nói khi vừa vào màn chơi.
   useEffect(() => {
     if (phase !== 'playing') return;
@@ -1151,27 +1303,36 @@ export default function DetectiveCluesView({ onBack }: Props) {
             // Mỗi dòng manh mối là một nút bấm: chạm để bật/tắt gạch ngang,
             // giúp bé tự đánh dấu những manh mối đã suy luận xong.
             const struck = struckClues.has(i);
+            // Đang được "Nhắc nhở thông minh" sau khi PHÁ ÁN sai — đè lên
+            // mọi style khác để bé dễ thấy.
+            const flashing = flashClue === i;
             return (
               <li key={i}>
                 <button
                   type="button"
                   onClick={() => toggleClueStruck(i)}
                   className={`w-full flex gap-2 items-start text-left px-2 py-1.5 rounded-xl transition-all active:scale-[0.98] ${
-                    struck ? 'bg-amber-100/60' : 'hover:bg-amber-100/40'
+                    flashing
+                      ? 'bg-rose-100 ring-2 ring-rose-400 animate-pulse'
+                      : struck
+                        ? 'bg-amber-100/60'
+                        : 'hover:bg-amber-100/40'
                   }`}
                 >
                   <span
                     className={`flex-shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-black flex items-center justify-center mt-0.5 transition-colors ${
-                      struck ? 'bg-amber-300' : 'bg-amber-500'
+                      flashing ? 'bg-rose-500' : struck ? 'bg-amber-300' : 'bg-amber-500'
                     }`}
                   >
-                    {struck ? '✓' : i + 1}
+                    {flashing ? '!' : struck ? '✓' : i + 1}
                   </span>
                   <div
                     className={`flex-1 text-sm font-semibold leading-snug transition-all ${
-                      struck
-                        ? 'line-through text-amber-700/50'
-                        : 'text-amber-900'
+                      flashing
+                        ? 'text-rose-700'
+                        : struck
+                          ? 'line-through text-amber-700/50'
+                          : 'text-amber-900'
                     }`}
                   >
                     <span className="mr-1 text-base align-middle">
