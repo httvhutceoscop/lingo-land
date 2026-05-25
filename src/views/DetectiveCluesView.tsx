@@ -424,6 +424,9 @@ export default function DetectiveCluesView({ onBack }: Props) {
   const [levelIdx, setLevelIdx] = useState(0);
   const [placedCount, setPlacedCount] = useState(0);
   const [hintCount, setHintCount] = useState(0);
+  // Tập chỉ số manh mối đã bị bé gạch ngang (đánh dấu "đã phân tích xong").
+  // Reset mỗi khi vào màn mới để không lẫn dữ liệu giữa các vụ án.
+  const [struckClues, setStruckClues] = useState<Set<number>>(() => new Set());
   // Thông báo kết quả sau khi bấm "PHÁ ÁN".
   const [checkMsg, setCheckMsg] = useState<string | null>(null);
   const [checkTone, setCheckTone] = useState<'wrong' | 'info'>('info');
@@ -476,8 +479,19 @@ export default function DetectiveCluesView({ onBack }: Props) {
     setPlacedCount(0);
     setHintCount(0);
     setCheckMsg(null);
+    setStruckClues(new Set()); // mỗi vụ án bắt đầu với sổ tay sạch
     phaseRef.current = 'playing';
     setPhase('playing');
+  }, []);
+
+  /** Bật/tắt gạch ngang cho một dòng manh mối khi bé chạm vào. */
+  const toggleClueStruck = useCallback((idx: number) => {
+    setStruckClues((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
   }, []);
 
   /** Đồng bộ vài chỉ số ra React để giao diện cập nhật. */
@@ -1132,18 +1146,43 @@ export default function DetectiveCluesView({ onBack }: Props) {
             Manh mối
           </span>
         </div>
-        <ol className="space-y-2">
-          {level.clues.map((clue, i) => (
-            <li key={i} className="flex gap-2 items-start">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-[11px] font-black flex items-center justify-center mt-0.5">
-                {i + 1}
-              </span>
-              <div className="flex-1 text-sm font-semibold text-amber-900 leading-snug">
-                <span className="mr-1 text-base align-middle">{clue.icons.join(' ')}</span>
-                {clue.text}
-              </div>
-            </li>
-          ))}
+        <ol className="space-y-1">
+          {level.clues.map((clue, i) => {
+            // Mỗi dòng manh mối là một nút bấm: chạm để bật/tắt gạch ngang,
+            // giúp bé tự đánh dấu những manh mối đã suy luận xong.
+            const struck = struckClues.has(i);
+            return (
+              <li key={i}>
+                <button
+                  type="button"
+                  onClick={() => toggleClueStruck(i)}
+                  className={`w-full flex gap-2 items-start text-left px-2 py-1.5 rounded-xl transition-all active:scale-[0.98] ${
+                    struck ? 'bg-amber-100/60' : 'hover:bg-amber-100/40'
+                  }`}
+                >
+                  <span
+                    className={`flex-shrink-0 w-5 h-5 rounded-full text-white text-[11px] font-black flex items-center justify-center mt-0.5 transition-colors ${
+                      struck ? 'bg-amber-300' : 'bg-amber-500'
+                    }`}
+                  >
+                    {struck ? '✓' : i + 1}
+                  </span>
+                  <div
+                    className={`flex-1 text-sm font-semibold leading-snug transition-all ${
+                      struck
+                        ? 'line-through text-amber-700/50'
+                        : 'text-amber-900'
+                    }`}
+                  >
+                    <span className="mr-1 text-base align-middle">
+                      {clue.icons.join(' ')}
+                    </span>
+                    {clue.text}
+                  </div>
+                </button>
+              </li>
+            );
+          })}
         </ol>
       </div>
 
