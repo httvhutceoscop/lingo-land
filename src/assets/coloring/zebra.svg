@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #FFFFFF; color: #FFFFFF; }
+    .belly { fill: #F5F5F5; color: #F5F5F5; }
+    .head { fill: #FFFFFF; color: #FFFFFF; }
+    .neck { fill: #FFFFFF; color: #FFFFFF; }
+    .stripe { fill: #1E1E1E; color: #1E1E1E; }
+    .stripe-head { fill: #1E1E1E; color: #1E1E1E; }
+    .stripe-neck { fill: #1E1E1E; color: #1E1E1E; }
+    .mane { fill: #1E1E1E; color: #1E1E1E; }
+    .tail { fill: #FFFFFF; color: #FFFFFF; }
+    .tail-tuft { fill: #1E1E1E; color: #1E1E1E; }
+    .leg-front { fill: #FFFFFF; color: #FFFFFF; }
+    .leg-back { fill: #FFFFFF; color: #FFFFFF; }
+    .hoof { fill: #1E1E1E; color: #1E1E1E; }
+    .ear { fill: #FFFFFF; color: #FFFFFF; }
+    .eye { fill: #1E1E1E; color: #1E1E1E; }
+    .nostril { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-zebra">
+<!-- Tail -->
+    <path class="tail" d="M155,130 q15,5 15,22" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <path class="tail-tuft" d="M168,150 q3,4 0,10 q-5,-2 -3,-10 Z"/>
+    <!-- Back legs -->
+    <rect class="leg-back" x="55" y="145" width="12" height="40" rx="2"/>
+    <rect class="leg-back" x="138" y="145" width="12" height="40" rx="2"/>
+    <rect class="hoof" x="53" y="182" width="16" height="4"/>
+    <rect class="hoof" x="136" y="182" width="16" height="4"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="130" rx="55" ry="25"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="145" rx="35" ry="12"/>
+    <!-- Front legs -->
+    <rect class="leg-front" x="75" y="145" width="12" height="40" rx="2"/>
+    <rect class="leg-front" x="115" y="145" width="12" height="40" rx="2"/>
+    <rect class="hoof" x="73" y="182" width="16" height="4"/>
+    <rect class="hoof" x="113" y="182" width="16" height="4"/>
+    <!-- Body stripes -->
+    <path class="stripe" d="M60,115 q3,15 0,30 M75,110 q3,20 0,40 M90,108 q3,22 0,44 M105,108 q3,22 0,44 M120,110 q3,20 0,40 M135,115 q3,15 0,30"
+          fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+    <!-- Neck -->
+    <path class="neck" d="M138,118 L155,75 L168,80 L150,125 Z"/>
+    <!-- Neck stripes -->
+    <path class="stripe-neck" d="M145,110 l15,4 M148,98 l16,3 M151,85 l15,2"
+          fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <!-- Mane -->
+    <path class="mane" d="M155,75 L168,80 L172,68 L160,62 Z"/>
+    <!-- Head -->
+    <ellipse class="head" cx="160" cy="65" rx="22" ry="16" transform="rotate(-15 160 65)"/>
+    <!-- Head stripes -->
+    <path class="stripe-head" d="M150,55 l-2,12 M158,52 l-2,14 M166,53 l-2,14 M174,58 l-3,12"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Ear -->
+    <ellipse class="ear" cx="148" cy="48" rx="4" ry="7" transform="rotate(-30 148 48)"/>
+    <!-- Eye -->
+    <circle class="eye" cx="162" cy="60" r="2.5"/>
+    <!-- Nostril -->
+    <circle class="nostril" cx="178" cy="70" r="1.5"/>
+  </g>
+</svg>

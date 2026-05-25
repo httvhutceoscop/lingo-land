@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #B8865C; color: #B8865C; }
+    .belly { fill: #E8C49A; color: #E8C49A; }
+    .head { fill: #B8865C; color: #B8865C; }
+    .neck { fill: #B8865C; color: #B8865C; }
+    .snout { fill: #9C6E48; color: #9C6E48; }
+    .pouch { fill: #E8C49A; color: #E8C49A; }
+    .ear-left { fill: #B8865C; color: #B8865C; }
+    .ear-right { fill: #B8865C; color: #B8865C; }
+    .ear-inner-left { fill: #E8C49A; color: #E8C49A; }
+    .ear-inner-right { fill: #E8C49A; color: #E8C49A; }
+    .arm-left { fill: #B8865C; color: #B8865C; }
+    .arm-right { fill: #B8865C; color: #B8865C; }
+    .paw { fill: #9C6E48; color: #9C6E48; }
+    .leg-back { fill: #B8865C; color: #B8865C; }
+    .foot { fill: #9C6E48; color: #9C6E48; }
+    .tail { fill: #B8865C; color: #B8865C; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-kangaroo">
+<!-- Tail (huge, on ground for balance) -->
+    <path class="tail" d="M55,150 Q20,160 15,180 Q25,182 40,175 Q55,165 70,155 Z"/>
+    <!-- Big hind leg/foot -->
+    <path class="leg-back" d="M70,130 Q60,150 55,170 Q60,175 80,170 Q85,150 90,135 Z"/>
+    <!-- Big foot -->
+    <ellipse class="foot" cx="68" cy="175" rx="20" ry="6"/>
+    <!-- Body (upright pear shape) -->
+    <ellipse class="body" cx="100" cy="115" rx="32" ry="42"/>
+    <!-- Belly pouch -->
+    <path class="pouch" d="M82,120 Q100,150 118,120 Q115,140 100,142 Q85,140 82,120 Z"/>
+    <!-- Small front arms -->
+    <ellipse class="arm-left"  cx="78"  cy="95" rx="6" ry="14" transform="rotate(20 78 95)"/>
+    <ellipse class="arm-right" cx="122" cy="95" rx="6" ry="14" transform="rotate(-20 122 95)"/>
+    <!-- Paws -->
+    <circle class="paw" cx="74" cy="110" r="4"/>
+    <circle class="paw" cx="126" cy="110" r="4"/>
+    <!-- Neck -->
+    <path class="neck" d="M88,82 Q100,72 112,82 L110,95 L90,95 Z"/>
+    <!-- Head (kangaroo: long muzzle) -->
+    <ellipse class="head" cx="100" cy="62" rx="22" ry="20"/>
+    <!-- Snout extension -->
+    <ellipse class="snout" cx="100" cy="72" rx="14" ry="10"/>
+    <!-- Ears (tall pointed) -->
+    <ellipse class="ear-left"  cx="88"  cy="36" rx="5" ry="14" transform="rotate(-10 88 36)"/>
+    <ellipse class="ear-right" cx="112" cy="36" rx="5" ry="14" transform="rotate(10 112 36)"/>
+    <ellipse class="ear-inner-left"  cx="88"  cy="38" rx="2" ry="10" transform="rotate(-10 88 38)"/>
+    <ellipse class="ear-inner-right" cx="112" cy="38" rx="2" ry="10" transform="rotate(10 112 38)"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="92"  cy="60" r="2.5"/>
+    <circle class="eye-right" cx="108" cy="60" r="2.5"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="74" rx="3" ry="2"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M95,80 Q100,83 105,80" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</svg>

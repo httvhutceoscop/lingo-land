@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #7A7E85; color: #7A7E85; }
+    .belly { fill: #D4D2CC; color: #D4D2CC; }
+    .head { fill: #7A7E85; color: #7A7E85; }
+    .back-stripe { fill: #3E3E44; color: #3E3E44; }
+    .snout { fill: #D4D2CC; color: #D4D2CC; }
+    .cheek { fill: #D4D2CC; color: #D4D2CC; }
+    .ruff { fill: #5F5F66; color: #5F5F66; }
+    .ear-left { fill: #7A7E85; color: #7A7E85; }
+    .ear-right { fill: #7A7E85; color: #7A7E85; }
+    .ear-inner-left { fill: #3E3E44; color: #3E3E44; }
+    .ear-inner-right { fill: #3E3E44; color: #3E3E44; }
+    .tail { fill: #7A7E85; color: #7A7E85; }
+    .tail-tip { fill: #3E3E44; color: #3E3E44; }
+    .leg-front { fill: #7A7E85; color: #7A7E85; }
+    .leg-back { fill: #7A7E85; color: #7A7E85; }
+    .eye-left { fill: #E8B445; color: #E8B445; }
+    .eye-right { fill: #E8B445; color: #E8B445; }
+    .nose { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-wolf">
+<!-- Tail (down, bushy) -->
+    <path class="tail" d="M150,135 Q175,145 178,168 Q172,172 168,160 Q158,150 148,145 Z"/>
+    <path class="tail-tip" d="M170,165 q5,3 4,10 q-7,0 -8,-8 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M58,160 q3,15 0,25 h14 q0,-13 0,-25 Z"/>
+    <path class="leg-back" d="M138,160 q3,15 0,25 h14 q0,-13 0,-25 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="52" ry="28"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="32" ry="13"/>
+    <!-- Back stripe (darker) -->
+    <path class="back-stripe" d="M55,118 Q100,108 145,118 Q140,124 100,118 Q60,124 55,118 Z"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M78,160 q-2,15 0,22 h13 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h13 q0,-12 0,-22 Z"/>
+    <!-- Neck ruff -->
+    <path class="ruff" d="M70,98 Q60,115 75,118 Q85,108 80,95 Z M130,98 Q140,115 125,118 Q115,108 120,95 Z"/>
+    <!-- Head (elongated wolf snout) -->
+    <path class="head" d="M68,82 Q100,58 132,82 Q128,108 100,108 Q72,108 68,82 Z"/>
+    <!-- Snout (long, pointed) -->
+    <path class="snout" d="M82,95 Q100,125 118,95 Q110,108 100,108 Q90,108 82,95 Z"/>
+    <!-- Ears (pointed up) -->
+    <path class="ear-left"  d="M76,68 L70,32 L92,58 Z"/>
+    <path class="ear-right" d="M124,68 L130,32 L108,58 Z"/>
+    <!-- Ears inner -->
+    <path class="ear-inner-left"  d="M79,62 L76,42 L88,58 Z"/>
+    <path class="ear-inner-right" d="M121,62 L124,42 L112,58 Z"/>
+    <!-- Cheek (lighter mask) -->
+    <ellipse class="cheek" cx="100" cy="100" rx="16" ry="6"/>
+    <!-- Eyes (almond, fierce) -->
+    <ellipse class="eye-left"  cx="86"  cy="80" rx="3.5" ry="2.5" transform="rotate(-15 86 80)"/>
+    <ellipse class="eye-right" cx="114" cy="80" rx="3.5" ry="2.5" transform="rotate(15 114 80)"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="98" rx="4" ry="3"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,101 L100,106 Q94,110 90,107 M100,106 Q106,110 110,107"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

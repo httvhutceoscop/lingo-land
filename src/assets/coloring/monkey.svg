@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #8B5A3C; color: #8B5A3C; }
+    .belly { fill: #D4A878; color: #D4A878; }
+    .head { fill: #8B5A3C; color: #8B5A3C; }
+    .face { fill: #E8C49A; color: #E8C49A; }
+    .ear-left { fill: #8B5A3C; color: #8B5A3C; }
+    .ear-right { fill: #8B5A3C; color: #8B5A3C; }
+    .ear-inner-left { fill: #E8C49A; color: #E8C49A; }
+    .ear-inner-right { fill: #E8C49A; color: #E8C49A; }
+    .arm-left { fill: #8B5A3C; color: #8B5A3C; }
+    .arm-right { fill: #8B5A3C; color: #8B5A3C; }
+    .hand { fill: #D4A878; color: #D4A878; }
+    .leg-back { fill: #8B5A3C; color: #8B5A3C; }
+    .foot { fill: #D4A878; color: #D4A878; }
+    .tail { fill: #8B5A3C; color: #8B5A3C; }
+    .brow { fill: #5F3820; color: #5F3820; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #5F3820; color: #5F3820; }
+    .mouth { fill: #5F3820; color: #5F3820; }
+  </style>
+  
+  <g class="animal animal-monkey">
+<!-- Tail (curly) -->
+    <path class="tail" d="M55,140 q-15,5 -18,-8 q-2,-12 8,-10 q6,2 4,8"
+          fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Back legs -->
+    <ellipse class="leg-back" cx="68"  cy="172" rx="11" ry="12"/>
+    <ellipse class="leg-back" cx="132" cy="172" rx="11" ry="12"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="138" rx="42" ry="32"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="28" ry="20"/>
+    <!-- Arms -->
+    <ellipse class="arm-left"  cx="62"  cy="125" rx="9" ry="20" transform="rotate(-20 62 125)"/>
+    <ellipse class="arm-right" cx="138" cy="125" rx="9" ry="20" transform="rotate(20 138 125)"/>
+    <!-- Hands -->
+    <circle class="hand" cx="55" cy="148" r="6"/>
+    <circle class="hand" cx="145" cy="148" r="6"/>
+    <!-- Feet -->
+    <ellipse class="foot" cx="68" cy="183" rx="10" ry="5"/>
+    <ellipse class="foot" cx="132" cy="183" rx="10" ry="5"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="72" r="32"/>
+    <!-- Ears -->
+    <circle class="ear-left"  cx="72" cy="68" r="7"/>
+    <circle class="ear-right" cx="128" cy="68" r="7"/>
+    <circle class="ear-inner-left"  cx="72" cy="68" r="3.5"/>
+    <circle class="ear-inner-right" cx="128" cy="68" r="3.5"/>
+    <!-- Face (lighter area) -->
+    <ellipse class="face" cx="100" cy="80" rx="22" ry="22"/>
+    <!-- Brow ridge -->
+    <path class="brow" d="M82,68 q8,-5 15,0 M103,68 q8,-5 15,0"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="90"  cy="75" r="3"/>
+    <circle class="eye-right" cx="110" cy="75" r="3"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="86" rx="3" ry="2"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M92,94 Q100,100 108,94"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

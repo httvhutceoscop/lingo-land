@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #5BA84A; color: #5BA84A; }
+    .belly { fill: #D4E8A8; color: #D4E8A8; }
+    .head { fill: #5BA84A; color: #5BA84A; }
+    .pattern { fill: #2B5F1F; color: #2B5F1F; }
+    .tail-tip { fill: #2B5F1F; color: #2B5F1F; }
+    .eye-bump { fill: #5BA84A; color: #5BA84A; }
+    .eye { fill: #E8B445; color: #E8B445; }
+    .nostril { fill: #2B5F1F; color: #2B5F1F; }
+    .tongue { fill: #E24B4A; color: #E24B4A; }
+  </style>
+  
+  <g class="animal animal-snake">
+<!-- Body (coiled S-shape) -->
+    <path class="body" d="M20,150
+                           Q40,120 70,140
+                           Q100,160 130,140
+                           Q160,120 175,140
+                           Q180,150 170,155
+                           Q155,150 140,160
+                           Q110,180 80,160
+                           Q50,140 30,160
+                           Q15,165 20,150 Z"/>
+    <!-- Belly stripe (lighter) -->
+    <path class="belly" d="M25,152
+                            Q42,135 68,150
+                            Q100,170 132,150
+                            Q158,135 172,150
+                            Q160,148 140,158
+                            Q110,175 80,158
+                            Q50,148 30,158
+                            Q25,158 25,152 Z"/>
+    <!-- Pattern spots/diamonds along back -->
+    <ellipse class="pattern" cx="45"  cy="143" rx="6" ry="4" transform="rotate(-20 45 143)"/>
+    <ellipse class="pattern" cx="75"  cy="145" rx="6" ry="4"/>
+    <ellipse class="pattern" cx="105" cy="148" rx="6" ry="4"/>
+    <ellipse class="pattern" cx="135" cy="145" rx="6" ry="4"/>
+    <ellipse class="pattern" cx="160" cy="142" rx="6" ry="4" transform="rotate(20 160 142)"/>
+    <!-- Head (raised, diamond shape) -->
+    <path class="head" d="M155,135 Q175,115 192,118 Q198,125 195,135 Q190,145 175,148 Q160,148 155,135 Z"/>
+    <!-- Eye -->
+    <ellipse class="eye-bump" cx="180" cy="125" rx="4" ry="3"/>
+    <ellipse class="eye" cx="180" cy="125" rx="2" ry="2.5"/>
+    <!-- Nostril -->
+    <circle class="nostril" cx="193" cy="128" r="1"/>
+    <!-- Tongue (forked) -->
+    <path class="tongue" d="M195,134 L208,132 M201,133 L210,128 M201,133 L210,138"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Tail tip (pointed) -->
+    <path class="tail-tip" d="M20,150 L8,148 L8,154 Z"/>
+  </g>
+</svg>

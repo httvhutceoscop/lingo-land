@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #5F7A3E; color: #5F7A3E; }
+    .belly { fill: #C5C094; color: #C5C094; }
+    .head { fill: #5F7A3E; color: #5F7A3E; }
+    .scale { fill: #3E5028; color: #3E5028; }
+    .tail { fill: #5F7A3E; color: #5F7A3E; }
+    .leg-front { fill: #5F7A3E; color: #5F7A3E; }
+    .leg-back { fill: #5F7A3E; color: #5F7A3E; }
+    .claw { fill: #1E1E1E; color: #1E1E1E; }
+    .jaw-line { fill: #3E5028; color: #3E5028; }
+    .tooth { fill: #FFFFFF; color: #FFFFFF; }
+    .eye-bump { fill: #5F7A3E; color: #5F7A3E; }
+    .eye { fill: #E8B445; color: #E8B445; }
+    .nostril { fill: #3E5028; color: #3E5028; }
+  </style>
+  
+  <g class="animal animal-crocodile">
+<!-- Tail (long, scaly, tapered) -->
+    <path class="tail" d="M15,130 Q5,135 8,142 L55,148 L55,138 Z"/>
+    <!-- Tail scales (dorsal spikes) -->
+    <path class="scale" d="M20,130 L23,124 L26,130 Z M30,128 L33,121 L36,128 Z M40,127 L43,119 L46,127 Z M50,126 L53,118 L56,126 Z"/>
+    <!-- Back legs (short, splayed) -->
+    <ellipse class="leg-back" cx="70"  cy="155" rx="10" ry="8" transform="rotate(20 70 155)"/>
+    <ellipse class="leg-back" cx="145" cy="155" rx="10" ry="8" transform="rotate(-20 145 155)"/>
+    <!-- Claws back -->
+    <path class="claw" d="M62,162 L60,167 M68,164 L68,169 M74,162 L77,167"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="claw" d="M138,162 L135,167 M144,164 L144,169 M150,162 L154,167"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Body (long, low) -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="18"/>
+    <!-- Belly (lighter) -->
+    <ellipse class="belly" cx="100" cy="143" rx="40" ry="10"/>
+    <!-- Back scales row -->
+    <path class="scale" d="M60,123 L63,116 L66,123 Z M72,120 L75,112 L78,120 Z M85,118 L88,110 L91,118 Z M98,117 L101,108 L104,117 Z M111,118 L114,110 L117,118 Z M124,120 L127,112 L130,120 Z M137,123 L140,116 L143,123 Z"/>
+    <!-- Front legs -->
+    <ellipse class="leg-front" cx="80"  cy="152" rx="9" ry="7" transform="rotate(20 80 152)"/>
+    <ellipse class="leg-front" cx="125" cy="152" rx="9" ry="7" transform="rotate(-20 125 152)"/>
+    <!-- Claws front -->
+    <path class="claw" d="M73,159 L72,163 M79,160 L80,165 M85,158 L88,162"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path class="claw" d="M120,158 L117,162 M125,160 L126,165 M131,159 L132,163"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Head (elongated, flat snout) -->
+    <path class="head" d="M150,130 L195,128 Q198,134 195,140 L150,142 Q145,136 150,130 Z"/>
+    <!-- Upper jaw line -->
+    <path class="jaw-line" d="M150,135 L195,135" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <!-- Teeth (upper) -->
+    <path class="tooth" d="M158,135 L160,140 L162,135 Z M167,135 L169,140 L171,135 Z M177,135 L179,140 L181,135 Z M186,135 L188,140 L190,135 Z"/>
+    <!-- Eye bump on top of head -->
+    <ellipse class="eye-bump" cx="158" cy="125" rx="5" ry="4"/>
+    <!-- Eye -->
+    <ellipse class="eye" cx="158" cy="125" rx="2.5" ry="3"/>
+    <!-- Nostril at end of snout -->
+    <ellipse class="nostril" cx="192" cy="131" rx="2" ry="1.5"/>
+  </g>
+</svg>

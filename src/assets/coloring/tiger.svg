@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #F09836; color: #F09836; }
+    .belly { fill: #FFE3B8; color: #FFE3B8; }
+    .head { fill: #F09836; color: #F09836; }
+    .ear-left { fill: #F09836; color: #F09836; }
+    .ear-right { fill: #F09836; color: #F09836; }
+    .ear-inner { fill: #FFFFFF; color: #FFFFFF; }
+    .snout { fill: #FFE3B8; color: #FFE3B8; }
+    .tail { fill: #F09836; color: #F09836; }
+    .leg-front { fill: #F09836; color: #F09836; }
+    .leg-back { fill: #F09836; color: #F09836; }
+    .stripe-body { fill: #2B2B2B; color: #2B2B2B; }
+    .stripe-head { fill: #2B2B2B; color: #2B2B2B; }
+    .stripe-tail { fill: #2B2B2B; color: #2B2B2B; }
+    .eye-left { fill: #2B7A1F; color: #2B7A1F; }
+    .eye-right { fill: #2B7A1F; color: #2B7A1F; }
+    .nose { fill: #2B2B2B; color: #2B2B2B; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-tiger">
+<!-- Tail -->
+    <path class="tail" d="M155,135 q25,0 28,-15 q-3,-3 -8,2 q-4,12 -20,8 Z"/>
+    <path class="stripe-tail" d="M165,128 l3,-8 M172,124 l3,-7"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <path class="leg-back" d="M140,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="33"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="150" rx="35" ry="15"/>
+    <!-- Stripes on body -->
+    <path class="stripe-body" d="M65,118 q5,8 0,16 M80,113 q5,9 0,18 M100,110 q5,9 0,20 M120,113 q5,9 0,18 M135,118 q5,8 0,16"
+          fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="75" r="36"/>
+    <!-- Ears outer -->
+    <path class="ear-left"  d="M70,52 L66,30 L88,46 Z"/>
+    <path class="ear-right" d="M130,52 L134,30 L112,46 Z"/>
+    <!-- Ears inner -->
+    <path class="ear-inner" d="M73,48 L72,36 L84,46 Z M127,48 L128,36 L116,46 Z"/>
+    <!-- Stripes on head -->
+    <path class="stripe-head" d="M75,70 l-8,-4 M75,80 l-10,2 M125,70 l8,-4 M125,80 l10,2 M100,45 l-3,-10 M100,45 l3,-10 M90,50 l-2,-8 M110,50 l2,-8"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="88" rx="16" ry="11"/>
+    <!-- Eyes -->
+    <ellipse class="eye-left"  cx="88"  cy="72" rx="3.5" ry="5"/>
+    <ellipse class="eye-right" cx="112" cy="72" rx="3.5" ry="5"/>
+    <!-- Nose -->
+    <path class="nose" d="M95,82 L105,82 L100,89 Z"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,89 L100,96 Q95,100 91,98 M100,96 Q105,100 109,98"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

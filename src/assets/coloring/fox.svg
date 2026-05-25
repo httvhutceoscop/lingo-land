@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #E0631A; color: #E0631A; }
+    .belly { fill: #FFFFFF; color: #FFFFFF; }
+    .head { fill: #E0631A; color: #E0631A; }
+    .snout { fill: #FFFFFF; color: #FFFFFF; }
+    .cheek { fill: #FFFFFF; color: #FFFFFF; }
+    .ear-left { fill: #E0631A; color: #E0631A; }
+    .ear-right { fill: #E0631A; color: #E0631A; }
+    .ear-inner-left { fill: #1E1E1E; color: #1E1E1E; }
+    .ear-inner-right { fill: #1E1E1E; color: #1E1E1E; }
+    .tail { fill: #E0631A; color: #E0631A; }
+    .tail-tip { fill: #FFFFFF; color: #FFFFFF; }
+    .leg-front { fill: #E0631A; color: #E0631A; }
+    .leg-back { fill: #E0631A; color: #E0631A; }
+    .sock { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-fox">
+<!-- Tail (bushy) -->
+    <path class="tail" d="M150,140 q30,-5 32,-30 q-2,-10 -12,-8 q-3,8 -8,14 q-8,8 -16,18 Z"/>
+    <path class="tail-tip" d="M178,108 q4,-4 2,-12 q-8,-2 -10,6 q4,2 8,6 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M58,160 q3,15 0,25 h14 q0,-13 0,-25 Z"/>
+    <path class="leg-back" d="M138,160 q3,15 0,25 h14 q0,-13 0,-25 Z"/>
+    <rect class="sock" x="58" y="178" width="14" height="8" rx="1"/>
+    <rect class="sock" x="138" y="178" width="14" height="8" rx="1"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="52" ry="30"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="150" rx="32" ry="14"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M78,160 q-2,15 0,22 h13 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h13 q0,-12 0,-22 Z"/>
+    <rect class="sock" x="78" y="175" width="13" height="8" rx="1"/>
+    <rect class="sock" x="115" y="175" width="13" height="8" rx="1"/>
+    <!-- Head (pointed) -->
+    <path class="head" d="M65,80 Q100,55 135,80 Q130,105 100,108 Q70,105 65,80 Z"/>
+    <!-- Snout -->
+    <path class="snout" d="M85,92 Q100,118 115,92 Q108,103 100,103 Q92,103 85,92 Z"/>
+    <!-- Ears outer (large pointed) -->
+    <path class="ear-left"  d="M72,68 L60,30 L92,55 Z"/>
+    <path class="ear-right" d="M128,68 L140,30 L108,55 Z"/>
+    <!-- Ears inner -->
+    <path class="ear-inner-left"  d="M76,62 L70,42 L88,55 Z"/>
+    <path class="ear-inner-right" d="M124,62 L130,42 L112,55 Z"/>
+    <!-- Cheek (white area) -->
+    <ellipse class="cheek" cx="100" cy="98" rx="18" ry="8"/>
+    <!-- Eyes -->
+    <ellipse class="eye-left"  cx="88"  cy="78" rx="3" ry="4"/>
+    <ellipse class="eye-right" cx="112" cy="78" rx="3" ry="4"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="95" rx="3.5" ry="2.5"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,98 L100,103 Q96,106 93,104 M100,103 Q104,106 107,104"
+          fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</svg>

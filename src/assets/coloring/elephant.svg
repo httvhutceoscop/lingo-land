@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #A8A8B0; color: #A8A8B0; }
+    .belly { fill: #C0C0C8; color: #C0C0C8; }
+    .head { fill: #A8A8B0; color: #A8A8B0; }
+    .ear { fill: #8E8E96; color: #8E8E96; }
+    .trunk { fill: #A8A8B0; color: #A8A8B0; }
+    .tusk { fill: #F5EDD4; color: #F5EDD4; }
+    .tail { fill: #A8A8B0; color: #A8A8B0; }
+    .tail-tip { fill: #5F5F66; color: #5F5F66; }
+    .leg-front { fill: #A8A8B0; color: #A8A8B0; }
+    .leg-back { fill: #A8A8B0; color: #A8A8B0; }
+    .toenail { fill: #5F5F66; color: #5F5F66; }
+    .eye { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-elephant">
+<!-- Tail -->
+    <path class="tail" d="M30,130 q-12,5 -10,18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <path class="tail-tip" d="M18,148 q3,3 0,8 q-4,-2 -3,-8 Z"/>
+    <!-- Back legs -->
+    <rect class="leg-back" x="50" y="140" width="20" height="42" rx="3"/>
+    <rect class="leg-back" x="130" y="140" width="20" height="42" rx="3"/>
+    <rect class="toenail" x="52" y="178" width="16" height="4" rx="1"/>
+    <rect class="toenail" x="132" y="178" width="16" height="4" rx="1"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="120" rx="60" ry="38"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="138" rx="40" ry="18"/>
+    <!-- Front legs -->
+    <rect class="leg-front" x="75" y="140" width="20" height="42" rx="3"/>
+    <rect class="leg-front" x="105" y="140" width="20" height="42" rx="3"/>
+    <rect class="toenail" x="77" y="178" width="16" height="4" rx="1"/>
+    <rect class="toenail" x="107" y="178" width="16" height="4" rx="1"/>
+    <!-- Head -->
+    <ellipse class="head" cx="148" cy="95" rx="32" ry="30"/>
+    <!-- Ear -->
+    <path class="ear" d="M130,75 q-25,-5 -28,20 q-2,22 22,22 q5,-18 6,-42 Z"/>
+    <!-- Trunk -->
+    <path class="trunk" d="M168,105 q15,5 18,25 q1,15 -10,18 q-3,-2 0,-6 q8,-2 6,-12 q-2,-12 -14,-15 Z"/>
+    <!-- Tusk -->
+    <path class="tusk" d="M158,118 q3,8 -2,14 q-4,-2 -3,-12 Z"/>
+    <!-- Eye -->
+    <circle class="eye" cx="152" cy="90" r="3"/>
+  </g>
+</svg>

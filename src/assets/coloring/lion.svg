@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #E0A867; color: #E0A867; }
+    .belly { fill: #F5D9A8; color: #F5D9A8; }
+    .head { fill: #E8B673; color: #E8B673; }
+    .mane { fill: #9C5A1F; color: #9C5A1F; }
+    .ear-left { fill: #9C5A1F; color: #9C5A1F; }
+    .ear-right { fill: #9C5A1F; color: #9C5A1F; }
+    .snout { fill: #F5D9A8; color: #F5D9A8; }
+    .tail { fill: #E0A867; color: #E0A867; }
+    .tail-tuft { fill: #9C5A1F; color: #9C5A1F; }
+    .leg-front { fill: #E0A867; color: #E0A867; }
+    .leg-back { fill: #E0A867; color: #E0A867; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #4A2810; color: #4A2810; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-lion">
+<!-- Tail -->
+    <path class="tail" d="M155,135 q25,5 28,25" fill="none" stroke="currentColor" stroke-width="3"/>
+    <path class="tail-tuft" d="M180,158 q6,4 4,12 q-8,-2 -8,-10 Z"/>
+    <!-- Back legs -->
+    <path class="leg-back" d="M55,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <path class="leg-back" d="M140,160 q2,15 0,25 h15 q0,-13 0,-25 Z"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="33"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="150" rx="35" ry="15"/>
+    <!-- Front legs -->
+    <path class="leg-front" d="M75,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <path class="leg-front" d="M115,160 q-2,15 0,22 h14 q0,-12 0,-22 Z"/>
+    <!-- Mane -->
+    <circle class="mane" cx="100" cy="78" r="44"/>
+    <path class="mane" d="M60,78 q-6,-6 -3,-14 q5,2 8,8 Z M140,78 q6,-6 3,-14 q-5,2 -8,8 Z M70,45 q-3,-7 2,-12 q6,3 5,10 Z M130,45 q3,-7 -2,-12 q-6,3 -5,10 Z M100,30 q-5,-6 0,-12 q5,6 0,12 Z"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="80" r="30"/>
+    <!-- Ears -->
+    <circle class="ear-left"  cx="80"  cy="58" r="6"/>
+    <circle class="ear-right" cx="120" cy="58" r="6"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="92" rx="14" ry="10"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="90"  cy="78" r="3"/>
+    <circle class="eye-right" cx="110" cy="78" r="3"/>
+    <!-- Nose -->
+    <path class="nose" d="M96,87 L104,87 L100,93 Z"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,93 L100,99 Q96,102 93,100 M100,99 Q104,102 107,100"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

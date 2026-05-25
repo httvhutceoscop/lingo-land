@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #A88BA0; color: #A88BA0; }
+    .belly { fill: #C5A8BC; color: #C5A8BC; }
+    .head { fill: #A88BA0; color: #A88BA0; }
+    .snout { fill: #9C7E94; color: #9C7E94; }
+    .ear-left { fill: #A88BA0; color: #A88BA0; }
+    .ear-right { fill: #A88BA0; color: #A88BA0; }
+    .ear-inner-left { fill: #E89AAA; color: #E89AAA; }
+    .ear-inner-right { fill: #E89AAA; color: #E89AAA; }
+    .tail { fill: #A88BA0; color: #A88BA0; }
+    .leg-front { fill: #A88BA0; color: #A88BA0; }
+    .leg-back { fill: #A88BA0; color: #A88BA0; }
+    .toe { fill: #5F4858; color: #5F4858; }
+    .eye-bump-left { fill: #A88BA0; color: #A88BA0; }
+    .eye-bump-right { fill: #A88BA0; color: #A88BA0; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nostril { fill: #5F4858; color: #5F4858; }
+    .mouth { fill: #5F4858; color: #5F4858; }
+    .tooth { fill: #FFFFFF; color: #FFFFFF; }
+  </style>
+  
+  <g class="animal animal-hippo">
+<!-- Tail (small) -->
+    <path class="tail" d="M40,135 q-10,3 -10,12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <!-- Back legs (stubby) -->
+    <rect class="leg-back" x="50" y="148" width="22" height="32" rx="6"/>
+    <rect class="leg-back" x="128" y="148" width="22" height="32" rx="6"/>
+    <!-- Toes back -->
+    <rect class="toe" x="52" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="60" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="130" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="138" y="176" width="6" height="6" rx="1"/>
+    <!-- Body (huge barrel) -->
+    <ellipse class="body" cx="100" cy="125" rx="65" ry="40"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="145" rx="42" ry="18"/>
+    <!-- Front legs -->
+    <rect class="leg-front" x="72" y="148" width="22" height="32" rx="6"/>
+    <rect class="leg-front" x="106" y="148" width="22" height="32" rx="6"/>
+    <!-- Toes front -->
+    <rect class="toe" x="74" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="82" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="108" y="176" width="6" height="6" rx="1"/>
+    <rect class="toe" x="116" y="176" width="6" height="6" rx="1"/>
+    <!-- Head (huge, blocky) -->
+    <ellipse class="head" cx="100" cy="80" rx="50" ry="35"/>
+    <!-- Snout/mouth area -->
+    <ellipse class="snout" cx="100" cy="95" rx="42" ry="20"/>
+    <!-- Open mouth slit -->
+    <path class="mouth" d="M65,98 Q100,108 135,98" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Teeth -->
+    <rect class="tooth" x="78" y="103" width="4" height="6" rx="1"/>
+    <rect class="tooth" x="118" y="103" width="4" height="6" rx="1"/>
+    <!-- Ears (small on top) -->
+    <ellipse class="ear-left"  cx="72"  cy="50" r="7"/>
+    <ellipse class="ear-right" cx="128" cy="50" r="7"/>
+    <ellipse class="ear-inner-left"  cx="72"  cy="50" rx="4" ry="3"/>
+    <ellipse class="ear-inner-right" cx="128" cy="50" rx="4" ry="3"/>
+    <!-- Eyes (bulgy on top) -->
+    <circle class="eye-bump-left"  cx="82"  cy="58" r="7"/>
+    <circle class="eye-bump-right" cx="118" cy="58" r="7"/>
+    <circle class="eye-left"  cx="82"  cy="58" r="3"/>
+    <circle class="eye-right" cx="118" cy="58" r="3"/>
+    <!-- Nostrils -->
+    <ellipse class="nostril" cx="88"  cy="85" rx="3" ry="4"/>
+    <ellipse class="nostril" cx="112" cy="85" rx="3" ry="4"/>
+  </g>
+</svg>

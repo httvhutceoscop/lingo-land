@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #7A4A2B; color: #7A4A2B; }
+    .belly { fill: #A8784E; color: #A8784E; }
+    .head { fill: #7A4A2B; color: #7A4A2B; }
+    .ear-left { fill: #7A4A2B; color: #7A4A2B; }
+    .ear-right { fill: #7A4A2B; color: #7A4A2B; }
+    .ear-inner-left { fill: #A8784E; color: #A8784E; }
+    .ear-inner-right { fill: #A8784E; color: #A8784E; }
+    .snout { fill: #C9A57A; color: #C9A57A; }
+    .leg-front { fill: #7A4A2B; color: #7A4A2B; }
+    .leg-back { fill: #7A4A2B; color: #7A4A2B; }
+    .paw-pad { fill: #3E2410; color: #3E2410; }
+    .eye-left { fill: #1E1E1E; color: #1E1E1E; }
+    .eye-right { fill: #1E1E1E; color: #1E1E1E; }
+    .nose { fill: #1E1E1E; color: #1E1E1E; }
+    .mouth { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-bear">
+<!-- Back legs -->
+    <ellipse class="leg-back" cx="62"  cy="170" rx="14" ry="14"/>
+    <ellipse class="leg-back" cx="138" cy="170" rx="14" ry="14"/>
+    <!-- Body -->
+    <ellipse class="body" cx="100" cy="135" rx="55" ry="38"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="100" cy="148" rx="32" ry="20"/>
+    <!-- Front legs -->
+    <ellipse class="leg-front" cx="80"  cy="172" rx="11" ry="13"/>
+    <ellipse class="leg-front" cx="120" cy="172" rx="11" ry="13"/>
+    <!-- Paw pads -->
+    <circle class="paw-pad" cx="80"  cy="180" r="4"/>
+    <circle class="paw-pad" cx="120" cy="180" r="4"/>
+    <!-- Head -->
+    <circle class="head" cx="100" cy="78" r="35"/>
+    <!-- Ears outer -->
+    <circle class="ear-left"  cx="75"  cy="50" r="11"/>
+    <circle class="ear-right" cx="125" cy="50" r="11"/>
+    <!-- Ears inner -->
+    <circle class="ear-inner-left"  cx="75"  cy="52" r="6"/>
+    <circle class="ear-inner-right" cx="125" cy="52" r="6"/>
+    <!-- Snout -->
+    <ellipse class="snout" cx="100" cy="90" rx="16" ry="12"/>
+    <!-- Eyes -->
+    <circle class="eye-left"  cx="88"  cy="72" r="3"/>
+    <circle class="eye-right" cx="112" cy="72" r="3"/>
+    <!-- Nose -->
+    <ellipse class="nose" cx="100" cy="85" rx="5" ry="4"/>
+    <!-- Mouth -->
+    <path class="mouth" d="M100,89 L100,96 Q95,100 91,98 M100,96 Q105,100 109,98"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg>

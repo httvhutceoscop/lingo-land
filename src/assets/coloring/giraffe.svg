@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+  <style>
+    .body { fill: #F2D08C; color: #F2D08C; }
+    .belly { fill: #FFE9B8; color: #FFE9B8; }
+    .head { fill: #F2D08C; color: #F2D08C; }
+    .neck { fill: #F2D08C; color: #F2D08C; }
+    .snout { fill: #FFE9B8; color: #FFE9B8; }
+    .spot { fill: #8B5A2B; color: #8B5A2B; }
+    .spot-neck { fill: #8B5A2B; color: #8B5A2B; }
+    .mane { fill: #6B3F1A; color: #6B3F1A; }
+    .tail { fill: #F2D08C; color: #F2D08C; }
+    .tail-tuft { fill: #6B3F1A; color: #6B3F1A; }
+    .leg-front { fill: #F2D08C; color: #F2D08C; }
+    .leg-back { fill: #F2D08C; color: #F2D08C; }
+    .hoof { fill: #3E2410; color: #3E2410; }
+    .horn { fill: #F2D08C; color: #F2D08C; }
+    .horn-tip { fill: #1E1E1E; color: #1E1E1E; }
+    .ear { fill: #F2D08C; color: #F2D08C; }
+    .eye { fill: #1E1E1E; color: #1E1E1E; }
+  </style>
+  
+  <g class="animal animal-giraffe">
+<!-- Back legs -->
+    <rect class="leg-back" x="58" y="140" width="10" height="45" rx="2"/>
+    <rect class="leg-back" x="115" y="140" width="10" height="45" rx="2"/>
+    <rect class="hoof" x="56" y="182" width="14" height="4"/>
+    <rect class="hoof" x="113" y="182" width="14" height="4"/>
+    <!-- Body -->
+    <ellipse class="body" cx="95" cy="130" rx="45" ry="20"/>
+    <!-- Belly -->
+    <ellipse class="belly" cx="95" cy="140" rx="30" ry="10"/>
+    <!-- Front legs -->
+    <rect class="leg-front" x="72" y="140" width="10" height="45" rx="2"/>
+    <rect class="leg-front" x="100" y="140" width="10" height="45" rx="2"/>
+    <rect class="hoof" x="70" y="182" width="14" height="4"/>
+    <rect class="hoof" x="98" y="182" width="14" height="4"/>
+    <!-- Tail -->
+    <path class="tail" d="M52,128 q-10,8 -8,18" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <path class="tail-tuft" d="M42,142 q3,4 0,8 q-4,-2 -3,-8 Z"/>
+    <!-- Neck -->
+    <path class="neck" d="M125,115 L150,40 L168,40 L142,118 Z"/>
+    <!-- Mane -->
+    <path class="mane" d="M150,40 L168,40 L162,55 L154,55 Z M152,60 L166,60 L161,72 L155,72 Z M156,75 L164,75 L161,85 L157,85 Z"/>
+    <!-- Head -->
+    <ellipse class="head" cx="160" cy="32" rx="18" ry="14"/>
+    <!-- Snout extension -->
+    <ellipse class="snout" cx="173" cy="36" rx="8" ry="6"/>
+    <!-- Spots -->
+    <ellipse class="spot" cx="80"  cy="125" rx="6" ry="5"/>
+    <ellipse class="spot" cx="100" cy="120" rx="7" ry="5"/>
+    <ellipse class="spot" cx="118" cy="128" rx="6" ry="4"/>
+    <ellipse class="spot" cx="90"  cy="138" rx="5" ry="4"/>
+    <ellipse class="spot" cx="110" cy="138" rx="6" ry="4"/>
+    <ellipse class="spot-neck" cx="148" cy="60" rx="5" ry="6"/>
+    <ellipse class="spot-neck" cx="156" cy="85" rx="4" ry="5"/>
+    <ellipse class="spot-neck" cx="152" cy="100" rx="5" ry="5"/>
+    <!-- Horns (ossicones) -->
+    <rect class="horn" x="150" y="14" width="3" height="10" rx="1"/>
+    <rect class="horn" x="163" y="14" width="3" height="10" rx="1"/>
+    <circle class="horn-tip" cx="151.5" cy="13" r="2.5"/>
+    <circle class="horn-tip" cx="164.5" cy="13" r="2.5"/>
+    <!-- Ear -->
+    <ellipse class="ear" cx="146" cy="22" rx="5" ry="3" transform="rotate(-30 146 22)"/>
+    <!-- Eye -->
+    <circle class="eye" cx="158" cy="28" r="2"/>
+  </g>
+</svg>
