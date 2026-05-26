@@ -43,6 +43,8 @@ import MarsPackingView from './views/MarsPackingView';
 import DetectiveCluesView from './views/DetectiveCluesView';
 import RiverRescueView from './views/RiverRescueView';
 const ColoringView = lazy(() => import('./views/ColoringView'));
+// Phaser game (~1 MB dep) — lazy-loaded like ColoringView để không phình bundle ban đầu.
+const WhackMathView = lazy(() => import('./views/WhackMathView'));
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -86,6 +88,7 @@ type View =
   | 'marspack'
   | 'detective'
   | 'riverrescue'
+  | 'whackmath'
   | 'gameisland'
   | 'knowledge';
 
@@ -110,6 +113,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'marspack',
   'detective',
   'riverrescue',
+  'whackmath',
   'challenge',
 ]);
 
@@ -244,6 +248,9 @@ export default function App() {
       case 'riverrescue':
         setView('riverrescue');
         break;
+      case 'whackmath':
+        setView('whackmath');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -290,6 +297,11 @@ export default function App() {
         {view === 'marspack' && <MarsPackingView onBack={goGameIsland} />}
         {view === 'detective' && <DetectiveCluesView onBack={goGameIsland} />}
         {view === 'riverrescue' && <RiverRescueView onBack={goGameIsland} />}
+        {view === 'whackmath' && (
+          <Suspense fallback={<div className="p-8 text-center text-slate-400">Đang tải…</div>}>
+            <WhackMathView onBack={goGameIsland} />
+          </Suspense>
+        )}
         {view === 'coloring' && (
           <Suspense
             fallback={

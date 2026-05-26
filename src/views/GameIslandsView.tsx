@@ -19,6 +19,7 @@ type GameKey =
   | 'marspack'
   | 'detective'
   | 'riverrescue'
+  | 'whackmath'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -215,6 +216,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Đưa cả đội qua sông an toàn — đừng để ai bị ăn hay bị bắt',
     gradient: 'from-sky-500 via-cyan-500 to-emerald-500',
     shadow: 'shadow-sky-200',
+    age: 'primary',
+  },
+  {
+    key: 'whackmath',
+    emoji: '🔨',
+    title: 'Đập thú toán học',
+    subtitle: 'Đập đúng số chẵn / số lẻ — phản xạ nhanh nào!',
+    gradient: 'from-amber-500 via-orange-500 to-rose-500',
+    shadow: 'shadow-amber-200',
     age: 'primary',
   },
   {
