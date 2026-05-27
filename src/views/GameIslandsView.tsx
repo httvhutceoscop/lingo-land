@@ -21,6 +21,7 @@ type GameKey =
   | 'riverrescue'
   | 'whackmath'
   | 'fruitrescue'
+  | 'spellingking'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -235,6 +236,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Đập sâu hại, bảo vệ lợn con và táo chín',
     gradient: 'from-emerald-500 via-lime-500 to-yellow-500',
     shadow: 'shadow-emerald-200',
+    age: 'primary',
+  },
+  {
+    key: 'spellingking',
+    emoji: '👑',
+    title: 'Vua chính tả',
+    subtitle: 'Đập từ viết sai (L/N, CH/TR, tiếng Anh) để sửa lỗi',
+    gradient: 'from-violet-500 via-fuchsia-500 to-pink-500',
+    shadow: 'shadow-violet-200',
     age: 'primary',
   },
   {
