@@ -20,6 +20,7 @@ type GameKey =
   | 'detective'
   | 'riverrescue'
   | 'whackmath'
+  | 'fruitrescue'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -225,6 +226,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Đập đúng số chẵn / số lẻ — phản xạ nhanh nào!',
     gradient: 'from-amber-500 via-orange-500 to-rose-500',
     shadow: 'shadow-amber-200',
+    age: 'primary',
+  },
+  {
+    key: 'fruitrescue',
+    emoji: '🐛',
+    title: 'Giải cứu trái cây',
+    subtitle: 'Đập sâu hại, bảo vệ lợn con và táo chín',
+    gradient: 'from-emerald-500 via-lime-500 to-yellow-500',
+    shadow: 'shadow-emerald-200',
     age: 'primary',
   },
   {

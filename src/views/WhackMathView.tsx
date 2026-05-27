@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
 import { LANG_SPEAK_DEFAULT, speak } from '../lib/audio';
+import { playBip, playTing } from '../lib/beep';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * GAME: "Đập Thú Toán Học: Thợ Săn Số Chẵn / Số Lẻ"
@@ -70,92 +71,6 @@ const STORE_KEY = 'lingoland_whackmath_hs'; // localStorage: điểm cao
 // nó emit event này; Scene lắng nghe và cập nhật biến kiểm tra `targetType`
 // của mình ngay lập tức — không phụ thuộc vào registry / polling.
 const EV_UPDATE_TARGET_TYPE = 'UPDATE_TARGET_TYPE';
-
-/* ===========================================================================
- * 1.5 BEEP SYNTHESIZER (WebAudio)
- *
- * Sinh trực tiếp 2 hiệu ứng âm thanh ngắn ngay trong trình duyệt — không cần
- * tải file audio nào:
- *  - Ting (đập ĐÚNG): hai sóng sin chồng nhau (A5 + E6) cho cảm giác
- *    chuông trong trẻo, decay nhanh ~0.35s.
- *  - Bíp (đập SAI)  : sóng square thấp ~180Hz xuống dần 120Hz, có chất
- *    "buzz" hơi thô để bé biết là không tốt.
- * AudioContext được khởi tạo lười (lần đập đầu tiên — vốn đã có user gesture
- * từ nút BẮT ĐẦU + tap chuột nên không bị browser chặn).
- * ========================================================================= */
-
-let _audioCtx: AudioContext | null = null;
-function getAudioCtx(): AudioContext | null {
-  if (_audioCtx) return _audioCtx;
-  if (typeof window === 'undefined') return null;
-  const AC =
-    window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!AC) return null;
-  try {
-    _audioCtx = new AC();
-  } catch {
-    return null;
-  }
-  return _audioCtx;
-}
-
-/** Phát tiếng "Ting" vui tai khi đập trúng. */
-function playTing() {
-  const ctx = getAudioCtx();
-  if (!ctx) return;
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
-  const now = ctx.currentTime;
-
-  // Sóng nền: A5 (~880Hz) — tone trong sáng làm hạt nhân của tiếng "ting".
-  const gain1 = ctx.createGain();
-  gain1.connect(ctx.destination);
-  gain1.gain.setValueAtTime(0, now);
-  gain1.gain.linearRampToValueAtTime(0.22, now + 0.005);
-  gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-  const osc1 = ctx.createOscillator();
-  osc1.type = 'sine';
-  osc1.frequency.setValueAtTime(880, now);
-  osc1.connect(gain1);
-
-  // Hài âm cao hơn (E6 ~1318Hz) tắt nhanh → cho hiệu ứng "leng keng".
-  const gain2 = ctx.createGain();
-  gain2.connect(ctx.destination);
-  gain2.gain.setValueAtTime(0, now);
-  gain2.gain.linearRampToValueAtTime(0.12, now + 0.005);
-  gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-  const osc2 = ctx.createOscillator();
-  osc2.type = 'sine';
-  osc2.frequency.setValueAtTime(1318, now);
-  osc2.connect(gain2);
-
-  osc1.start(now);
-  osc2.start(now);
-  osc1.stop(now + 0.4);
-  osc2.stop(now + 0.22);
-}
-
-/** Phát tiếng "Bíp" trầm khi đập sai. */
-function playBip() {
-  const ctx = getAudioCtx();
-  if (!ctx) return;
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
-  const now = ctx.currentTime;
-
-  const gain = ctx.createGain();
-  gain.connect(ctx.destination);
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
-
-  const osc = ctx.createOscillator();
-  osc.type = 'square'; // square wave cho cảm giác "buzz" thô
-  osc.frequency.setValueAtTime(180, now);
-  // Trượt xuống 120Hz cho cảm giác "rớt" — củng cố thông điệp "sai".
-  osc.frequency.linearRampToValueAtTime(120, now + 0.22);
-  osc.connect(gain);
-  osc.start(now);
-  osc.stop(now + 0.3);
-}
 
 /* ===========================================================================
  * 2. PHASER SCENE
