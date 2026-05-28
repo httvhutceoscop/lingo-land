@@ -4,10 +4,13 @@
  * Bộ 3 hiệu ứng âm thanh ngắn dùng chung cho các trò chơi phản xạ kiểu
  * "đập thú". Sinh trực tiếp trong trình duyệt — không cần tải file audio:
  *
- *  - playTing(): chuông trong trẻo, A5 + E6 chồng nhau, dùng khi bé làm ĐÚNG.
- *  - playBip() : buzz trầm 180→120Hz, dùng khi bé làm SAI (chạm nhầm).
- *  - playMiss(): tiếng "doh" nhẹ nhàng, sine 520→220Hz, dùng khi bé bỏ lỡ
- *                mục tiêu (vd: sâu/quái thoát ra hố mà không kịp đập).
+ *  - playTing() : chuông trong trẻo, A5 + E6 chồng nhau, dùng khi bé làm ĐÚNG.
+ *  - playBip()  : buzz trầm 180→120Hz, dùng khi bé làm SAI (chạm nhầm).
+ *  - playMiss() : tiếng "doh" nhẹ nhàng, sine 520→220Hz, dùng khi bé bỏ lỡ
+ *                 mục tiêu (vd: sâu/quái thoát ra hố mà không kịp đập).
+ *  - playChomp(): tiếng "chomp chomp" tượng trưng cho tiếng NHAI — hai nhịp
+ *                 sawtooth tần số thấp 110→55Hz pha với 1 noise burst lọc
+ *                 thấp ~600Hz để có texture "mushy" như cắn vào trái cây.
  *
  * AudioContext được khởi tạo LƯỜI ở lần phát đầu tiên (vốn xảy ra ngay sau
  * thao tác chạm của bé nên không bị browser chặn vì thiếu user gesture).
@@ -93,6 +96,79 @@ export function playBip() {
   osc.connect(gain);
   osc.start(now);
   osc.stop(now + 0.3);
+}
+
+/**
+ * Phát tiếng "Chomp Chomp" — 2 nhịp nhai liên tiếp dành cho game cho thú ăn.
+ *
+ * Kết cấu mỗi NHỊP:
+ *   1) Oscillator SAWTOOTH 110Hz → 55Hz (~120ms) — thân chính, đặc rậm, gợi
+ *      cảm giác "ngậm vào". Sawtooth giàu hài âm hơn sine ⇒ texture dày.
+ *   2) Noise burst 80ms lọc lowpass ~600Hz — texture "ẩm/mushy" như đang
+ *      cắn vào trái cây/cỏ.
+ *
+ * Hai nhịp cách nhau 190ms → tạo nhịp điệu "chomp ... chomp" rõ ràng.
+ */
+export function playChomp() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  ensureResumed(ctx);
+  const baseNow = ctx.currentTime;
+
+  // Dựng MỘT nhịp "chomp" tại offset (giây) tính từ baseNow.
+  const buildOne = (offset: number) => {
+    const start = baseNow + offset;
+
+    // ── (1) Sawtooth tần số thấp — phần thân tiếng nhai ─────────────────
+    const oscGain = ctx.createGain();
+    oscGain.connect(ctx.destination);
+    oscGain.gain.setValueAtTime(0, start);
+    // Attack rất nhanh 12ms → âm bật ngay khi cắn xuống.
+    oscGain.gain.linearRampToValueAtTime(0.28, start + 0.012);
+    // Decay 130ms về gần 0 — đủ dài để cảm thấy "nhồm nhoàm" mà không lê thê.
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(110, start);
+    // Trượt xuống 55Hz cho cảm giác "ngậm vào" (pitch drop = swallow feel).
+    osc.frequency.exponentialRampToValueAtTime(55, start + 0.12);
+    osc.connect(oscGain);
+
+    // ── (2) Noise burst lọc thấp — texture mushy ────────────────────────
+    const noiseLen = 0.08; // 80ms
+    const sampleRate = ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, Math.floor(noiseLen * sampleRate), sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.6;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    // Lowpass ~600Hz → cắt phần "sssh" cao, giữ lại "fwwff" trầm = ướt/ẩm.
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 600;
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, start);
+    noiseGain.gain.linearRampToValueAtTime(0.16, start + 0.008);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);
+
+    noise.connect(lp);
+    lp.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    osc.start(start);
+    osc.stop(start + 0.16);
+    noise.start(start);
+    // noise tự tắt khi hết buffer; không cần stop() thủ công.
+  };
+
+  // "Chomp ... Chomp" — 2 nhịp cách 190ms.
+  buildOne(0);
+  buildOne(0.19);
 }
 
 /** Phát tiếng "Hụt" nhẹ khi bé BỎ LỠ mục tiêu (đối tượng cần đập tự thoát). */

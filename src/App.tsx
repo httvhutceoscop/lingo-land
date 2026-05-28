@@ -48,6 +48,7 @@ const WhackMathView = lazy(() => import('./views/WhackMathView'));
 const FruitRescueView = lazy(() => import('./views/FruitRescueView'));
 const SpellingKingView = lazy(() => import('./views/SpellingKingView'));
 import TracerKidsView from './views/TracerKidsView';
+import FeedCountView from './views/FeedCountView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -95,6 +96,7 @@ type View =
   | 'fruitrescue'
   | 'spellingking'
   | 'tracerkids'
+  | 'feedcount'
   | 'gameisland'
   | 'knowledge';
 
@@ -123,6 +125,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'fruitrescue',
   'spellingking',
   'tracerkids',
+  'feedcount',
   'challenge',
 ]);
 
@@ -269,6 +272,9 @@ export default function App() {
       case 'tracerkids':
         setView('tracerkids');
         break;
+      case 'feedcount':
+        setView('feedcount');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -331,6 +337,7 @@ export default function App() {
           </Suspense>
         )}
         {view === 'tracerkids' && <TracerKidsView onBack={goGameIsland} />}
+        {view === 'feedcount' && <FeedCountView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

@@ -23,6 +23,7 @@ type GameKey =
   | 'fruitrescue'
   | 'spellingking'
   | 'tracerkids'
+  | 'feedcount'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -255,6 +256,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Tập tô chữ A-Z và số 0-9 bằng cọ sơn nhiều màu',
     gradient: 'from-amber-400 via-orange-500 to-rose-500',
     shadow: 'shadow-orange-200',
+    age: 'preschool',
+  },
+  {
+    key: 'feedcount',
+    emoji: '🍽️',
+    title: 'Cho thú ăn — đếm số',
+    subtitle: 'Kéo đúng số lượng thức ăn vào miệng thú cưng',
+    gradient: 'from-yellow-400 via-amber-500 to-emerald-500',
+    shadow: 'shadow-amber-200',
     age: 'preschool',
   },
   {
