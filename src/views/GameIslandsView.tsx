@@ -24,6 +24,7 @@ type GameKey =
   | 'spellingking'
   | 'tracerkids'
   | 'feedcount'
+  | 'bubbleletters'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -265,6 +266,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Kéo đúng số lượng thức ăn vào miệng thú cưng',
     gradient: 'from-yellow-400 via-amber-500 to-emerald-500',
     shadow: 'shadow-amber-200',
+    age: 'preschool',
+  },
+  {
+    key: 'bubbleletters',
+    emoji: '🫧',
+    title: 'Bong bóng chữ cái',
+    subtitle: 'Chú voi thổi bong bóng — chọc đúng chữ để cộng điểm',
+    gradient: 'from-sky-400 via-blue-500 to-indigo-500',
+    shadow: 'shadow-sky-200',
     age: 'preschool',
   },
   {
