@@ -4,6 +4,34 @@ export type ColoringRegion = {
   defaultFill?: string;
 };
 
+export type ColoringCategoryId =
+  | 'animals'
+  | 'people'
+  | 'flowers'
+  | 'fruits'
+  | 'toys'
+  | 'vehicles'
+  | 'buildings'
+  | 'other';
+
+export type ColoringCategory = {
+  id: ColoringCategoryId;
+  vi: string;
+  emoji: string;
+  gradient: string;
+};
+
+export const COLORING_CATEGORIES: ColoringCategory[] = [
+  { id: 'animals', vi: 'Động vật', emoji: '🐾', gradient: 'from-amber-100 via-orange-100 to-rose-100' },
+  { id: 'people', vi: 'Con người', emoji: '👧', gradient: 'from-pink-100 via-fuchsia-100 to-purple-100' },
+  { id: 'flowers', vi: 'Hoa lá', emoji: '🌸', gradient: 'from-rose-100 via-pink-100 to-fuchsia-100' },
+  { id: 'fruits', vi: 'Trái cây', emoji: '🍎', gradient: 'from-red-100 via-orange-100 to-amber-100' },
+  { id: 'toys', vi: 'Đồ chơi', emoji: '🧸', gradient: 'from-yellow-100 via-amber-100 to-lime-100' },
+  { id: 'vehicles', vi: 'Phương tiện', emoji: '🚗', gradient: 'from-sky-100 via-blue-100 to-indigo-100' },
+  { id: 'buildings', vi: 'Nhà cửa', emoji: '🏠', gradient: 'from-emerald-100 via-teal-100 to-cyan-100' },
+  { id: 'other', vi: 'Khác', emoji: '🎨', gradient: 'from-slate-100 via-stone-100 to-zinc-100' },
+];
+
 export type ColoringPicture = {
   id: string;
   vi: string;
@@ -11,6 +39,7 @@ export type ColoringPicture = {
   viewBox: string;
   transform?: string;
   regions: ColoringRegion[];
+  category: ColoringCategoryId;
 };
 
 // 16 colors for the palette (4 rows × 4 cols in the UI)
@@ -122,6 +151,25 @@ function humanize(slug: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+function inferAutoCategory(slug: string): ColoringCategoryId {
+  const s = slug.toLowerCase();
+  // People first so "paperdoll" wins over the "doll" toy keyword.
+  if (/chibi|paperdoll|princess|nordic/.test(s)) {
+    return 'people';
+  }
+  // Toys before animals so composite names like "teddy bear" don't fall into animals.
+  if (/teddy|doll|ball|candy|crayon|football|rocking|hoop|maraca|pacifier|bucket|skate|trumpet/.test(s)) {
+    return 'toys';
+  }
+  if (/scooter|tricycle|bicycle|bike|^car|-car|\bcar-/.test(s)) {
+    return 'vehicles';
+  }
+  if (/bear|bird|cat|chick|cow|crocodile|dog|eagle|elephant|fish|fox|giraffe|hippo|kangaroo|lion|monkey|panda|pig|rabbit|rhino|snake|tiger|wolf|zebra|shark|dinosaur|horse/.test(s)) {
+    return 'animals';
+  }
+  return 'other';
+}
+
 const autoPictures: ColoringPicture[] = Object.entries(svgModules)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([path, svg]) => {
@@ -134,6 +182,7 @@ const autoPictures: ColoringPicture[] = Object.entries(svgModules)
       viewBox: asset.viewBox,
       transform: asset.transform,
       regions: svgAssetToRegions(asset.paths),
+      category: inferAutoCategory(slug),
     };
   })
   .filter((p) => p.regions.length > 0);
@@ -146,6 +195,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'apple',
     vi: 'Quả táo',
     emoji: '🍎',
+    category: 'fruits',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -170,6 +220,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'fish',
     vi: 'Con cá',
     emoji: '🐠',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -199,6 +250,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'car',
     vi: 'Ô tô',
     emoji: '🚗',
+    category: 'vehicles',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -227,6 +279,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'butterfly',
     vi: 'Bươm bướm',
     emoji: '🦋',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -255,6 +308,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'house',
     vi: 'Ngôi nhà',
     emoji: '🏠',
+    category: 'buildings',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -287,6 +341,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'flower',
     vi: 'Bông hoa',
     emoji: '🌸',
+    category: 'flowers',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -327,6 +382,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'elsa',
     vi: 'Công chúa Elsa',
     emoji: '👸',
+    category: 'people',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -387,6 +443,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'cat',
     vi: 'Con mèo',
     emoji: '🐱',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -433,6 +490,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'bear',
     vi: 'Con gấu',
     emoji: '🐻',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -484,6 +542,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'rabbit',
     vi: 'Con thỏ',
     emoji: '🐰',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -538,6 +597,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'pig',
     vi: 'Con lợn',
     emoji: '🐷',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {
@@ -594,6 +654,7 @@ export const COLORING_PICTURES: ColoringPicture[] = [
     id: 'chick',
     vi: 'Gà con',
     emoji: '🐥',
+    category: 'animals',
     viewBox: '0 0 200 200',
     regions: [
       {

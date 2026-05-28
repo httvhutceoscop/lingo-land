@@ -1,14 +1,17 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
-  COLOR_PALETTE,
+  COLORING_CATEGORIES,
   COLORING_PICTURES,
+  COLOR_PALETTE,
   DEFAULT_FILL,
   OUTLINE_COLOR,
+  type ColoringCategory,
+  type ColoringCategoryId,
   type ColoringPicture,
 } from '../data/coloringData';
 import { LANG_SPEAK_DEFAULT, speak } from '../lib/audio';
 
-type Phase = 'library' | 'coloring';
+type Phase = 'categories' | 'pictures' | 'coloring';
 type AllFills = Record<string, Record<string, string>>;
 
 const STORAGE_KEY = 'lingoland_coloring';
@@ -46,7 +49,9 @@ type ColoringViewProps = {
 };
 
 export default function ColoringView({ onBack }: ColoringViewProps) {
-  const [phase, setPhase] = useState<Phase>('library');
+  const [phase, setPhase] = useState<Phase>('categories');
+  const [activeCategoryId, setActiveCategoryId] =
+    useState<ColoringCategoryId | null>(null);
   const [activePictureId, setActivePictureId] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>(COLOR_PALETTE[0]);
   const [allFills, setAllFills] = useState<AllFills>(() => loadFills());
@@ -54,19 +59,40 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
   const [resetArmed, setResetArmed] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
   const [search, setSearch] = useState('');
-  const libraryScrollRef = useRef({ mainTop: 0, winY: 0 });
+  const picturesScrollRef = useRef({ mainTop: 0, winY: 0 });
+
+  const picturesByCategory = useMemo(() => {
+    const map = new Map<ColoringCategoryId, ColoringPicture[]>();
+    for (const cat of COLORING_CATEGORIES) map.set(cat.id, []);
+    for (const pic of COLORING_PICTURES) {
+      const list = map.get(pic.category);
+      if (list) list.push(pic);
+    }
+    return map;
+  }, []);
+
+  const activeCategory: ColoringCategory | null = useMemo(
+    () =>
+      COLORING_CATEGORIES.find((c) => c.id === activeCategoryId) ?? null,
+    [activeCategoryId]
+  );
+
+  const categoryPictures = useMemo(
+    () => (activeCategoryId ? picturesByCategory.get(activeCategoryId) ?? [] : []),
+    [activeCategoryId, picturesByCategory]
+  );
 
   const filteredPictures = useMemo(() => {
     const q = normalizeForSearch(search);
     const base = q
-      ? COLORING_PICTURES.filter((p) => normalizeForSearch(p.vi).includes(q))
-      : COLORING_PICTURES;
+      ? categoryPictures.filter((p) => normalizeForSearch(p.vi).includes(q))
+      : categoryPictures;
     return [...base].sort((a, b) => {
       const aFilled = Object.keys(allFills[a.id] ?? {}).length > 0 ? 1 : 0;
       const bFilled = Object.keys(allFills[b.id] ?? {}).length > 0 ? 1 : 0;
       return aFilled - bFilled;
     });
-  }, [search, allFills]);
+  }, [search, categoryPictures, allFills]);
 
   useLayoutEffect(() => {
     const main = document.querySelector('main');
@@ -74,8 +100,8 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
       if (main) main.scrollTop = mainTop;
       window.scrollTo(0, winY);
     };
-    if (phase === 'library') {
-      const { mainTop, winY } = libraryScrollRef.current;
+    if (phase === 'pictures') {
+      const { mainTop, winY } = picturesScrollRef.current;
       apply(mainTop, winY);
       const id = requestAnimationFrame(() => apply(mainTop, winY));
       return () => cancelAnimationFrame(id);
@@ -90,7 +116,6 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
 
   const activeFills = activePicture ? allFills[activePicture.id] ?? {} : {};
 
-  // Speak the title once when entering the coloring phase
   useEffect(() => {
     if (phase !== 'coloring' || !activePicture) return;
     const t = window.setTimeout(() => {
@@ -99,16 +124,28 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
     return () => window.clearTimeout(t);
   }, [phase, activePicture]);
 
-  // Auto-disarm the reset confirmation after RESET_CONFIRM_MS
   useEffect(() => {
     if (!resetArmed) return;
     const t = window.setTimeout(() => setResetArmed(false), RESET_CONFIRM_MS);
     return () => window.clearTimeout(t);
   }, [resetArmed]);
 
+  const openCategory = (id: ColoringCategoryId) => {
+    picturesScrollRef.current = { mainTop: 0, winY: 0 };
+    setActiveCategoryId(id);
+    setSearch('');
+    setPhase('pictures');
+  };
+
+  const backToCategories = () => {
+    setPhase('categories');
+    setActiveCategoryId(null);
+    setSearch('');
+  };
+
   const openPicture = (id: string) => {
     const main = document.querySelector('main');
-    libraryScrollRef.current = {
+    picturesScrollRef.current = {
       mainTop: main?.scrollTop ?? 0,
       winY: window.scrollY,
     };
@@ -118,8 +155,8 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
     setPulsingRegion(null);
   };
 
-  const backToLibrary = () => {
-    setPhase('library');
+  const backToPictures = () => {
+    setPhase('pictures');
     setActivePictureId(null);
     setResetArmed(false);
     setPulsingRegion(null);
@@ -152,8 +189,8 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
     setResetArmed(false);
   };
 
-  // ─── LIBRARY ───────────────────────────────────────────────────────
-  if (phase === 'library' || !activePicture) {
+  // ─── CATEGORIES ────────────────────────────────────────────────────
+  if (phase === 'categories') {
     return (
       <>
         <button
@@ -168,7 +205,62 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
             Tô màu vui
           </h2>
           <p className="text-slate-500 text-sm">
-            Chọn một bức tranh và tô màu theo ý thích.
+            Chọn một chủ đề để xem các bức tranh.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
+          {COLORING_CATEGORIES.map((cat) => {
+            const pics = picturesByCategory.get(cat.id) ?? [];
+            if (pics.length === 0) return null;
+            const filledCount = pics.reduce(
+              (n, p) =>
+                Object.keys(allFills[p.id] ?? {}).length > 0 ? n + 1 : n,
+              0
+            );
+            return (
+              <button
+                key={cat.id}
+                onClick={() => openCategory(cat.id)}
+                className={`bg-gradient-to-br ${cat.gradient} border-2 border-white/70 rounded-3xl p-4 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-2 text-center hover:shadow-md`}
+              >
+                <div className="text-5xl">{cat.emoji}</div>
+                <div className="font-black text-slate-700 text-sm">
+                  {cat.vi}
+                </div>
+                <div className="text-[10px] font-bold text-slate-500 bg-white/70 px-2 py-0.5 rounded-full">
+                  {pics.length} tranh
+                  {filledCount > 0 ? ` · ${filledCount} đã tô` : ''}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
+  // ─── PICTURES (within a category) ──────────────────────────────────
+  if (phase === 'pictures' || !activePicture) {
+    if (!activeCategory) {
+      // Defensive: should not happen, but bail to categories.
+      return null;
+    }
+    return (
+      <>
+        <button
+          onClick={backToCategories}
+          className="text-slate-400 font-bold hover:text-slate-600 transition-colors mb-4"
+        >
+          ← Chủ đề
+        </button>
+        <div className="text-center mb-5 max-w-md mx-auto">
+          <div className="text-7xl mb-3 floating">{activeCategory.emoji}</div>
+          <h2 className="text-3xl font-black mb-1 bg-gradient-to-r from-pink-500 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+            {activeCategory.vi}
+          </h2>
+          <p className="text-slate-500 text-sm">
+            {categoryPictures.length} bức tranh trong chủ đề này.
           </p>
         </div>
 
@@ -239,7 +331,7 @@ export default function ColoringView({ onBack }: ColoringViewProps) {
     <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-3 gap-2">
         <button
-          onClick={backToLibrary}
+          onClick={backToPictures}
           className="text-slate-400 font-bold hover:text-slate-600 text-sm shrink-0"
         >
           ← Thư viện
