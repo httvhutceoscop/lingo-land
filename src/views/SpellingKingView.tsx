@@ -133,14 +133,19 @@ const SCORE_HIT = 10;
 
 // Tốc độ theo level (1..5). React đẩy `level` qua registry, Scene poll mỗi
 // lần lập lịch sinh quái → khó tăng tức thì khi vượt mốc điểm.
+//
+// LƯU Ý chuyên biệt cho game chính tả: khác hai game whack-a-mole còn lại
+// (toán học chỉ liếc SỐ, sâu/táo chỉ nhìn HÌNH), ở đây bé phải ĐỌC + xử lý
+// NGÔN NGỮ → tốn thời gian hơn. Vì vậy ở các level đầu (1-2), thời gian
+// STAY được nới rộng 2.0-2.5 giây để bé kịp đọc cả các từ dài như
+// "Beautiful" / "Necessary" mà không phải bấm đại.
 type SpeedTable = { spawnMs: number; stayMs: number; riseMs: number };
 const SPEED_TABLE: Record<number, SpeedTable> = {
-  // STAY dài hơn các game khác — bé cần thời gian đọc từ.
-  1: { spawnMs: 1700, stayMs: 2200, riseMs: 280 },
-  2: { spawnMs: 1500, stayMs: 1950, riseMs: 250 },
-  3: { spawnMs: 1300, stayMs: 1700, riseMs: 230 },
-  4: { spawnMs: 1150, stayMs: 1500, riseMs: 210 },
-  5: { spawnMs: 1000, stayMs: 1300, riseMs: 200 },
+  1: { spawnMs: 1800, stayMs: 2500, riseMs: 280 }, // 2.5s — thoải mái cho người mới
+  2: { spawnMs: 1600, stayMs: 2150, riseMs: 250 }, // 2.15s — vẫn đủ rộng để đọc
+  3: { spawnMs: 1350, stayMs: 1850, riseMs: 230 },
+  4: { spawnMs: 1150, stayMs: 1600, riseMs: 210 },
+  5: { spawnMs: 1000, stayMs: 1400, riseMs: 200 }, // 1.4s — vẫn hơn các game khác
 };
 const getSpeed = (level: number): SpeedTable =>
   SPEED_TABLE[Math.min(5, Math.max(1, level))];
@@ -275,27 +280,30 @@ class SpellingScene extends Phaser.Scene {
     const showIncorrect = Math.random() < 0.5;
     const word = showIncorrect ? pair.incorrect : pair.correct;
 
-    m.pop(word, showIncorrect);
+    // Truyền cả `correct` (chữ đúng tương ứng) cho mole — dùng để dạy bé
+    // ngay tại chỗ khi bé đập trúng biến thể viết sai.
+    m.pop(word, showIncorrect, pair.correct);
   }
 
   /** Xử lý khi bé chạm vào một con thú đang nhô lên. */
   private handleTap(m: SpellingMole) {
     if (m.state !== 'STAYING' && m.state !== 'RISING') return;
 
-    // Hiệu ứng búa & thu nhỏ biến mất con thú.
     this.playHammer(m.x, m.y - 18);
     const wasIncorrect = m.isIncorrect;
-    m.hit();
 
     if (wasIncorrect) {
-      // ĐÚNG yêu cầu: đập trúng từ SAI → nổ chữ + ngôi sao + Ting.
+      // ĐÚNG yêu cầu: đập trúng từ SAI → nổ chữ + ngôi sao + Ting + hiện
+      // chữ ĐÚNG màu xanh lá 0.5s để bé HỌC NGAY từ lỗi sai vừa "sửa".
       this.particles?.explode(18, m.x, m.y - 24);
       playTing();
+      m.hitWithReveal();
       this.game.events.emit('correct');
     } else {
-      // SAI: đập nhầm từ ĐÚNG → ❌ + Bíp + báo trừ mạng cho React.
+      // SAI: đập nhầm từ ĐÚNG → ❌ + Bíp + biến mất nhanh + báo trừ mạng.
       this.flashWrongMark(m.x, m.y - 24);
       playBip();
+      m.hit();
       this.game.events.emit('wrong');
     }
   }
@@ -354,6 +362,12 @@ class SpellingMole {
   /** Từ hiện tại con thú mang theo + nó có phải là biến thể VIẾT SAI hay không. */
   word = '';
   isIncorrect = false;
+  /**
+   * Chữ ĐÚNG CHÍNH TẢ tương ứng (luôn được nhồi từ ngoài vào). Dùng để hiển
+   * thị "đáp án" màu xanh lá khi bé đập trúng biến thể viết sai → bộ não bé
+   * gắn ngay "sai → đúng" để nhớ.
+   */
+  correctWord = '';
   state: MoleState = 'IDLE';
   private stayTimer?: Phaser.Time.TimerEvent;
 
@@ -403,11 +417,17 @@ class SpellingMole {
     this.container.setMask(maskGfx.createGeometryMask());
   }
 
-  /** Trồi lên kèm 1 từ. `isIncorrect` cho biết đây là biến thể viết SAI. */
-  pop(word: string, isIncorrect: boolean) {
+  /**
+   * Trồi lên kèm 1 từ.
+   *  - `word`        : từ hiển thị trên đầu con thú (đúng hay sai tuỳ rút thăm).
+   *  - `isIncorrect` : true nếu `word` là biến thể VIẾT SAI.
+   *  - `correctWord` : chữ ĐÚNG CHÍNH TẢ của cặp này — dùng cho reveal khi bị đập.
+   */
+  pop(word: string, isIncorrect: boolean, correctWord: string) {
     if (this.state !== 'IDLE') return;
     this.word = word;
     this.isIncorrect = isIncorrect;
+    this.correctWord = correctWord;
     this.wordLabel.setText(word).setVisible(true);
     this.state = 'RISING';
     this.container.setVisible(true);
@@ -446,6 +466,76 @@ class SpellingMole {
         // Bỏ sót: theo luật chơi của game này KHÔNG có hình phạt — bé sẽ thử
         // lại ở lần pop kế tiếp. Không emit gì cho React.
       },
+    });
+  }
+
+  /**
+   * Phiên bản "có dạy" của hit() — dùng khi bé đập trúng từ VIẾT SAI:
+   *
+   *   1. Gạch ngang đường đỏ qua chữ sai.
+   *   2. Bật chữ ĐÚNG (xanh lá) ngay phía trên với scale nhảy lên.
+   *   3. Giữ nguyên cảnh đó 500ms để bé ghi nhớ "sai → đúng".
+   *   4. Hết 500ms thì mới chạy hit-animation (thu nhỏ + biến mất) như bình thường.
+   */
+  hitWithReveal() {
+    if (this.state !== 'STAYING' && this.state !== 'RISING') return;
+    this.state = 'HIT';
+    if (this.stayTimer) this.stayTimer.remove();
+    this.scene.tweens.killTweensOf(this.container);
+
+    // ── 1. Vẽ đường gạch ngang đỏ trên chữ sai ─────────────────────────
+    // wordLabel có origin (0.5, 0.5) → tâm tại (container.x, container.y - 46).
+    const labelCx = this.container.x;
+    const labelCy = this.container.y - 46;
+    const halfW = Math.max(20, this.wordLabel.width / 2) + 6;
+    const strike = this.scene.add.graphics();
+    strike.setDepth(this.container.depth + 5);
+    strike.lineStyle(4, 0xef4444, 1);
+    strike.beginPath();
+    strike.moveTo(labelCx - halfW, labelCy);
+    strike.lineTo(labelCx + halfW, labelCy);
+    strike.strokePath();
+
+    // ── 2. Hiện chữ ĐÚNG màu xanh lá ngay TRÊN chữ sai, scale nhảy lên ─
+    const correctLabel = this.scene.add
+      .text(this.container.x, this.container.y - 78, this.correctWord, {
+        fontSize: '24px',
+        fontStyle: 'bold',
+        fontFamily: 'Nunito, sans-serif',
+        color: '#4ade80', // green-400
+        stroke: '#052e16', // viền xanh đậm để nổi trên mọi nền
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5)
+      .setDepth(this.container.depth + 6)
+      .setScale(0.3);
+    this.scene.tweens.add({
+      targets: correctLabel,
+      scale: 1,
+      y: this.container.y - 86,
+      duration: 220,
+      ease: 'Back.easeOut',
+    });
+
+    // ── 3. Sau 500ms: gỡ effect + chạy hit-animation thu nhỏ biến mất ──
+    this.scene.time.delayedCall(500, () => {
+      strike.destroy();
+      correctLabel.destroy();
+      this.scene.tweens.add({
+        targets: this.container,
+        scale: 0.4,
+        alpha: 0,
+        duration: 220,
+        onComplete: () => {
+          this.container
+            .setScale(1)
+            .setAlpha(1)
+            .setY(this.holeY + BASE_Y_DY)
+            .setVisible(false);
+          this.wordLabel.setVisible(false);
+          this.state = 'IDLE';
+        },
+      });
     });
   }
 
