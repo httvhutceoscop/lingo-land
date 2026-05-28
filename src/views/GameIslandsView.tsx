@@ -22,6 +22,7 @@ type GameKey =
   | 'whackmath'
   | 'fruitrescue'
   | 'spellingking'
+  | 'tracerkids'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -246,6 +247,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-violet-500 via-fuchsia-500 to-pink-500',
     shadow: 'shadow-violet-200',
     age: 'primary',
+  },
+  {
+    key: 'tracerkids',
+    emoji: '🎨',
+    title: 'Thợ sơn tí hon',
+    subtitle: 'Tập tô chữ A-Z và số 0-9 bằng cọ sơn nhiều màu',
+    gradient: 'from-amber-400 via-orange-500 to-rose-500',
+    shadow: 'shadow-orange-200',
+    age: 'preschool',
   },
   {
     key: 'challenge',
