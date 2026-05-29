@@ -27,6 +27,7 @@ type GameKey =
   | 'bubbleletters'
   | 'connectdots'
   | 'dinoalphabet'
+  | 'fruitscale'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -295,6 +296,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Ghép trứng chữ thường về với khủng long mẹ chữ HOA',
     gradient: 'from-emerald-400 via-green-500 to-lime-500',
     shadow: 'shadow-emerald-200',
+    age: 'preschool',
+  },
+  {
+    key: 'fruitscale',
+    emoji: '⚖️',
+    title: 'Cân trái cây',
+    subtitle: 'Đặt đúng số quả lên đĩa để cân thăng bằng — tập đếm',
+    gradient: 'from-pink-400 via-rose-500 to-amber-500',
+    shadow: 'shadow-rose-200',
     age: 'preschool',
   },
   {
