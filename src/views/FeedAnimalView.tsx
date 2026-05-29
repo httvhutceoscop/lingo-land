@@ -396,7 +396,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
           const isWrong = wrongId === f.id;
           const isEaten = eatenFoodId === f.id;
           return (
-            <div key={f.id} className="aspect-square">
+            <div key={f.id} style={{ height: 110 }}>
               <button
                 type="button"
                 disabled={solved || isEaten}
@@ -421,7 +421,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
                   cursor: solved ? 'default' : 'grab',
                 }}
               >
-                <span style={{ fontSize: 56, lineHeight: 1 }}>{f.emoji}</span>
+                <span style={{ fontSize: 40, lineHeight: 1 }}>{f.emoji}</span>
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
                   {f.en}
                 </span>
