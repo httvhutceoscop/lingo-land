@@ -11,6 +11,9 @@
  *  - playChomp(): tiếng "chomp chomp" tượng trưng cho tiếng NHAI — hai nhịp
  *                 sawtooth tần số thấp 110→55Hz pha với 1 noise burst lọc
  *                 thấp ~600Hz để có texture "mushy" như cắn vào trái cây.
+ *  - playPop()  : tiếng "BÓC!" bong bóng nổ — sine sweep 1400→350Hz cực
+ *                 nhanh (~90ms) với envelope sắc gọn. Dùng cho game bong
+ *                 bóng — phản hồi nhanh, vui tai, kích thích bé chọc thêm.
  *
  * AudioContext được khởi tạo LƯỜI ở lần phát đầu tiên (vốn xảy ra ngay sau
  * thao tác chạm của bé nên không bị browser chặn vì thiếu user gesture).
@@ -169,6 +172,43 @@ export function playChomp() {
   // "Chomp ... Chomp" — 2 nhịp cách 190ms.
   buildOne(0);
   buildOne(0.19);
+}
+
+/**
+ * Phát tiếng "BÓC!" bong bóng nổ — dành cho game chọc bong bóng.
+ *
+ * Thiết kế:
+ *   - Sóng SINE thuần (mịn, không gắt) — đặc trưng tiếng bóng xà phòng vỡ.
+ *   - Tần số quét nhanh 1400Hz → 350Hz trong 90ms → tạo cảm giác "nổ rồi
+ *     trầm xuống" cực kỳ ngắn gọn, đúng kiểu pop.
+ *   - Envelope: attack 4ms (sắc gọn) + exponential decay 100ms → tiếng pop
+ *     đứt khoát mà không để lại đuôi vang dai dẳng.
+ *   - Volume 0.25 — đủ nghe trên loa di động/iPad mà không gây giật mình.
+ *
+ * Phát ngay khi va chạm trả về true (bất kể đúng/sai chữ mục tiêu) để bé
+ * luôn có phản hồi âm thanh vui tai mỗi lần chọc trúng bong bóng.
+ */
+export function playPop() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  ensureResumed(ctx);
+  const now = ctx.currentTime;
+
+  // Envelope chính — attack siêu nhanh + decay 100ms.
+  const gain = ctx.createGain();
+  gain.connect(ctx.destination);
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.25, now + 0.004);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+
+  // Sine sweep 1400Hz → 350Hz trong 90ms.
+  const osc = ctx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1400, now);
+  osc.frequency.exponentialRampToValueAtTime(350, now + 0.09);
+  osc.connect(gain);
+  osc.start(now);
+  osc.stop(now + 0.12);
 }
 
 /** Phát tiếng "Hụt" nhẹ khi bé BỎ LỠ mục tiêu (đối tượng cần đập tự thoát). */

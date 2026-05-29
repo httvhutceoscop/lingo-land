@@ -8,7 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
 import { LANG_SPEAK_DEFAULT, speak } from '../lib/audio';
-import { playTing } from '../lib/beep';
+import { playPop, playTing } from '../lib/beep';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * GAME: "Bong Bóng Chữ Cái — Tìm Cặp Trùng Nhau"
@@ -84,6 +84,10 @@ const SCORE_PER_HIT = 10;
 
 // Thời lượng animation "nổ" (pop scale → 0).
 const POP_MS = 200;
+
+// Thời lượng "puff" — voi phình lên rồi xẹp xuống mỗi lần thổi 1 bong bóng.
+// 380ms vừa đủ để mắt nhận ra "ô, chú voi đang thổi", không quá lâu.
+const PUFF_MS = 380;
 
 // localStorage — kỷ lục điểm cao nhất 1 lượt chơi.
 const STORAGE_KEY = 'lingoland_bubbleletter_hs';
@@ -163,11 +167,17 @@ type Bubble = {
   letter: string;
   /** Lưu lại sẵn xem bubble này có phải mục tiêu không — tránh so chuỗi mỗi frame. */
   isTarget: boolean;
-  /** Tốc độ ngang (rất nhỏ — chỉ wobble) và đứng (lên trên = âm). */
+  /** Tốc độ ngang — luôn DƯƠNG, làm bong bóng trôi CHÉO sang phải khi
+   *  bay lên. Nhờ đó cụm bong bóng trải rộng ra cả canvas thay vì bám
+   *  sát mép trái nơi voi đứng. Kết hợp với sin(y) ở RAF loop → vừa
+   *  lắc lư vừa toả ra. */
   vx: number;
+  /** Tốc độ đứng — luôn âm (bay lên trên). */
   vy: number;
-  /** Pha sin cho dao động ngang nhẹ — như bong bóng xà phòng thật. */
-  wobblePhase: number;
+  /** OFFSET PHA cho hàm sin — gán random [0, 2π) lúc spawn. Nhờ đó, dù
+   *  cùng dùng công thức `sin(y / 30)`, mỗi bong bóng vẫn lắc lư LỆCH
+   *  PHA với bong bóng khác → cụm bong bóng không "đồng pha" cứng nhắc. */
+  phaseOffset: number;
   /** Hue HSL cho gradient tint bong bóng. */
   hue: number;
   /** Đang ở animation "nổ" không. */
@@ -272,9 +282,14 @@ function spawnBubble(
     radius,
     letter,
     isTarget,
-    vx: randRange(-0.3, 0.3), // hướng nhẹ
+    // Trôi CHÉO sang phải — vx luôn dương để bong bóng dạt khỏi mép trái
+    // (nơi voi đứng) và lan ra cả canvas. Random [0.35, 0.85] px/frame.
+    // Cộng thêm sin(y) ở RAF loop để vừa trôi vừa lắc lư tự nhiên.
+    vx: randRange(0.35, 0.85),
     vy: -randRange(BUBBLE_SPEED_MIN, BUBBLE_SPEED_MAX),
-    wobblePhase: Math.random() * Math.PI * 2,
+    // Random [0, 2π) — mỗi bong bóng có pha xuất phát khác nhau cho đỡ
+    // đồng pha với các bong bóng lân cận.
+    phaseOffset: Math.random() * Math.PI * 2,
     hue: pick(BUBBLE_HUES),
     popping: false,
     popT: 0,
@@ -351,6 +366,9 @@ export default function BubbleLettersView({ onBack }: Props) {
   const idGenRef = useRef(0);
   const lastSpawnAtRef = useRef(0);
   const nextSpawnDelayRef = useRef(SPAWN_MIN_MS);
+  // Thời điểm voi BẮT ĐẦU puff (thổi bong bóng) lần gần nhất. Khởi tạo rất
+  // sâu trong quá khứ để puff animation không tự kích hoạt lúc mount.
+  const puffStartRef = useRef(-99999);
   // Mirror các state cho RAF loop / pointer handlers đọc đúng giá trị mới nhất.
   const targetRef = useRef(targetChar);
   useEffect(() => { targetRef.current = targetChar; }, [targetChar]);
@@ -447,6 +465,13 @@ export default function BubbleLettersView({ onBack }: Props) {
       if (b.popping) continue;
       // Tăng nhẹ bán kính hit (+6) để bé dễ chạm bằng ngón tay.
       if (dist2(p.x, p.y, b.x, b.y) <= (b.radius + 6) ** 2) {
+        // ── VA CHẠM TRẢ VỀ TRUE ─────────────────────────────────────────
+        // Phát NGAY tiếng "BÓC!" bong bóng nổ — sine sweep 1400→350Hz
+        // (~90ms) qua WebAudio. Phát BẤT KỂ chữ đúng hay sai vì trẻ con
+        // cực thích cảm giác chọc bong bóng nổ → khuyến khích bé tiếp tục
+        // tìm và chọc thêm.
+        playPop();
+
         // Trúng bong bóng này.
         b.popping = true;
         b.popT = 0;
@@ -455,7 +480,8 @@ export default function BubbleLettersView({ onBack }: Props) {
         spawnParticles(particlesRef.current, b.x, b.y, b.isTarget);
 
         if (b.isTarget) {
-          // ĐÚNG chữ mục tiêu — cộng điểm + leng keng.
+          // ĐÚNG chữ mục tiêu — cộng điểm + chuông leng keng (chồng lên
+          // tiếng pop để cảm giác "BÓC! ✨ leng keng" rất phấn khích).
           playTing();
           addScore(SCORE_PER_HIT);
           setScore((s) => {
@@ -521,6 +547,26 @@ export default function BubbleLettersView({ onBack }: Props) {
         bubblesRef.current.push(
           spawnBubble(targetRef.current, topicRef.current.chars, idGenRef),
         );
+
+        // ĐỒNG BỘ ANIMATION VOI — đánh dấu thời điểm bắt đầu "puff" để
+        // drawFrame phình voi to lên 8% rồi xẹp xuống trong PUFF_MS, tạo
+        // cảm giác chú voi vừa hít vào rồi thở mạnh ra → bong bóng xuất hiện.
+        puffStartRef.current = now;
+
+        // Chùm KHÓI TRẮNG nhỏ ở miệng vòi — tái sử dụng pipeline particle:
+        // 4 hạt trắng mờ, bay nhẹ lên-phải, gravity sẽ kéo dần xuống. Vừa
+        // đủ thấy "ô có hơi thở ra", không che lấp bong bóng vừa sinh.
+        for (let k = 0; k < 4; k++) {
+          particlesRef.current.push({
+            x: ELEPHANT_X + SPOUT_DX + randRange(-4, 4),
+            y: ELEPHANT_Y + SPOUT_DY + randRange(-2, 2),
+            vx: randRange(0.6, 1.8),
+            vy: randRange(-1.4, -0.4),
+            life: 1,
+            color: 'rgba(255, 255, 255, 0.85)',
+            size: randRange(3, 5),
+          });
+        }
       }
 
       // ── (2) UPDATE BUBBLES ────────────────────────────────────────────
@@ -535,13 +581,18 @@ export default function BubbleLettersView({ onBack }: Props) {
           }
           continue;
         }
-        // Wobble pha tăng dần → vx dao động sin cho cảm giác trôi bồng bềnh.
-        b.wobblePhase += 0.02;
-        const wobble = Math.sin(b.wobblePhase) * 0.4;
-        b.x += b.vx + wobble;
+        // ── CHUYỂN ĐỘNG NGANG = DRIFT CHÉO + SWAY SIN ──────────────────
+        // (1) b.vx (luôn dương) → bong bóng trôi chéo dần sang PHẢI khi
+        //     bay lên, lan toả ra khắp canvas thay vì chụm bên trái nơi
+        //     voi đứng — bé thấy không gian "rộng rãi" hơn.
+        // (2) Math.sin(b.y / 30 + phaseOffset) * 0.5 → vẫn giữ chuyển
+        //     động lắt léo (zig-zag) chồng lên drift, để chuyển động trông
+        //     y hệt bong bóng xà phòng thật. phaseOffset random làm mỗi
+        //     bong bóng lệch pha, không lắc đều như duyệt binh.
+        b.x += b.vx + Math.sin(b.y / 30 + b.phaseOffset) * 0.5;
         b.y += b.vy;
-        // Bay quá đỉnh canvas → DỌN khỏi mảng (memory cleanup theo doc).
-        if (b.y + b.radius < 0) {
+        // DỌN khi bay quá đỉnh HOẶC trôi quá mép phải (memory cleanup).
+        if (b.y + b.radius < 0 || b.x - b.radius > CANVAS_W) {
           bubbles.splice(i, 1);
         }
       }
@@ -687,17 +738,45 @@ export default function BubbleLettersView({ onBack }: Props) {
     }
 
     // (f) CHÚ VOI — vẽ SAU bong bóng để che phần bong bóng vừa sinh.
-    //     Có bob nhẹ + miệng vòi hướng phải-trên.
-    const t = performance.now() / 1000;
+    //
+    // Có 3 lớp animation chồng lên nhau, tạo cảm giác "đang sống và đang
+    // thổi bong bóng":
+    //
+    //   (1) BOB — nhún lên xuống ±2px theo sin(t * 1.7), luôn diễn ra.
+    //   (2) BREATH — hít thở nhịp nhàng, body scale ±2.5% theo sin(t * 1.5).
+    //       Tần số chậm hơn bob → nhìn không bị "co giật" đồng pha.
+    //   (3) PUFF — burst riêng mỗi lần spawn bong bóng. Trong PUFF_MS, body
+    //       phình lên 8% rồi xẹp xuống theo nửa chu kỳ sin (0 → 1 → 0), và
+    //       dạt nhẹ về phía sau (trái) như bị phản lực do thổi mạnh.
+    const nowMs = performance.now();
+    const t = nowMs / 1000;
     const elephantBob = Math.sin(t * 1.7) * 2;
-    // Bóng đất dưới chân voi.
+    const breath = 1 + Math.sin(t * 1.5) * 0.025;
+
+    // Tính puff progress 0 → 1, sau đó nửa chu kỳ sin → giá trị peak ở 0.5.
+    const puffElapsed = nowMs - puffStartRef.current;
+    const puffT = Math.max(0, Math.min(1, puffElapsed / PUFF_MS));
+    const puffCurve = puffT < 1 ? Math.sin(puffT * Math.PI) : 0;
+    const bodyScale = breath * (1 + puffCurve * 0.08);
+    const puffLeanX = -puffCurve * 5; // dạt nhẹ sang TRÁI (= sau lưng voi)
+
+    // Bóng đất dưới chân voi — bóng phình nhẹ theo body scale cho khớp.
     ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
     ctx.beginPath();
-    ctx.ellipse(ELEPHANT_X, ELEPHANT_Y + 50, 54, 9, 0, 0, Math.PI * 2);
+    ctx.ellipse(
+      ELEPHANT_X + puffLeanX, ELEPHANT_Y + 50,
+      54 * bodyScale, 9 * bodyScale,
+      0, 0, Math.PI * 2,
+    );
     ctx.fill();
-    // Emoji voi.
+
+    // Emoji voi — LẬT NGANG để vòi quay sang phải, hướng về phía bong bóng
+    // được sinh ra (SPOUT_DX > 0). Scale âm trục X = mirror; scale dương
+    // trục Y giữ chiều cao. Cả 2 nhân với bodyScale để puff + breath
+    // áp dụng đều cả ngang lẫn dọc.
     ctx.save();
-    ctx.translate(ELEPHANT_X, ELEPHANT_Y + elephantBob);
+    ctx.translate(ELEPHANT_X + puffLeanX, ELEPHANT_Y + elephantBob);
+    ctx.scale(-bodyScale, bodyScale);
     ctx.font = `${ELEPHANT_FONT_PX}px ${EMOJI_FONT_STACK}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
