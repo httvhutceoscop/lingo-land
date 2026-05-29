@@ -735,6 +735,7 @@ export default function DinoAlphabetView({ onBack }: Props) {
     ctx.fill();
     ctx.save();
     ctx.translate(MOM_CX, MOM_CY + momBob);
+    ctx.scale(-1, 1);
     ctx.font = `${MOM_FONT_PX}px ${EMOJI_FONT_STACK}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

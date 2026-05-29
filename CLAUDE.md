@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run typecheck` — type-check only
 - `npm run preview` — preview the production build locally
 
-No test runner is configured.
+No test runner / linter / formatter is configured. `npm run typecheck` is the only static-analysis gate; it runs as part of `build`, so a green build implies a clean TS compile.
 
 ## Deployment
 
@@ -34,19 +34,24 @@ LingoLand is a single-page Vietnamese-language English vocabulary game **plus a 
 
 ### View routing lives in App.tsx, not a router
 
-[src/App.tsx](src/App.tsx) holds a `view: View` union with ~25 entries: `'map'`, `'knowledge'`, `'gameisland'`, `'category'`, `'flashcard'`, `'test'`, `'result'`, `'leader'`, `'profile'`, `'pron'`, `'stickers'`, `'review'`, `'alphabet'`, `'numbers'`, `'mathland'`, `'mathquiz'`, plus 10 Game Island views (`'numberpop'`, `'feedanimal'`, `'compare'`, `'subtract'`, `'plus'`, `'count'`, `'matchpuzzle'`, `'sequence'`, `'coloring'`, `'challenge'`). State also tracks `activeCategory`, `activeSubGroup`, `quizResult`, `activeMathLevel`, `drawerOpen`. Conditionally renders one view per state. Navigation is callback props — no URL routing. Adding a screen: extend `View` union, add conditional render in [App.tsx](src/App.tsx), thread a callback into the trigger.
+[src/App.tsx](src/App.tsx) holds a `view: View` union with ~50 entries: the core flow screens (`'map'`, `'knowledge'`, `'gameisland'`, `'category'`, `'flashcard'`, `'test'`, `'result'`, `'leader'`, `'profile'`, `'pron'`, `'stickers'`, `'review'`, `'alphabet'`, `'numbers'`, `'mathland'`, `'mathquiz'`) plus **~30 Game Island game keys** mirrored from `GameKey` in [GameIslandsView](src/views/GameIslandsView.tsx). The authoritative list of Game Island view names lives in the `GAME_ISLAND_VIEWS` `Set<View>` constant near the top of [App.tsx](src/App.tsx) — BGM and nav-collapse logic both read from it, so any new Game Island view MUST be added there. State also tracks `activeCategory`, `activeSubGroup`, `quizResult`, `activeMathLevel`, `drawerOpen`. Conditionally renders one view per state. Navigation is callback props — no URL routing. Adding a screen: extend `View` union, add a conditional render in [App.tsx](src/App.tsx), add a `case` in `pickGame()` if it's a Game Island game, add to `GAME_ISLAND_VIEWS` set, and add a card entry in [GameIslandsView](src/views/GameIslandsView.tsx) (`GAMES: GameCard[]`).
 
 **MapView is a hub**, not the category picker. [MapView](src/views/MapView.tsx) renders four cards: Daily Review (conditional on `dueDeck.length > 0`), Đảo Tri Thức (→ [KnowledgeIslandsView](src/views/KnowledgeIslandsView.tsx)), Đảo Toán Học (→ [MathLandView](src/views/MathLandView.tsx)), Đảo Trò Chơi (→ [GameIslandsView](src/views/GameIslandsView.tsx)). The 60-second time challenge is **not** a top-level card anymore — it lives inside Game Island. Categories (`CATEGORIES`) are listed inside `KnowledgeIslandsView`, not on the map.
 
 The `test` view dispatches to one of 7 mini-game components based on `activeSubGroup.mode` (`TestMode` in [src/data/gameData.ts](src/data/gameData.ts)): [QuizView](src/views/QuizView.tsx), [MatchingView](src/views/MatchingView.tsx), [ListeningView](src/views/ListeningView.tsx), [TypingView](src/views/TypingView.tsx), [MemoryView](src/views/MemoryView.tsx), [HangmanView](src/views/HangmanView.tsx), [ShadowView](src/views/ShadowView.tsx). All 7 share the contract `(words: Word[], onFinish: (r: QuizResult) => void, onExit: () => void)` — keep that shape if you add an 8th mode. `onExit` should be wired to [TestExitButton](src/components/TestExitButton.tsx), the shared "✕ Thoát" widget that shows a confirm modal before discarding mid-test progress. Completion-gated modes (matching, memory, shadow) always emit a 100% pass since the user must complete every pair/round to exit (shadow advances only on a correct drag-drop; wrong drops just shake and stay on the current round). Hangman emits `correct/total` where each word is a win/lose round (6 wrong-letter limit).
 
-`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow / off-path screens (`category`, `flashcard`, `test`, `result`, `mathland`, `mathquiz`, `review`, `knowledge`, `gameisland`, and all 10 game-island views) collapse to `'map'` for the nav's `active` highlight, and `'stickers'` collapses to `'profile'` (it's reached only via a button inside ProfileView, not the nav).
+`BottomNav` exposes `'map' | 'pron' | 'leader' | 'profile'` (see `NavKey` in [src/components/BottomNav.tsx](src/components/BottomNav.tsx)); in-flow / off-path screens (`category`, `flashcard`, `test`, `result`, `mathland`, `mathquiz`, `review`, `knowledge`, `gameisland`, and every Game Island view) collapse to `'map'` for the nav's `active` highlight, and `'stickers'` collapses to `'profile'` (it's reached only via a button inside ProfileView, not the nav).
 
 A right-side **slide-in drawer** ([SideDrawer](src/components/SideDrawer.tsx)) is mounted at the App container level (not BottomNav) and toggled via a ☰ button in [Header](src/components/Header.tsx). It hosts secondary tap-to-speak reference tools that don't deserve a bottom-nav slot: [AlphabetView](src/views/AlphabetView.tsx) (26 letters A-Z, examples drawn from `ALL_WORDS`) and [NumberView](src/views/NumberView.tsx) (0-10 / 11-19 / 20-90 / 100-1000 grouped sections; data in [src/data/numberData.ts](src/data/numberData.ts)). The drawer is `fixed`-positioned (viewport-scoped), locks body scroll while open, closes on backdrop tap / ✕ button / Escape key, and uses Tailwind's `translate-x-full ↔ translate-x-0` transition. Items inside the drawer should set the target view AND close the drawer in one tap handler.
 
 ### Lazy loading
 
-[ColoringView](src/views/ColoringView.tsx) is the **only** view loaded via `React.lazy` + `Suspense` in [App.tsx](src/App.tsx). It pulls in the entire coloring SVG set (auto-imported via `import.meta.glob('../assets/coloring/*.svg')` in [src/data/coloringData.ts](src/data/coloringData.ts)) plus the SVG parsing/render path, which would otherwise bloat the initial bundle. All other views are statically imported. If you add another asset-heavy screen, follow the same pattern: `const X = lazy(() => import('./views/X'))` with a Vietnamese-text Suspense fallback.
+Four views are loaded via `React.lazy` + `Suspense` in [App.tsx](src/App.tsx). All other views are statically imported.
+
+- [ColoringView](src/views/ColoringView.tsx) — pulls in the entire coloring SVG set (auto-imported via `import.meta.glob('../assets/coloring/*.svg')` in [src/data/coloringData.ts](src/data/coloringData.ts)) plus the SVG parsing/render path.
+- [WhackMathView](src/views/WhackMathView.tsx), [FruitRescueView](src/views/FruitRescueView.tsx), [SpellingKingView](src/views/SpellingKingView.tsx) — these are the **Phaser-based** games. `phaser` (~1 MB) is a runtime dependency only because of these three; keep them lazy so the dep doesn't land in the initial bundle. Their `Suspense` fallback is a plain `"Đang tải…"` div; ColoringView's fallback is a longer "🎨 Đang tải tranh tô màu…" message.
+
+If you add another asset-heavy or Phaser-based screen, follow the same pattern: `const X = lazy(() => import('./views/X'))` with a Vietnamese-text Suspense fallback.
 
 ### Game state: Context + localStorage
 
@@ -61,10 +66,16 @@ A right-side **slide-in drawer** ([SideDrawer](src/components/SideDrawer.tsx)) i
 - `lingoland_word_stats` (JSON `Record<wordEn, { level, lastSeen }>` for spaced-repetition state; keys are `Word.en` strings)
 - `lingoland_math_passed` (JSON `string[]` of passed math level IDs like `'math.symbols'`, `'math.plus.10'`)
 
-Game Island views own **their own** storage keys (not exposed via GameContext):
+Game Island views own **their own** storage keys (not exposed via GameContext). Naming is ad-hoc — there are three suffix conventions in use, pick whichever fits:
 
-- `lingoland_coloring` ([ColoringView](src/views/ColoringView.tsx)) — JSON `Record<pictureId, Record<regionId, hexColor>>`. Persists per-region fill choices across sessions.
-- `lingoland_count_hs`, `lingoland_plus_hs`, `lingoland_subtract_hs`, `lingoland_match_hs`, `lingoland_sequence_hs` — per-game high scores written directly inside [CountView](src/views/CountView.tsx), [PlusView](src/views/PlusView.tsx), [SubtractView](src/views/SubtractView.tsx), [MatchPuzzleView](src/views/MatchPuzzleView.tsx), [SequenceView](src/views/SequenceView.tsx).
+- `*_hs` for per-session high scores (integer). Examples: `lingoland_count_hs`, `lingoland_plus_hs`, `lingoland_subtract_hs`, `lingoland_match_hs`, `lingoland_sequence_hs`, `lingoland_time_hs`, `lingoland_fruitrescue_hs`, `lingoland_greenknight_hs`, `lingoland_mathrescue_hs`, `lingoland_ocean_hs`, `lingoland_spelling_hs`, `lingoland_whackmath_hs`, `lingoland_bubbleletter_hs`.
+- `*_passed` for boolean "this game/level cleared" sets, JSON-encoded. Examples: `lingoland_codekingdom_passed`, `lingoland_connectdots_passed`, `lingoland_ecobalance_passed`, `lingoland_lightengineer_passed`, `lingoland_traintrack_passed`.
+- `*_done` for once-and-done completion records. Examples: `lingoland_dinoalphabet_done`, `lingoland_feedcount_done`, `lingoland_fruitscale_done`, `lingoland_tracer_done`.
+- A handful of games (`detective`, `magic`, `marspack`, `riverrescue`) use a bespoke single-key shape — grep their view file before assuming.
+
+Plus the special-shape one: `lingoland_coloring` ([ColoringView](src/views/ColoringView.tsx)) — JSON `Record<pictureId, Record<regionId, hexColor>>`. Persists per-region fill choices across sessions.
+
+To see every key currently in use: `grep -hoE "lingoland_[a-z_]+" src/views/*.tsx src/context/*.tsx | sort -u`.
 
 On mount, GameContext removes the legacy key `lingoland_levels` (old `number[]` format) — that one-shot migration can be deleted once you're confident no users have stale state.
 
@@ -104,28 +115,29 @@ MathQuizView has 2 phases (`'playing' | 'done'`) — no intro screen (children d
 
 ### Game Island (off-path mini-game collection)
 
-[GameIslandsView](src/views/GameIslandsView.tsx) is reached from the pink→fuchsia→blue Đảo Trò Chơi card on MapView. It lists 10 standalone kids' games keyed by `GameKey` (exported from the same file):
+[GameIslandsView](src/views/GameIslandsView.tsx) is reached from the pink→fuchsia→blue Đảo Trò Chơi card on MapView. It lists **~30 standalone kids' games** keyed by `GameKey` (exported from the same file). Each entry is a `GameCard` carrying `key`, `emoji`, `title`, `subtitle`, `gradient`, `shadow`, and an `AgeGroup` tag of either `'preschool'` (1-5 yrs: tap / drag / colour / count) or `'primary'` (6-10 yrs: arithmetic, reading, logic, spatial). The grid is rendered grouped by age. The full canonical list of games + emojis + Vietnamese titles lives in the `GAMES: GameCard[]` array in [GameIslandsView](src/views/GameIslandsView.tsx) — treat that file as the source of truth rather than duplicating the list here.
 
-- `numberpop` → [NumberPopView](src/views/NumberPopView.tsx) — balloon-popping; has `'find'` and `'math'` sub-modes.
-- `feedanimal` → [FeedAnimalView](src/views/FeedAnimalView.tsx) — drag food to the animal that wants it. Data + round generator in [src/data/feedAnimalData.ts](src/data/feedAnimalData.ts) (`buildRound(optionsCount, excludeAnimalId)`).
-- `coloring` → [ColoringView](src/views/ColoringView.tsx) — region-fill SVG tap-to-paint. Lazy-loaded; SVG library auto-imported via `import.meta.glob`.
-- `sequence` → [SequenceView](src/views/SequenceView.tsx) — drag the missing number into a sequence.
-- `matchpuzzle` → [MatchPuzzleView](src/views/MatchPuzzleView.tsx) — drag piece into its silhouette.
-- `count` → [CountView](src/views/CountView.tsx) — count objects / pick the matching number.
-- `plus` → [PlusView](src/views/PlusView.tsx) — visual addition.
-- `subtract` → [SubtractView](src/views/SubtractView.tsx) — visual subtraction.
-- `compare` → [CompareView](src/views/CompareView.tsx) — pick `<`, `>`, or `=`.
-- `challenge` → [TimeChallengeView](src/views/TimeChallengeView.tsx) — 60-second vocabulary blitz (moved here from MapView).
+Three broad implementation styles coexist:
+- **HTML/Tailwind**: ordinary React components with React state for game flow (most of the older games — `feedanimal`, `count`, `plus`, `subtract`, `compare`, `matchpuzzle`, `sequence`, `numberpop`, etc.).
+- **`<canvas>` + RAF**: hand-rolled 2D rendering for richer animation (e.g. [DinoAlphabetView](src/views/DinoAlphabetView.tsx), [FruitScaleView](src/views/FruitScaleView.tsx), [TracerKidsView](src/views/TracerKidsView.tsx)). These usually keep gameplay state in refs (not React state) and run a single `requestAnimationFrame` loop.
+- **Phaser**: [WhackMathView](src/views/WhackMathView.tsx), [FruitRescueView](src/views/FruitRescueView.tsx), [SpellingKingView](src/views/SpellingKingView.tsx) embed a Phaser 4 scene inside the React tree. These three are the **only** consumers of the `phaser` runtime dep and are lazy-loaded for that reason (see Lazy loading).
 
-**None** of these participate in the Knowledge Island unlock/sticker/SRS systems. There's no cross-game progression: each game owns its own internal phase machine (typically `'idle' | 'playing' | 'finished'`) and several persist a high score under their own `lingoland_*_hs` key (see localStorage section). [ColoringView](src/views/ColoringView.tsx) is the exception — it persists per-picture fills, not a score.
+**None** of these participate in the Knowledge Island unlock/sticker/SRS systems. There's no cross-game progression: each game owns its own internal phase machine (typically `'idle' | 'playing' | 'finished'`) and persists state under its own `lingoland_*` key — three suffix conventions are in use (`_hs` / `_passed` / `_done`); see the localStorage section. [ColoringView](src/views/ColoringView.tsx) is the exception — it persists per-picture fills, not a score.
 
-Routing/back behaviour: each Game Island view receives `onBack` and returns to `gameisland` (not `map`). The dispatch happens in [App.tsx](src/App.tsx) via `pickGame(key: GameKey)`.
+Routing/back behaviour: each Game Island view receives `onBack` and returns to `gameisland` (not `map`). The dispatch happens in [App.tsx](src/App.tsx) via `pickGame(key: GameKey)` — when adding a game you must extend the `switch` there, the `View` union, the conditional render, **and** the `GAME_ISLAND_VIEWS` set (so BGM + nav-collapse work).
 
 ### Background music
 
 [src/lib/bgm.ts](src/lib/bgm.ts) hand-synthesizes a chip-tune-style loop using the WebAudio API (no audio assets — oscillators + a noise click for accents, no bundle/network cost beyond the code itself). `startBgm()` lazily initializes a shared `AudioContext` on first call (browsers block AudioContext until a user gesture, and the first call typically follows a tap), schedules notes ~300 ms ahead via `setInterval`, ramps the master gain from 0 → `MASTER_GAIN` over 0.4s, and alternates between two 16-step melodies (`MELODY_A` / `MELODY_B`). `stopBgm()` ramps the master gain back to 0 and clears the scheduler; the context is kept alive for the next start.
 
-BGM is scoped to **Game Island views only** (the `GAME_ISLAND_VIEWS` set in [App.tsx](src/App.tsx) — all 10 game keys including `'challenge'`). Entering one of those views starts the loop; leaving stops it. Knowledge tests, Math Land, daily review, and reference screens stay silent. Disable globally with `VITE_BGM_ENABLED=false`.
+BGM is scoped to **Game Island views only** (the `GAME_ISLAND_VIEWS` set in [App.tsx](src/App.tsx) — every Game Island view including `'challenge'`). Entering one of those views starts the loop; leaving stops it. Knowledge tests, Math Land, daily review, and reference screens stay silent. Disable globally with `VITE_BGM_ENABLED=false`.
+
+### In-game SFX synthesis
+
+Two adjacent files complement the HTML `<audio>` element approach in [src/lib/audio.ts](src/lib/audio.ts), generating sound entirely from WebAudio so no extra network requests / mixkit dependency is needed:
+
+- [src/lib/beep.ts](src/lib/beep.ts) — short oscillator-based effects shared by reflex games: `playTing` (correct), `playBip` (wrong tap), `playMiss` (missed target), `playChomp`, `playPop`, `playEggCrack`. Lazily creates a shared `AudioContext` on first call. Prefer these over adding new `<audio>` tags for short reaction cues.
+- [src/lib/trainSounds.ts](src/lib/trainSounds.ts) — train-themed loops/whistles for [TrainTrackPuzzleView](src/views/TrainTrackPuzzleView.tsx).
 
 ### Pet mascot
 
