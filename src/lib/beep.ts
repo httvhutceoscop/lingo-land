@@ -14,6 +14,9 @@
  *  - playPop()  : tiếng "BÓC!" bong bóng nổ — sine sweep 1400→350Hz cực
  *                 nhanh (~90ms) với envelope sắc gọn. Dùng cho game bong
  *                 bóng — phản hồi nhanh, vui tai, kích thích bé chọc thêm.
+ *  - playEggCrack(): chuỗi 3 giai đoạn "Rắc... Pop! Chíp chíp" cho game
+ *                 trứng khủng long nở — noise lọc thấp (rắc) → sweep cao
+ *                 đột ngột (pop) → 2 chirp cao (chim non kêu).
  *
  * AudioContext được khởi tạo LƯỜI ở lần phát đầu tiên (vốn xảy ra ngay sau
  * thao tác chạm của bé nên không bị browser chặn vì thiếu user gesture).
@@ -209,6 +212,98 @@ export function playPop() {
   osc.connect(gain);
   osc.start(now);
   osc.stop(now + 0.12);
+}
+
+/**
+ * Phát chuỗi âm thanh "RẮC... POP! Chíp chíp" cho game trứng khủng long nở.
+ *
+ * Có 3 GIAI ĐOẠN nối tiếp nhau (~700ms tổng):
+ *
+ *   T=0    : "Rắc" — noise burst (150ms) lọc lowpass ~800Hz → âm khô như vỏ
+ *            cứng nứt. Envelope attack 10ms + exponential decay.
+ *
+ *   T=200ms: "POP!" — sine sweep 200Hz → 1400Hz cực nhanh (60ms) → cảm giác
+ *            vỏ vỡ bung ra. Tần số tăng đột ngột = "bùng nổ" tích cực.
+ *
+ *   T=400ms & T=580ms: "Chíp chíp" — 2 chirp sine 1800→2800→2200Hz dạng
+ *            cong sweep up-then-down trong 120ms mỗi cái → âm chim non kêu,
+ *            khủng long bé chào đời.
+ *
+ * Tổng thời lượng ~700ms — khớp với HATCH_MS của game (700ms vỏ vỡ).
+ */
+export function playEggCrack() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  ensureResumed(ctx);
+  const baseNow = ctx.currentTime;
+
+  // ── (1) "Rắc" — noise burst lọc thấp ──────────────────────────────
+  {
+    const start = baseNow;
+    const noiseLen = 0.15;
+    const sampleRate = ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, Math.floor(noiseLen * sampleRate), sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.7;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    // Lowpass 800Hz → cắt phần cao chói, giữ texture "khô gãy" trầm.
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 800;
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, start);
+    noiseGain.gain.linearRampToValueAtTime(0.22, start + 0.01);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.15);
+
+    noise.connect(lp);
+    lp.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(start);
+  }
+
+  // ── (2) "POP!" — sine sweep cao đột ngột ──────────────────────────
+  {
+    const start = baseNow + 0.2;
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0, start);
+    oscGain.gain.linearRampToValueAtTime(0.3, start + 0.005);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(200, start);
+    osc.frequency.exponentialRampToValueAtTime(1400, start + 0.06);
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + 0.15);
+  }
+
+  // ── (3) "Chíp chíp" — 2 chirp sine chim non ──────────────────────
+  // Mỗi chirp: tần số đi LÊN 1800→2800Hz rồi LẶP xuống 2200Hz trong 120ms
+  // → tạo dáng "cong" lên-xuống đặc trưng của chim non kêu hí hí.
+  for (let chirp = 0; chirp < 2; chirp++) {
+    const start = baseNow + 0.4 + chirp * 0.18;
+    const chirpGain = ctx.createGain();
+    chirpGain.gain.setValueAtTime(0, start);
+    chirpGain.gain.linearRampToValueAtTime(0.22, start + 0.01);
+    chirpGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
+
+    const chirpOsc = ctx.createOscillator();
+    chirpOsc.type = 'sine';
+    chirpOsc.frequency.setValueAtTime(1800, start);
+    chirpOsc.frequency.exponentialRampToValueAtTime(2800, start + 0.05);
+    chirpOsc.frequency.exponentialRampToValueAtTime(2200, start + 0.12);
+    chirpOsc.connect(chirpGain);
+    chirpGain.connect(ctx.destination);
+    chirpOsc.start(start);
+    chirpOsc.stop(start + 0.15);
+  }
 }
 
 /** Phát tiếng "Hụt" nhẹ khi bé BỎ LỠ mục tiêu (đối tượng cần đập tự thoát). */

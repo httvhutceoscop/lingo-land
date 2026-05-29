@@ -8,7 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
 import { LANG_SPEAK_DEFAULT, speak } from '../lib/audio';
-import { playMiss, playPop, playTing } from '../lib/beep';
+import { playEggCrack, playMiss, playTing } from '../lib/beep';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * GAME: "Đảo Trứng Chữ Cái — Tìm Mẹ Cho Khủng Long"
@@ -82,8 +82,20 @@ const CELEBRATE_MS = 3000;
 const SPRING_STIFFNESS = 0.18;
 const SPRING_DAMPING = 0.62;
 
-// Độ dày nét MỰC khủng long con vẽ lại phía sau.
-const INK_LINE_WIDTH = 15;
+// ── HIỆU ỨNG DẤU CHÂN KHỦNG LONG ────────────────────────────────────
+// Thay vì vẽ 1 đường mực liền, vẽ chuỗi DẤU CHÂN nhỏ rải dọc strokePath
+// — bé sẽ thấy khủng long con đang DẪM xuống cát/đất tạo hình chữ cái,
+// hoạt hình hơn rất nhiều.
+//
+//   - FOOT_STRIDE  : khoảng cách giữa 2 dấu chân (px), đo dọc theo path.
+//   - FOOT_LATERAL : lệch NGANG ±px so với tâm path, xen kẽ trái/phải mô
+//                    phỏng chân trái-chân phải.
+//   - FOOT_PAD_LEN : nửa-trục dài của miếng đệm chân (theo hướng đi).
+//   - FOOT_PAD_WID : nửa-trục ngắn (vuông góc hướng đi).
+const FOOT_STRIDE = 24;
+const FOOT_LATERAL = 7;
+const FOOT_PAD_LEN = 9;
+const FOOT_PAD_WID = 6;
 
 // Cộng điểm cho mỗi cặp ghép đúng.
 const SCORE_PER_MATCH = 10;
@@ -388,8 +400,11 @@ export default function DinoAlphabetView({ onBack }: Props) {
     setPhase('hatching');
 
     addScore(SCORE_PER_MATCH);
+    // playTing → khen "đúng rồi" (chuông trong trẻo). Sau 250ms phát chuỗi
+    // playEggCrack → "Rắc... POP! Chíp chíp" mô phỏng vỏ nứt + chim non chào
+    // đời, kéo dài ~700ms khớp với HATCH_MS của animation vỏ vỡ.
     playTing();
-    window.setTimeout(() => playPop(), 200); // tiếng "bộp" vỏ trứng nứt
+    window.setTimeout(() => playEggCrack(), 250);
     speak('Đúng rồi!', LANG_SPEAK_DEFAULT);
 
     // Sau HATCH_MS chuyển sang walking.
@@ -726,26 +741,15 @@ export default function DinoAlphabetView({ onBack }: Props) {
     ctx.fillText(lvl.momEmoji, 0, 0);
     ctx.restore();
 
-    // (h) MỰC đã vẽ — đường polyline thick rounded TỪ strokePath[0] tới
-    // điểm hiện tại của baby. Vẽ kể cả khi đang walking hoặc đã xong.
+    // (h) DẤU CHÂN — chuỗi miếng đệm nâu + ngón vàng dọc strokePath, từ
+    // điểm 0 tới vị trí baby hiện tại. Mô phỏng khủng long con dẫm cát.
     if (ph === 'walking' || ph === 'celebrating') {
-      const path = lvl.strokePath;
-      const segIdx = walkSegRef.current;
-      const pos = babyPosRef.current;
-      ctx.save();
-      ctx.strokeStyle = lvl.inkColor;
-      ctx.lineWidth = INK_LINE_WIDTH;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(path[0].x, path[0].y);
-      for (let i = 1; i <= segIdx && i < path.length; i++) {
-        ctx.lineTo(path[i].x, path[i].y);
-      }
-      // Đoạn cuối đang đi — từ điểm vừa qua tới vị trí hiện tại của baby.
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-      ctx.restore();
+      drawFootprintTrail(
+        ctx,
+        lvl.strokePath,
+        walkSegRef.current,
+        babyPosRef.current,
+      );
     }
 
     // (i) TRỨNG đang Idle / Drag / Returning.
@@ -875,6 +879,104 @@ export default function DinoAlphabetView({ onBack }: Props) {
 /* ===========================================================================
  * 5. CÁC HÀM VẼ PHỤ
  * ========================================================================= */
+
+/**
+ * Vẽ CHUỖI DẤU CHÂN khủng long con dọc theo phần strokePath đã đi qua.
+ *
+ * Thuật toán:
+ *   1. Dựng polyline đầy đủ: path[0..segIdx] + babyPos hiện tại.
+ *   2. Đi dọc polyline, cộng dồn quãng đường. Cứ mỗi FOOT_STRIDE pixel,
+ *      emit 1 dấu chân tại vị trí đó.
+ *   3. Mỗi dấu chân:
+ *      - Lệch NGANG ±FOOT_LATERAL so với tâm path (xen kẽ trái/phải) →
+ *        2 hàng dấu chân song song y hệt khi đi thật.
+ *      - Xoay theo hướng đi (tangent của path tại điểm đó).
+ *      - Vẽ ellipse nâu làm "miếng đệm" + 3 đốm vàng nhỏ làm 3 ngón chân
+ *        nhô ra phía trước miếng đệm.
+ */
+function drawFootprintTrail(
+  ctx: CanvasRenderingContext2D,
+  path: Point[],
+  segIdx: number,
+  currentPos: Point,
+) {
+  // (1) Xây danh sách điểm thực tế baby đã đi: gồm tất cả các điểm chốt
+  // đã qua + vị trí hiện tại nếu chưa tới điểm cuối.
+  const points: Point[] = [];
+  for (let i = 0; i <= segIdx && i < path.length; i++) points.push(path[i]);
+  if (segIdx < path.length - 1) {
+    points.push(currentPos);
+  }
+  if (points.length < 2) return;
+
+  // (2) Quét polyline, emit dấu chân mỗi FOOT_STRIDE pixel.
+  // `remainder` = quãng "dư" chưa đủ FOOT_STRIDE từ frame trước, để
+  // bước chân liên tục mượt qua biên giới giữa các đoạn.
+  let footIdx = 0;
+  let remainder = FOOT_STRIDE * 0.4; // dấu chân đầu tiên ngay sau điểm 0
+
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const segLen = Math.hypot(dx, dy);
+    if (segLen < 1e-6) continue;
+    const ndx = dx / segLen; // tangent đơn vị x
+    const ndy = dy / segLen; // tangent đơn vị y
+    const nx = -ndy;          // normal đơn vị x (vuông góc trái)
+    const ny = ndx;           // normal đơn vị y
+
+    // `cursor` = vị trí (px) tính từ A trên đoạn AB nơi sẽ emit dấu kế.
+    let cursor = FOOT_STRIDE - remainder;
+
+    while (cursor <= segLen) {
+      const fx = a.x + ndx * cursor;
+      const fy = a.y + ndy * cursor;
+      // Lệch ngang trái/phải xen kẽ.
+      const side = footIdx % 2 === 0 ? 1 : -1;
+      const cx = fx + nx * FOOT_LATERAL * side;
+      const cy = fy + ny * FOOT_LATERAL * side;
+      const angle = Math.atan2(ndy, ndx);
+      drawSingleFootprint(ctx, cx, cy, angle);
+      footIdx++;
+      cursor += FOOT_STRIDE;
+    }
+
+    // Cập nhật remainder cho đoạn kế.
+    // remainder mới = phần dư khi vẫn còn quãng < FOOT_STRIDE chưa "tiêu".
+    remainder = segLen - (cursor - FOOT_STRIDE);
+  }
+}
+
+/** Vẽ 1 dấu chân tại (cx, cy) xoay theo `angle` (radian). */
+function drawSingleFootprint(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  angle: number,
+) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+
+  // Miếng đệm bàn chân — ellipse nâu (đất ướt in dấu).
+  ctx.fillStyle = 'rgba(120, 53, 15, 0.78)'; // amber-900/78
+  ctx.beginPath();
+  ctx.ellipse(0, 0, FOOT_PAD_LEN, FOOT_PAD_WID, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 3 ngón chân nhỏ — đốm vàng nhạt nhô ra trước miếng đệm.
+  ctx.fillStyle = 'rgba(253, 224, 71, 0.92)'; // yellow-300/92
+  const toeOffset = FOOT_PAD_LEN + 2;
+  for (let i = -1; i <= 1; i++) {
+    ctx.beginPath();
+    ctx.arc(toeOffset, i * 3, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
 
 /** Vẽ cây dừa decor (lá + thân). */
 function drawPalm(ctx: CanvasRenderingContext2D, x: number, baseY: number) {
