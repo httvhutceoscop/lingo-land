@@ -31,8 +31,9 @@ import { playTing } from '../lib/beep';
  *   - count > target → angle dương→ đĩa PHẢI ĐI XUỐNG (nặng)
  *   - count === target → angle 0  → thăng bằng
  *
- *   Mỗi frame, currentAngle được lerp tới targetAngle (ANGLE_LERP) → cân
- *   chuyển động mượt như có quán tính, không bị giật.
+ *   Mỗi frame, currentAngle được cập nhật bằng SPRING-DAMPER (ANGLE_STIFFNESS,
+ *   ANGLE_DAMPING) — cân overshoot rồi NẢY LẠI 1-2 nhịp trước khi đứng yên,
+ *   giống cân bập bênh thật, kích thích thị giác bé.
  *
  *   Vị trí TÂM 2 đĩa được tính bằng lượng giác từ Pivot:
  *     leftEnd  = Pivot + (-BEAM_LEN·cosθ, -BEAM_LEN·sinθ)
@@ -77,7 +78,22 @@ const FRUIT_HIT_R = 22;
 // ── VẬT LÝ CÂN ─────────────────────────────────────────────────────
 const MAX_ANGLE = Math.PI / 12;   // 15° = ±0.262 rad — giới hạn theo doc
 const SENSITIVITY = 0.03;          // rad / unit chênh lệch (~17° khi chênh 10)
-const ANGLE_LERP = 0.14;           // tốc độ cân tiến tới góc mục tiêu mỗi frame
+
+// SPRING-DAMPER thay vì lerp đơn — khi bé thả 1 quả vào, đòn cân sẽ
+// nhún xuống QUÁ vị trí cuối (overshoot) rồi nảy nhẹ lên 1-2 nhịp trước
+// khi đứng yên ở góc mục tiêu mới, giống hệt cân bập bênh thật.
+//
+// Mô hình: mỗi frame
+//   accel = (targetAngle - currentAngle) * STIFFNESS  (lực kéo về đích)
+//   vel   = (vel + accel) * DAMPING                   (mất bớt vận tốc do ma sát)
+//   angle += vel
+//
+//   - STIFFNESS càng cao → đòn rút về đích càng "rắn", nhịp nhún nhanh.
+//   - DAMPING (0..1) càng thấp → vận tốc mất nhanh, ít nhịp nhún hơn.
+//   - Cặp (0.12, 0.80) cho ~1-2 nhịp nảy rồi đứng yên — vừa đủ "sống động"
+//     mà không lê thê khiến bé sốt ruột.
+const ANGLE_STIFFNESS = 0.12;
+const ANGLE_DAMPING = 0.80;
 
 // ── KHAY TRÁI CÂY ─────────────────────────────────────────────────
 const TRAY_Y = 405;
@@ -169,6 +185,16 @@ type Sparkle = {
   size: number;
 };
 
+/** SỐ ĐẾM bay lên + mờ dần khi đặt 1 quả vào đĩa.
+ *  Hiển thị tổng số quả HIỆN TẠI ngay tại đĩa, giúp bé "nhẩm đếm theo
+ *  từng quả" (1, 2, 3...) — tăng cường liên kết động tác ↔ con số. */
+type FloatingNum = {
+  value: number;
+  x: number;
+  y: number;
+  life: number; // 0 → 1, mỗi frame giảm
+};
+
 type Phase = 'playing' | 'balanced';
 
 function dist2(x1: number, y1: number, x2: number, y2: number): number {
@@ -247,9 +273,13 @@ export default function FruitScaleView({ onBack }: Props) {
 
   // Sao lấp lánh khi thăng bằng.
   const sparklesRef = useRef<Sparkle[]>([]);
+  // Số đếm tiến trình bay lên mỗi lần thả thành công (1, 2, 3...).
+  const floatingNumsRef = useRef<FloatingNum[]>([]);
 
-  // Góc cân hiện tại (rad). Lerp tới targetAngle mỗi frame.
+  // Góc cân hiện tại (rad) + vận tốc góc (rad/frame) cho spring-damper.
+  // Cả 2 đều lưu trong refs vì cập nhật mỗi frame, không cần re-render.
   const angleRef = useRef(0);
+  const angleVelRef = useRef(0);
 
   // Mirror state cho RAF/pointer.
   const targetRef = useRef(target);
@@ -280,6 +310,7 @@ export default function FruitScaleView({ onBack }: Props) {
     placedRef.current = [];
     carryRef.current = [];
     sparklesRef.current = [];
+    floatingNumsRef.current = [];
     setPhase('playing');
     setRoundNo((r) => r + 1);
     window.setTimeout(() => {
@@ -477,7 +508,26 @@ export default function FruitScaleView({ onBack }: Props) {
     if (isInRightPlate(c.x, c.y)) {
       // ĐẶT ĐƯỢC vào đĩa phải.
       placedRef.current.push({ id: c.id });
+      // Số mới = placedRef.length (vừa push xong) — dùng cho cả floating num
+      // và setCount để đồng bộ.
+      const newCount = placedRef.current.length;
       setCount((cur) => cur + 1);
+
+      // ── PHẢN HỒI "tiến trình đếm" ──────────────────────────────────
+      // 1) "Ting" leng keng → phản hồi âm tích cực mỗi lần đặt đúng vào
+      //    đĩa, dù chưa đạt mục tiêu. Tăng dopamine vẫn còn chỗ chỗ điểm.
+      // 2) Chữ SỐ ĐẾM bay lên + mờ dần tại tâm đĩa phải → mắt + tai
+      //    cùng nhận đếm: bé NHÌN số "1, 2, 3..." vừa NGHE Ting → tự
+      //    nhẩm đếm theo từng quả.
+      playTing();
+      const plateC = getRightPlateCenter();
+      floatingNumsRef.current.push({
+        value: newCount,
+        x: plateC.x,
+        y: plateC.y - 75, // bắt đầu hơi cao hơn mặt đĩa
+        life: 1,
+      });
+
       // Xoá khỏi carryRef ngay (animation snap sẽ "biến" vào đĩa).
       carryRef.current = carryRef.current.filter((cf) => cf.id !== c.id);
     } else {
@@ -513,10 +563,22 @@ export default function FruitScaleView({ onBack }: Props) {
     const step = () => {
       const now = performance.now();
 
-      // (1) Vật lý đòn cân — lerp angle tới targetAngle.
+      // (1) Vật lý đòn cân — SPRING-DAMPER cho cảm giác "nhún nhảy" thực.
+      //
+      // Mỗi frame:
+      //   accel = (targetAngle - angle) * STIFFNESS  → lực kéo về đích
+      //   vel   = (vel + accel) * DAMPING            → giảm dần do ma sát
+      //   angle += vel
+      //
+      // Khi bé vừa thả 1 quả → targetAngle nhảy sang giá trị mới → đòn
+      // tích tốc, vượt QUÁ đích (overshoot), rồi spring kéo về, đảo
+      // chiều vận tốc → nảy nhẹ lên. Sau 1-2 nhịp, DAMPING làm vel ≈ 0,
+      // đòn đứng yên tại góc mục tiêu mới.
       const diff = countRef.current - targetRef.current;
       const targetAngle = clamp(diff * SENSITIVITY, -MAX_ANGLE, MAX_ANGLE);
-      angleRef.current += (targetAngle - angleRef.current) * ANGLE_LERP;
+      const accel = (targetAngle - angleRef.current) * ANGLE_STIFFNESS;
+      angleVelRef.current = (angleVelRef.current + accel) * ANGLE_DAMPING;
+      angleRef.current += angleVelRef.current;
 
       // (2) Spring trái cây carry đang isReturning về khay.
       const arr = carryRef.current;
@@ -571,6 +633,15 @@ export default function FruitScaleView({ onBack }: Props) {
         s.vy += 0.05;
         s.life -= 0.025;
         if (s.life <= 0) sp.splice(i, 1);
+      }
+
+      // Update + dọn FLOATING NUMBERS — bay lên + mờ dần ~900ms.
+      const fn = floatingNumsRef.current;
+      for (let i = fn.length - 1; i >= 0; i--) {
+        const f = fn[i];
+        f.y -= 1.4;          // bay LÊN 1.4px/frame
+        f.life -= 0.018;     // ~55 frame = ~900ms
+        if (f.life <= 0) fn.splice(i, 1);
       }
 
       drawFrame(ctx, now);
@@ -782,6 +853,29 @@ export default function FruitScaleView({ onBack }: Props) {
       ctx.save();
       ctx.globalAlpha = clamp(s.life, 0, 1);
       drawStar(ctx, s.x, s.y, s.size, '#fde047');
+      ctx.restore();
+    }
+
+    // (n-bis) FLOATING SỐ ĐẾM — vẽ SAU sparkles để luôn nằm trên cùng.
+    // Cỡ chữ scale lên theo life ở đầu (pop-in feel), rồi giữ nguyên.
+    for (const f of floatingNumsRef.current) {
+      const alpha = clamp(f.life, 0, 1);
+      // Pop scale: ở life=1 vừa spawn → scale 0.7→1.0 trong 100ms đầu
+      // (life 1.0 → 0.92), sau đó giữ scale 1.0.
+      const popT = clamp((1 - f.life) / 0.08, 0, 1);
+      const scale = 0.7 + 0.3 * popT;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(f.x, f.y);
+      ctx.scale(scale, scale);
+      ctx.font = `900 56px ${NUM_FONT_FAMILY}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeText(String(f.value), 0, 0);
+      ctx.fillStyle = '#16a34a'; // green-600 — phản hồi tích cực
+      ctx.fillText(String(f.value), 0, 0);
       ctx.restore();
     }
 
