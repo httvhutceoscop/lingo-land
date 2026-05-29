@@ -46,9 +46,21 @@ const CANVAS_H = 500;
 // bán kính, ở đây dùng 14 để dễ nhìn + có chỗ vẽ số bên trong.
 const DOT_RADIUS = 14;
 
-// Bán kính HITBOX khi check chạm đúng/sai. Doc khuyến nghị 25, dùng 35 để
-// bé 3-5 tuổi (chưa chính xác) dễ nối trúng.
+// Bán kính HITBOX khi check chạm chấm NGUỒN (chấm bé bắt đầu kéo từ đó).
+// Doc khuyến nghị 25, dùng 35 để bé 3-5 tuổi dễ chạm.
 const HIT_RADIUS = 35;
+
+// Bán kính NAM CHÂM cho chấm ĐÍCH (chấm bé đang kéo tới). Khi đầu sợi
+// "rubber-band" của bé tiến vào phạm vi này, đường nối sẽ TỰ ĐỘNG HÚT
+// dính vào tâm chấm — gọi là Magnetic Snap.
+//
+// Mục đích: bé 3-5 tuổi điều khiển cơ tay chưa chuẩn, đường kéo thường bị
+// run/lệch vài pixel. Nam châm 40px giúp bé chỉ cần kéo "tới gần" là đường
+// dính chặt, tránh ức chế khi nối lệch tay chút mà game không nhận.
+//
+// SNAP_RADIUS đồng thời là ngưỡng ACCEPT lúc nhả tay → bé thấy đường đã
+// hút vào tâm thì nhả tay là chắc chắn ăn — phản hồi nhất quán.
+const SNAP_RADIUS = 40;
 
 // Độ dày nét vẽ.
 const LINE_WIDTH = 8;
@@ -365,7 +377,10 @@ export default function ConnectDotsView({ onBack }: Props) {
     if (nextIdx >= lvl.points.length) return; // an toàn — không có chấm kế.
 
     const target = lvl.points[nextIdx];
-    const ok = dist2(p.x, p.y, target.x, target.y) <= HIT_RADIUS * HIT_RADIUS;
+    // ACCEPT dùng SNAP_RADIUS (40) cho khớp với visual snap — bất kể bé
+    // thấy đường đã hút vào tâm hay không, miễn pointer trong vùng nam
+    // châm thì coi là nối đúng.
+    const ok = dist2(p.x, p.y, target.x, target.y) <= SNAP_RADIUS * SNAP_RADIUS;
 
     if (ok) {
       // ── NỐI ĐÚNG ────────────────────────────────────────────────────
@@ -491,20 +506,57 @@ export default function ConnectDotsView({ onBack }: Props) {
     ctx.restore();
 
     // (d) RUBBER-BAND LINE — vẽ đường tạm từ chấm hiện tại tới pointer.
+    //
+    // Khi pointer của bé đi vào vùng NAM CHÂM (≤ SNAP_RADIUS) quanh chấm
+    // KẾ TIẾP, đầu sợi rubber-band TỰ ĐỘNG hút dính vào tâm chấm đó →
+    // visual đổi từ NÉT ĐỨT MỜ → NÉT LIỀN ĐẬM để bé biết "đã bắt được",
+    // chỉ cần nhả tay là ăn.
     if (drawingRef.current && pointerPosRef.current && !isCompleted) {
       const from = lvl.points[ai];
-      const p = pointerPosRef.current;
+      const rawP = pointerPosRef.current;
+      const nextIdx = ai + 1;
+      const target = nextIdx < lvl.points.length ? lvl.points[nextIdx] : null;
+
+      // Kiểm tra SNAP — pointer có trong vùng nam châm quanh chấm đích không.
+      const snapped =
+        !!target &&
+        dist2(rawP.x, rawP.y, target.x, target.y) <= SNAP_RADIUS * SNAP_RADIUS;
+      // Endpoint vẽ: nếu snapped → tâm chấm; nếu không → bám pointer.
+      const endX = snapped ? target!.x : rawP.x;
+      const endY = snapped ? target!.y : rawP.y;
+
       ctx.save();
       ctx.strokeStyle = lvl.lineColor;
-      ctx.globalAlpha = 0.5;
-      ctx.lineWidth = RUBBER_LINE_WIDTH;
       ctx.lineCap = 'round';
-      ctx.setLineDash([10, 8]);
+      if (snapped) {
+        // ĐÃ BẮT — nét liền + đầy alpha + dày hơn = phản hồi rõ ràng.
+        ctx.globalAlpha = 0.95;
+        ctx.lineWidth = LINE_WIDTH; // dùng độ dày của line cố định
+        ctx.setLineDash([]);
+      } else {
+        // CHƯA BẮT — nét đứt mờ như cũ.
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = RUBBER_LINE_WIDTH;
+        ctx.setLineDash([10, 8]);
+      }
       ctx.beginPath();
       ctx.moveTo(from.x, from.y);
-      ctx.lineTo(p.x, p.y);
+      ctx.lineTo(endX, endY);
       ctx.stroke();
       ctx.restore();
+
+      // Hiệu ứng SNAP HALO — vẽ vòng tròn sáng quanh chấm đích khi đã bắt
+      // được, ngay cả trước khi nhả tay → bé biết "đường đã dính chặt rồi".
+      if (snapped && target) {
+        ctx.save();
+        ctx.strokeStyle = '#22c55e'; // xanh lá "go!"
+        ctx.lineWidth = 4;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.arc(target.x, target.y, DOT_RADIUS + 8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
     }
 
     // (e) CÁC CHẤM TRÒN — vẽ sau line để chấm nằm trên line.
