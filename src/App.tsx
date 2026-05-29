@@ -151,6 +151,11 @@ export default function App() {
 
   useEffect(() => {
     speak('');
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+    splash.classList.add('fade-out');
+    const t = window.setTimeout(() => splash.remove(), 500);
+    return () => window.clearTimeout(t);
   }, []);
 
   useEffect(() => {
