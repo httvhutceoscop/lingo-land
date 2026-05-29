@@ -25,6 +25,7 @@ type GameKey =
   | 'tracerkids'
   | 'feedcount'
   | 'bubbleletters'
+  | 'connectdots'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -275,6 +276,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Chú voi thổi bong bóng — chọc đúng chữ để cộng điểm',
     gradient: 'from-sky-400 via-blue-500 to-indigo-500',
     shadow: 'shadow-sky-200',
+    age: 'preschool',
+  },
+  {
+    key: 'connectdots',
+    emoji: '✨',
+    title: 'Nối điểm thần kỳ',
+    subtitle: 'Nối số 1→10 theo thứ tự để hiện ra hình bí ẩn',
+    gradient: 'from-amber-400 via-yellow-500 to-orange-500',
+    shadow: 'shadow-amber-200',
     age: 'preschool',
   },
   {
