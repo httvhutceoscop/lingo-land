@@ -26,6 +26,7 @@ type GameKey =
   | 'feedcount'
   | 'bubbleletters'
   | 'connectdots'
+  | 'dinoalphabet'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -285,6 +286,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Nối số 1→10 theo thứ tự để hiện ra hình bí ẩn',
     gradient: 'from-amber-400 via-yellow-500 to-orange-500',
     shadow: 'shadow-amber-200',
+    age: 'preschool',
+  },
+  {
+    key: 'dinoalphabet',
+    emoji: '🦕',
+    title: 'Đảo trứng chữ cái',
+    subtitle: 'Ghép trứng chữ thường về với khủng long mẹ chữ HOA',
+    gradient: 'from-emerald-400 via-green-500 to-lime-500',
+    shadow: 'shadow-emerald-200',
     age: 'preschool',
   },
   {

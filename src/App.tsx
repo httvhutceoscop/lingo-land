@@ -51,6 +51,7 @@ import TracerKidsView from './views/TracerKidsView';
 import FeedCountView from './views/FeedCountView';
 import BubbleLettersView from './views/BubbleLettersView';
 import ConnectDotsView from './views/ConnectDotsView';
+import DinoAlphabetView from './views/DinoAlphabetView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -101,6 +102,7 @@ type View =
   | 'feedcount'
   | 'bubbleletters'
   | 'connectdots'
+  | 'dinoalphabet'
   | 'gameisland'
   | 'knowledge';
 
@@ -132,6 +134,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'feedcount',
   'bubbleletters',
   'connectdots',
+  'dinoalphabet',
   'challenge',
 ]);
 
@@ -287,6 +290,9 @@ export default function App() {
       case 'connectdots':
         setView('connectdots');
         break;
+      case 'dinoalphabet':
+        setView('dinoalphabet');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -352,6 +358,7 @@ export default function App() {
         {view === 'feedcount' && <FeedCountView onBack={goGameIsland} />}
         {view === 'bubbleletters' && <BubbleLettersView onBack={goGameIsland} />}
         {view === 'connectdots' && <ConnectDotsView onBack={goGameIsland} />}
+        {view === 'dinoalphabet' && <DinoAlphabetView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={
