@@ -5,7 +5,7 @@ import {
   youtubeSearchUrl,
   type PhonemeType,
 } from '../data/ipaData';
-import { pronounce } from '../lib/speak';
+import { pronounce } from '../lib/audio';
 
 const TAB_ACCENT: Record<PhonemeType, string> = {
   'vowel-short': 'bg-blue-50 text-blue-700 border-blue-200',

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ALL_WORDS } from '../data/gameData';
-import { pronounce } from '../lib/speak';
+import { pronounce } from '../lib/audio';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 

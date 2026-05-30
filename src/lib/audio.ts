@@ -1,22 +1,7 @@
-import { puter } from '@heyputer/puter.js';
-
 export const LANG_SPEAK_DEFAULT = 'vi-VN';
 
-const MAX_TTS_LEN = 200;
-
-const VOICE_BY_LANG: Record<string, string> = {
-  en: 'Puck',
-  vi: 'Leda',
-};
-const DEFAULT_VOICE = 'Puck';
-
-function shortLang(lang: string): string {
-  return lang.split('-')[0].toLowerCase();
-}
-
-function voiceFor(lang: string): string {
-  return VOICE_BY_LANG[shortLang(lang)] ?? DEFAULT_VOICE;
-}
+const CAMBRIDGE_BASE = 'https://dictionary.cambridge.org';
+const CORS_PROXY = 'https://corsproxy.io/?url=';
 
 const EN_ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 const EN_TEENS = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
@@ -81,54 +66,40 @@ function viNumber(n: number): string {
 }
 
 const EN_OPS: Record<string, string> = {
-  '+': 'plus',
-  '-': 'minus',
-  '−': 'minus',
-  '×': 'times',
-  '*': 'times',
-  '÷': 'divided by',
-  ':': 'divided by',
-  '/': 'divided by',
-  '=': 'equals',
-  '<': 'less than',
-  '>': 'greater than',
+  '+': 'plus', '-': 'minus', '−': 'minus',
+  '×': 'times', '*': 'times',
+  '÷': 'divided by', ':': 'divided by', '/': 'divided by',
+  '=': 'equals', '<': 'less than', '>': 'greater than',
 };
 
 const VI_OPS: Record<string, string> = {
-  '+': 'cộng',
-  '-': 'trừ',
-  '−': 'trừ',
-  '×': 'nhân',
-  '*': 'nhân',
-  '÷': 'chia',
-  ':': 'chia',
-  '/': 'chia',
-  '=': 'bằng',
-  '<': 'nhỏ hơn',
-  '>': 'lớn hơn',
+  '+': 'cộng', '-': 'trừ', '−': 'trừ',
+  '×': 'nhân', '*': 'nhân',
+  '÷': 'chia', ':': 'chia', '/': 'chia',
+  '=': 'bằng', '<': 'nhỏ hơn', '>': 'lớn hơn',
 };
 
 const OP_RE = /(\d)\s*([+\-−×÷*/:<>=])\s*(?=\d)/g;
 const DIGIT_RE = /\d+/g;
 
 function localize(text: string, lang: string): string {
-  const short = shortLang(lang);
+  const short = lang.split('-')[0].toLowerCase();
   if (short !== 'en' && short !== 'vi') return text;
 
   const num = short === 'en' ? enNumber : viNumber;
   const ops = short === 'en' ? EN_OPS : VI_OPS;
 
-  const withOps = text.replace(OP_RE, (m, d: string, op: string) => {
-    const word = ops[op];
-    return word ? `${d} ${word} ` : m;
-  });
-
-  const withNums = withOps.replace(DIGIT_RE, (m) => {
-    const n = parseInt(m, 10);
-    return n > 9999 ? m : num(n);
-  });
-
-  return withNums.replace(/\s+/g, ' ').trim();
+  return text
+    .replace(OP_RE, (m, d: string, op: string) => {
+      const word = ops[op];
+      return word ? `${d} ${word} ` : m;
+    })
+    .replace(DIGIT_RE, (m) => {
+      const n = parseInt(m, 10);
+      return n > 9999 ? m : num(n);
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -146,56 +117,72 @@ function stopCurrent(): void {
   }
 }
 
-function fallbackSpeak(text: string, lang: string): void {
+export function speak(text: string, lang: string = 'en-US'): void {
+  if (!text) return;
+  stopCurrent();
+  speakToken++;
   if (typeof window === 'undefined' || !window.speechSynthesis) return;
-  const msg = new SpeechSynthesisUtterance(text);
+  const msg = new SpeechSynthesisUtterance(localize(text, lang));
   msg.lang = lang;
   window.speechSynthesis.speak(msg);
 }
 
-export async function speak(text: string, lang: string = 'en-US'): Promise<void> {
-  if (!text) return;
-  stopCurrent();
+const cambridgeUrlCache = new Map<string, string | null>();
 
-  const spoken = localize(text, lang);
+async function fetchCambridgeUrl(word: string): Promise<string | null> {
+  const key = word.trim().toLowerCase();
+  if (!key) return null;
+  if (cambridgeUrlCache.has(key)) return cambridgeUrlCache.get(key)!;
 
-  if (spoken.length > MAX_TTS_LEN) {
-    fallbackSpeak(spoken, lang);
-    return;
-  }
-
-  const token = ++speakToken;
-  let audio: HTMLAudioElement;
+  const pageUrl = `${CAMBRIDGE_BASE}/dictionary/english/${encodeURIComponent(key)}`;
   try {
-    audio = await puter.ai.txt2speech(spoken, {
-      provider: 'gemini',
-      model: 'gemini-2.5-flash-preview-tts',
-      voice: voiceFor(lang),
-      language: lang,
-    });
+    const res = await fetch(`${CORS_PROXY}${encodeURIComponent(pageUrl)}`);
+    if (!res.ok) {
+      cambridgeUrlCache.set(key, null);
+      return null;
+    }
+    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+    const src = doc
+      .querySelector('audio#audio2 source[type="audio/mpeg"]')
+      ?.getAttribute('src');
+    const url = src ? (src.startsWith('http') ? src : `${CAMBRIDGE_BASE}${src}`) : null;
+    cambridgeUrlCache.set(key, url);
+    return url;
   } catch {
-    if (token === speakToken) fallbackSpeak(spoken, lang);
-    return;
+    cambridgeUrlCache.set(key, null);
+    return null;
   }
+}
 
+export async function pronounce(word: string): Promise<void> {
+  if (!word) return;
+  stopCurrent();
+  const token = ++speakToken;
+
+  const url = await fetchCambridgeUrl(word);
   if (token !== speakToken) return;
 
-  let fallbackFired = false;
-  const fireFallback = () => {
-    if (fallbackFired) return;
-    fallbackFired = true;
-    if (currentAudio === audio) currentAudio = null;
-    if (token === speakToken) fallbackSpeak(spoken, lang);
-  };
-  audio.onerror = fireFallback;
-  currentAudio = audio;
-  audio.play().catch(fireFallback);
+  if (url) {
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => {
+      if (currentAudio === audio) currentAudio = null;
+    };
+    try {
+      await audio.play();
+      return;
+    } catch {
+      if (currentAudio === audio) currentAudio = null;
+    }
+  }
+
+  if (token === speakToken) speak(word);
 }
 
 export function playSfx(id: string): void {
   const el = document.getElementById(id) as HTMLAudioElement | null;
   if (el) {
     el.currentTime = 0;
-    el.play().catch(() => { });
+    el.play().catch(() => {});
   }
 }

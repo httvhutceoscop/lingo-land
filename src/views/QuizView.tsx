@@ -1,8 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx } from '../lib/audio';
-import { pronounce } from '../lib/speak';
+import { playSfx, pronounce } from '../lib/audio';
 import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 

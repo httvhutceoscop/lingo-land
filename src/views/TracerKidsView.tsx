@@ -8,8 +8,7 @@ import {
 } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
-import { pronounce } from '../lib/speak';
+import { LANG_SPEAK_DEFAULT, playSfx, pronounce, speak } from '../lib/audio';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * GAME: "Thợ Sơn Tí Hon — Tập Tô Chữ Và Số"

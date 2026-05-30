@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx } from '../lib/audio';
-import { pronounce } from '../lib/speak';
+import { playSfx, pronounce } from '../lib/audio';
 import { MAX_LEVEL, nextLevel } from '../data/srsData';
 
 const FEEDBACK_MS = 1100;

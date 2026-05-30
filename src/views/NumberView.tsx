@@ -4,7 +4,7 @@ import {
   formatNumeral,
   type NumberEntry,
 } from '../data/numberData';
-import { pronounce } from '../lib/speak';
+import { pronounce } from '../lib/audio';
 
 type NumberViewProps = {
   onBack: () => void;

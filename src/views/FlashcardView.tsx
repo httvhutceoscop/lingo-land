@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Flashcard from '../components/Flashcard';
-import { pronounce } from '../lib/speak';
+import { pronounce } from '../lib/audio';
 import type { SubGroup, TestMode } from '../data/gameData';
 
 const TEST_LABEL: Record<TestMode, string> = {

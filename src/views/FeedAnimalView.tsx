@@ -7,8 +7,7 @@ import {
   type Food,
 } from '../data/feedAnimalData';
 import { useGame } from '../context/GameContext';
-import { playSfx } from '../lib/audio';
-import { pronounce } from '../lib/speak';
+import { playSfx, pronounce } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'finished';
 

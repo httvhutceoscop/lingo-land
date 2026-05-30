@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx } from '../lib/audio';
-import { pronounce } from '../lib/speak';
+import { playSfx, pronounce } from '../lib/audio';
 
 type Phase = 'idle' | 'playing' | 'success' | 'gameover';
 type TopicKey = 'animals' | 'colors' | 'fruits';
