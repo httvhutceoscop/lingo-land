@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
@@ -33,7 +34,7 @@ export default function QuizView({ words, onFinish, onExit }: QuizViewProps) {
   const options = useMemo(() => buildOptions(word), [word]);
 
   useEffect(() => {
-    const t = window.setTimeout(() => speak(word.en), 300);
+    const t = window.setTimeout(() => pronounce(word.en), 300);
     return () => window.clearTimeout(t);
   }, [word]);
 

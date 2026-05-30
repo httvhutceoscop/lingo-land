@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 type Phase = 'idle' | 'playing' | 'success' | 'gameover';
 type TopicKey = 'animals' | 'colors' | 'fruits';
@@ -647,7 +648,7 @@ export default function OceanVocabularyView({ onBack }: Props) {
       });
       // Speak the completed word
       try {
-        speak(w.toLowerCase(), 'en-US');
+        pronounce(w.toLowerCase());
       } catch {
         /* noop */
       }

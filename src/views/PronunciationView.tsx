@@ -5,7 +5,7 @@ import {
   youtubeSearchUrl,
   type PhonemeType,
 } from '../data/ipaData';
-import { speak } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 const TAB_ACCENT: Record<PhonemeType, string> = {
   'vowel-short': 'bg-blue-50 text-blue-700 border-blue-200',
@@ -70,7 +70,7 @@ export default function PronunciationView() {
             <p className="text-[11px] text-slate-500 leading-relaxed flex-1 mb-3">{p.vi}</p>
             <div className="flex gap-2 mt-auto">
               <button
-                onClick={() => speak(p.examples[0])}
+                onClick={() => pronounce(p.examples[0])}
                 aria-label={`Nghe ví dụ ${p.examples[0]}`}
                 className="flex-1 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold active:scale-95 transition-all"
               >

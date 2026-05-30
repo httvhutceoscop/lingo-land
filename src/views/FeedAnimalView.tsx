@@ -7,7 +7,8 @@ import {
   type Food,
 } from '../data/feedAnimalData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 type Phase = 'idle' | 'playing' | 'finished';
 
@@ -63,7 +64,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
   useEffect(() => {
     if (phase !== 'playing' || !round) return;
     const t = window.setTimeout(() => {
-      speak(`${round.animal.en} is hungry!`);
+      pronounce(`${round.animal.en} is hungry!`);
     }, 350);
     return () => window.clearTimeout(t);
   }, [phase, round]);
@@ -119,8 +120,8 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
       origin: { y: 0.4 },
       colors: ['#fb7185', '#f472b6', '#fbbf24', '#34d399', '#60a5fa'],
     });
-    window.setTimeout(() => speak(food.en), 350);
-    window.setTimeout(() => speak('Yummy!'), 950);
+    window.setTimeout(() => pronounce(food.en), 350);
+    window.setTimeout(() => pronounce('Yummy!'), 950);
 
     window.setTimeout(() => {
       if (roundIdx + 1 < deck.length) {
@@ -353,7 +354,7 @@ export default function FeedAnimalView({ onBack }: FeedAnimalViewProps) {
         {!solved && (
           <button
             type="button"
-            onClick={() => speak(`${round.animal.en} is hungry!`)}
+            onClick={() => pronounce(`${round.animal.en} is hungry!`)}
             aria-label="Phát âm"
             className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur border border-slate-200 flex items-center justify-center active:scale-95 shadow-sm"
           >

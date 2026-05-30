@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
@@ -53,7 +54,7 @@ export default function ShadowView({ words, onFinish, onExit }: ShadowViewProps)
   const shadowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const t = window.setTimeout(() => speak(word.en), 250);
+    const t = window.setTimeout(() => pronounce(word.en), 250);
     return () => window.clearTimeout(t);
   }, [word.en]);
 
@@ -68,7 +69,7 @@ export default function ShadowView({ words, onFinish, onExit }: ShadowViewProps)
     setSolved(true);
     playSfx('snd-correct');
     addScore(20);
-    speak(word.en);
+    pronounce(word.en);
     confetti({
       particleCount: 60,
       spread: 70,
@@ -176,7 +177,7 @@ export default function ShadowView({ words, onFinish, onExit }: ShadowViewProps)
         </div>
         <button
           type="button"
-          onClick={() => speak(word.en)}
+          onClick={() => pronounce(word.en)}
           aria-label="Phát âm"
           className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/80 backdrop-blur border border-slate-200 flex items-center justify-center active:scale-95"
         >

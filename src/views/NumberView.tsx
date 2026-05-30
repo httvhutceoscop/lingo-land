@@ -4,7 +4,7 @@ import {
   formatNumeral,
   type NumberEntry,
 } from '../data/numberData';
-import { speak } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 type NumberViewProps = {
   onBack: () => void;
@@ -68,7 +68,7 @@ export default function NumberView({ onBack }: NumberViewProps) {
 function NumberCard({ item, accent }: { item: NumberEntry; accent: string }) {
   return (
     <button
-      onClick={() => speak(item.en)}
+      onClick={() => pronounce(item.en)}
       aria-label={`Phát âm số ${item.value} là ${item.en}`}
       className={`aspect-square bg-gradient-to-br ${accent} border-2 rounded-3xl p-2 flex flex-col items-center justify-center active:scale-95 hover:shadow-md transition-all`}
     >

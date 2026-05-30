@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import { MAX_LEVEL, nextLevel } from '../data/srsData';
 
 const FEEDBACK_MS = 1100;
@@ -209,7 +210,7 @@ export default function DailyReviewView({ onBack }: DailyReviewViewProps) {
       <div className="text-6xl text-center mb-3">{word.img}</div>
       <h2 className="text-2xl font-black text-center mb-1">{word.en}</h2>
       <button
-        onClick={() => speak(word.en)}
+        onClick={() => pronounce(word.en)}
         aria-label="Phát âm"
         className="block mx-auto text-blue-500 text-sm font-bold mb-2 hover:text-blue-700"
       >

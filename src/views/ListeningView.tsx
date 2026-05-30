@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ALL_WORDS, type Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
@@ -33,7 +34,7 @@ export default function ListeningView({ words, onFinish, onExit }: ListeningView
   const options = useMemo(() => buildOptions(word), [word]);
 
   useEffect(() => {
-    const t = setTimeout(() => speak(word.en), 300);
+    const t = setTimeout(() => pronounce(word.en), 300);
     return () => clearTimeout(t);
   }, [word]);
 
@@ -91,7 +92,7 @@ export default function ListeningView({ words, onFinish, onExit }: ListeningView
 
       <div className="flex flex-col items-center my-8">
         <button
-          onClick={() => speak(word.en)}
+          onClick={() => pronounce(word.en)}
           className="w-28 h-28 rounded-full bg-blue-500 text-white text-5xl shadow-xl shadow-blue-200 active:scale-95 transition-all flex items-center justify-center"
         >
           🔊

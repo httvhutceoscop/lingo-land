@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Word } from '../data/gameData';
 import { useGame } from '../context/GameContext';
-import { playSfx, speak } from '../lib/audio';
+import { playSfx } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import TestExitButton from '../components/TestExitButton';
 import type { QuizResult } from './ResultView';
 
@@ -50,7 +51,7 @@ export default function HangmanView({ words, onFinish, onExit }: HangmanViewProp
         addScore(20);
         setCorrectCount((c) => c + 1);
         setOutcome('won');
-        window.setTimeout(() => speak(word.en), 500);
+        window.setTimeout(() => pronounce(word.en), 500);
       } else {
         playSfx('snd-correct');
       }
@@ -60,7 +61,7 @@ export default function HangmanView({ words, onFinish, onExit }: HangmanViewProp
       setWrongs(newWrongs);
       if (newWrongs >= MAX_WRONGS) {
         setOutcome('lost');
-        window.setTimeout(() => speak(word.en), 500);
+        window.setTimeout(() => pronounce(word.en), 500);
       }
     }
   };

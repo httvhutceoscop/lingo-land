@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Flashcard from '../components/Flashcard';
-import { speak } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 import type { SubGroup, TestMode } from '../data/gameData';
 
 const TEST_LABEL: Record<TestMode, string> = {
@@ -63,7 +63,7 @@ export default function FlashcardView({ subGroup, onExit, onComplete }: Flashcar
         <Flashcard word={word} flipped={flipped} onFlip={() => setFlipped((f) => !f)} />
         <div className="mt-10 flex flex-col gap-3 w-full max-w-md">
           <button
-            onClick={() => speak(word.en)}
+            onClick={() => pronounce(word.en)}
             className="w-full py-4 bg-blue-50 text-blue-600 border border-blue-100 rounded-2xl font-bold active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <span>🔊</span> Phát âm

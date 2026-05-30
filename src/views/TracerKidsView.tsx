@@ -9,6 +9,7 @@ import {
 import confetti from 'canvas-confetti';
 import { useGame } from '../context/GameContext';
 import { LANG_SPEAK_DEFAULT, playSfx, speak } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * GAME: "Thợ Sơn Tí Hon — Tập Tô Chữ Và Số"
@@ -738,7 +739,7 @@ function saveDone(set: Set<string>) {
 /** Đọc tên chữ to tiếng Việt cho TTS — chữ cái đọc tên Anh, số đọc tiếng Việt. */
 function speakCharVN(ch: string) {
   // Phát âm tiếng Anh cho chữ cái (đọc tên A, B, C…); tiếng Việt cho số.
-  if (/[A-Z]/.test(ch)) speak(ch, 'en-US');
+  if (/[A-Z]/.test(ch)) pronounce(ch);
   else speak(ch, LANG_SPEAK_DEFAULT);
 }
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ALL_WORDS } from '../data/gameData';
-import { speak } from '../lib/audio';
+import { pronounce } from '../lib/speak';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -47,7 +47,7 @@ export default function AlphabetView({ onBack }: AlphabetViewProps) {
           return (
             <button
               key={letter}
-              onClick={() => speak(letter.toLowerCase())}
+              onClick={() => pronounce(letter.toLowerCase())}
               aria-label={`Phát âm chữ ${letter}`}
               className="aspect-square bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100 rounded-3xl p-2 flex flex-col items-center justify-center active:scale-95 hover:border-blue-300 hover:shadow-md transition-all"
             >
