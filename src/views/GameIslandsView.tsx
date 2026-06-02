@@ -28,6 +28,7 @@ type GameKey =
   | 'connectdots'
   | 'dinoalphabet'
   | 'fruitscale'
+  | 'rhymegarden'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -305,6 +306,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Đặt đúng số quả lên đĩa để cân thăng bằng — tập đếm',
     gradient: 'from-pink-400 via-rose-500 to-amber-500',
     shadow: 'shadow-rose-200',
+    age: 'preschool',
+  },
+  {
+    key: 'rhymegarden',
+    emoji: '🌷',
+    title: 'Vần Vần Đồng Dao',
+    subtitle: 'Điền từ còn thiếu trong bài đồng dao quen thuộc',
+    gradient: 'from-pink-400 via-fuchsia-500 to-purple-500',
+    shadow: 'shadow-pink-200',
     age: 'preschool',
   },
   {
