@@ -54,6 +54,7 @@ import ConnectDotsView from './views/ConnectDotsView';
 import DinoAlphabetView from './views/DinoAlphabetView';
 import FruitScaleView from './views/FruitScaleView';
 import RhymeGardenView from './views/RhymeGardenView';
+import ToneKingView from './views/ToneKingView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -107,6 +108,7 @@ type View =
   | 'dinoalphabet'
   | 'fruitscale'
   | 'rhymegarden'
+  | 'toneking'
   | 'gameisland'
   | 'knowledge';
 
@@ -141,6 +143,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'dinoalphabet',
   'fruitscale',
   'rhymegarden',
+  'toneking',
   'challenge',
 ]);
 
@@ -310,6 +313,9 @@ export default function App() {
       case 'rhymegarden':
         setView('rhymegarden');
         break;
+      case 'toneking':
+        setView('toneking');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -378,6 +384,7 @@ export default function App() {
         {view === 'dinoalphabet' && <DinoAlphabetView onBack={goGameIsland} />}
         {view === 'fruitscale' && <FruitScaleView onBack={goGameIsland} />}
         {view === 'rhymegarden' && <RhymeGardenView onBack={goGameIsland} />}
+        {view === 'toneking' && <ToneKingView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

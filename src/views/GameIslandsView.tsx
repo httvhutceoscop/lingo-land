@@ -29,6 +29,7 @@ type GameKey =
   | 'dinoalphabet'
   | 'fruitscale'
   | 'rhymegarden'
+  | 'toneking'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -315,6 +316,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Điền từ còn thiếu trong bài đồng dao quen thuộc',
     gradient: 'from-pink-400 via-fuchsia-500 to-purple-500',
     shadow: 'shadow-pink-200',
+    age: 'preschool',
+  },
+  {
+    key: 'toneking',
+    emoji: '👑',
+    title: 'Vua Thanh Điệu',
+    subtitle: 'Nghe và chọn dấu thanh đúng — chinh phục 6 vương quốc',
+    gradient: 'from-amber-400 via-orange-500 to-purple-500',
+    shadow: 'shadow-amber-200',
     age: 'preschool',
   },
   {
