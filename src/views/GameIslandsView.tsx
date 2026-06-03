@@ -32,6 +32,7 @@ type GameKey =
   | 'toneking'
   | 'ghepting'
   | 'khoiso'
+  | 'congkhoi'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -345,6 +346,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Xếp khối nhỏ để xây tháp số — một số nhiều cách lắp',
     gradient: 'from-red-500 via-amber-500 to-emerald-500',
     shadow: 'shadow-amber-200',
+    age: 'preschool',
+  },
+  {
+    key: 'congkhoi',
+    emoji: '➕',
+    title: 'Cộng Khối',
+    subtitle: 'Hai tháp gặp nhau biến thành tháp lớn — đoán số mới',
+    gradient: 'from-orange-400 via-amber-400 to-sky-500',
+    shadow: 'shadow-orange-200',
     age: 'preschool',
   },
   {
