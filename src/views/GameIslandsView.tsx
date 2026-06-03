@@ -31,6 +31,7 @@ type GameKey =
   | 'rhymegarden'
   | 'toneking'
   | 'ghepting'
+  | 'khoiso'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -335,6 +336,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Kéo phụ âm và vần để xây ra tiếng — luyện đánh vần',
     gradient: 'from-emerald-400 via-sky-500 to-indigo-500',
     shadow: 'shadow-sky-200',
+    age: 'preschool',
+  },
+  {
+    key: 'khoiso',
+    emoji: '🧱',
+    title: 'Khối Số',
+    subtitle: 'Xếp khối nhỏ để xây tháp số — một số nhiều cách lắp',
+    gradient: 'from-red-500 via-amber-500 to-emerald-500',
+    shadow: 'shadow-amber-200',
     age: 'preschool',
   },
   {
