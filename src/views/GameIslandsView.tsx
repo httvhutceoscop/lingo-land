@@ -33,6 +33,7 @@ type GameKey =
   | 'ghepting'
   | 'khoiso'
   | 'congkhoi'
+  | 'bekhoi'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -355,6 +356,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Hai tháp gặp nhau biến thành tháp lớn — đoán số mới',
     gradient: 'from-orange-400 via-amber-400 to-sky-500',
     shadow: 'shadow-orange-200',
+    age: 'preschool',
+  },
+  {
+    key: 'bekhoi',
+    emoji: '➖',
+    title: 'Bẻ Khối',
+    subtitle: 'Tháp lớn bẻ làm hai — đoán phần còn lại',
+    gradient: 'from-rose-400 via-purple-500 to-indigo-500',
+    shadow: 'shadow-purple-200',
     age: 'preschool',
   },
   {
