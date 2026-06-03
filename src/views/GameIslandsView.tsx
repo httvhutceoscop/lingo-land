@@ -30,6 +30,7 @@ type GameKey =
   | 'fruitscale'
   | 'rhymegarden'
   | 'toneking'
+  | 'ghepting'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -325,6 +326,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Nghe và chọn dấu thanh đúng — chinh phục 6 vương quốc',
     gradient: 'from-amber-400 via-orange-500 to-purple-500',
     shadow: 'shadow-amber-200',
+    age: 'preschool',
+  },
+  {
+    key: 'ghepting',
+    emoji: '🧩',
+    title: 'Ghép Tiếng',
+    subtitle: 'Kéo phụ âm và vần để xây ra tiếng — luyện đánh vần',
+    gradient: 'from-emerald-400 via-sky-500 to-indigo-500',
+    shadow: 'shadow-sky-200',
     age: 'preschool',
   },
   {
