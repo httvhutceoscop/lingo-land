@@ -35,6 +35,7 @@ type GameKey =
   | 'congkhoi'
   | 'bekhoi'
   | 'cauvongso'
+  | 'missingletter'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -375,6 +376,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Xếp số theo thứ tự xây cầu thang rainbow',
     gradient: 'from-red-400 via-yellow-400 via-emerald-400 to-purple-500',
     shadow: 'shadow-emerald-200',
+    age: 'preschool',
+  },
+  {
+    key: 'missingletter',
+    emoji: '🔤',
+    title: 'Bé Tìm Chữ Bị Mất',
+    subtitle: 'Chọn chữ còn thiếu để hoàn thành tên con vật, đồ vật',
+    gradient: 'from-sky-400 via-fuchsia-500 to-amber-500',
+    shadow: 'shadow-sky-200',
     age: 'preschool',
   },
   {
