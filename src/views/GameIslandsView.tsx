@@ -37,6 +37,7 @@ type GameKey =
   | 'cauvongso'
   | 'missingletter'
   | 'supermarket'
+  | 'spotdiff'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -395,6 +396,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Làm nhân viên siêu thị: đếm, so sánh, cộng trừ và tính tiền',
     gradient: 'from-sky-400 via-emerald-500 to-amber-500',
     shadow: 'shadow-emerald-200',
+    age: 'primary',
+  },
+  {
+    key: 'spotdiff',
+    emoji: '🕵️',
+    title: 'Thám Tử Tìm Điểm Khác Biệt',
+    subtitle: 'So sánh hai bức tranh, tìm tất cả điểm khác biệt',
+    gradient: 'from-sky-400 via-indigo-500 to-purple-500',
+    shadow: 'shadow-indigo-200',
     age: 'primary',
   },
   {
