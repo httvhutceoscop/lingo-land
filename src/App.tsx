@@ -59,6 +59,7 @@ import GhepTiengView from './views/GhepTiengView';
 import KhoiSoView from './views/KhoiSoView';
 import CongKhoiView from './views/CongKhoiView';
 import BeKhoiView from './views/BeKhoiView';
+import CauVongSoView from './views/CauVongSoView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -117,6 +118,7 @@ type View =
   | 'khoiso'
   | 'congkhoi'
   | 'bekhoi'
+  | 'cauvongso'
   | 'gameisland'
   | 'knowledge';
 
@@ -156,6 +158,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'khoiso',
   'congkhoi',
   'bekhoi',
+  'cauvongso',
   'challenge',
 ]);
 
@@ -340,6 +343,9 @@ export default function App() {
       case 'bekhoi':
         setView('bekhoi');
         break;
+      case 'cauvongso':
+        setView('cauvongso');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -413,6 +419,7 @@ export default function App() {
         {view === 'khoiso' && <KhoiSoView onBack={goGameIsland} />}
         {view === 'congkhoi' && <CongKhoiView onBack={goGameIsland} />}
         {view === 'bekhoi' && <BeKhoiView onBack={goGameIsland} />}
+        {view === 'cauvongso' && <CauVongSoView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

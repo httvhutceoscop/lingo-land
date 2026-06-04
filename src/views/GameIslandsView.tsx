@@ -34,6 +34,7 @@ type GameKey =
   | 'khoiso'
   | 'congkhoi'
   | 'bekhoi'
+  | 'cauvongso'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -365,6 +366,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Tháp lớn bẻ làm hai — đoán phần còn lại',
     gradient: 'from-rose-400 via-purple-500 to-indigo-500',
     shadow: 'shadow-purple-200',
+    age: 'preschool',
+  },
+  {
+    key: 'cauvongso',
+    emoji: '🌈',
+    title: 'Cầu Vồng Số',
+    subtitle: 'Xếp số theo thứ tự xây cầu thang rainbow',
+    gradient: 'from-red-400 via-yellow-400 via-emerald-400 to-purple-500',
+    shadow: 'shadow-emerald-200',
     age: 'preschool',
   },
   {
