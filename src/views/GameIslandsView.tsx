@@ -36,6 +36,7 @@ type GameKey =
   | 'bekhoi'
   | 'cauvongso'
   | 'missingletter'
+  | 'supermarket'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -386,6 +387,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-sky-400 via-fuchsia-500 to-amber-500',
     shadow: 'shadow-sky-200',
     age: 'preschool',
+  },
+  {
+    key: 'supermarket',
+    emoji: '🛒',
+    title: 'Siêu Thị Toán Học',
+    subtitle: 'Làm nhân viên siêu thị: đếm, so sánh, cộng trừ và tính tiền',
+    gradient: 'from-sky-400 via-emerald-500 to-amber-500',
+    shadow: 'shadow-emerald-200',
+    age: 'primary',
   },
   {
     key: 'challenge',
