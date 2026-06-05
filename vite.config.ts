@@ -59,8 +59,13 @@ export default defineConfig(({ mode }) => {
           ],
         },
         workbox: {
-          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+          maximumFileSizeToCacheInBytes: 14 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+          // Mỗi lần build/deploy, SW mới sẽ chiếm quyền ngay và xoá precache của
+          // bản cũ — người dùng luôn nhận code mới nhất mà không cần reload thủ công.
+          cleanupOutdatedCaches: true,
+          skipWaiting: true,
+          clientsClaim: true,
           runtimeCaching: [
             {
               urlPattern: ({ url }) => url.origin === 'https://cdn.tailwindcss.com',
