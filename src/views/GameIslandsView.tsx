@@ -39,6 +39,7 @@ type GameKey =
   | 'supermarket'
   | 'spotdiff'
   | 'animalpuzzle'
+  | 'writeletter'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -416,6 +417,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-emerald-400 via-sky-500 to-purple-500',
     shadow: 'shadow-sky-200',
     age: 'preschool',
+  },
+  {
+    key: 'writeletter',
+    emoji: '✍️',
+    title: 'Bé Viết Chữ Thần Tốc',
+    subtitle: 'Tô theo nét để luyện viết chữ cái, từ và câu',
+    gradient: 'from-sky-400 via-indigo-500 to-purple-500',
+    shadow: 'shadow-indigo-200',
+    age: 'primary',
   },
   {
     key: 'challenge',
