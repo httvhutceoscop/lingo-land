@@ -63,6 +63,7 @@ import CauVongSoView from './views/CauVongSoView';
 import MissingLetterView from './views/MissingLetterView';
 import SupermarketMathView from './views/SupermarketMathView';
 import SpotDifferenceView from './views/SpotDifferenceView';
+import AnimalPuzzleView from './views/AnimalPuzzleView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -125,6 +126,7 @@ type View =
   | 'missingletter'
   | 'supermarket'
   | 'spotdiff'
+  | 'animalpuzzle'
   | 'gameisland'
   | 'knowledge';
 
@@ -168,6 +170,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'missingletter',
   'supermarket',
   'spotdiff',
+  'animalpuzzle',
   'challenge',
 ]);
 
@@ -364,6 +367,9 @@ export default function App() {
       case 'spotdiff':
         setView('spotdiff');
         break;
+      case 'animalpuzzle':
+        setView('animalpuzzle');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -441,6 +447,7 @@ export default function App() {
         {view === 'missingletter' && <MissingLetterView onBack={goGameIsland} />}
         {view === 'supermarket' && <SupermarketMathView onBack={goGameIsland} />}
         {view === 'spotdiff' && <SpotDifferenceView onBack={goGameIsland} />}
+        {view === 'animalpuzzle' && <AnimalPuzzleView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

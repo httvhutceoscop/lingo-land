@@ -38,6 +38,7 @@ type GameKey =
   | 'missingletter'
   | 'supermarket'
   | 'spotdiff'
+  | 'animalpuzzle'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -406,6 +407,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-sky-400 via-indigo-500 to-purple-500',
     shadow: 'shadow-indigo-200',
     age: 'primary',
+  },
+  {
+    key: 'animalpuzzle',
+    emoji: '🧩',
+    title: 'Ghép Hình Động Vật',
+    subtitle: 'Kéo các mảnh về đúng chỗ để hiện ra con vật',
+    gradient: 'from-emerald-400 via-sky-500 to-purple-500',
+    shadow: 'shadow-sky-200',
+    age: 'preschool',
   },
   {
     key: 'challenge',
