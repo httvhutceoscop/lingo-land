@@ -44,6 +44,7 @@ type GameKey =
   | 'spacemath'
   | 'classmonitor'
   | 'animalrescue'
+  | 'travelcat'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -465,6 +466,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Tìm, chăm sóc và đưa thú về đúng môi trường sống',
     gradient: 'from-emerald-400 via-sky-500 to-orange-500',
     shadow: 'shadow-emerald-200',
+    age: 'primary',
+  },
+  {
+    key: 'travelcat',
+    emoji: '😺',
+    title: 'Du Lịch Cùng Mèo Ú',
+    subtitle: 'Khám phá địa danh, ẩm thực và văn hoá khắp thế giới',
+    gradient: 'from-sky-400 via-orange-400 to-emerald-500',
+    shadow: 'shadow-sky-200',
     age: 'primary',
   },
   {
