@@ -46,6 +46,7 @@ type GameKey =
   | 'animalrescue'
   | 'travelcat'
   | 'schooljourney'
+  | 'mathtreasure'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -486,6 +487,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-sky-400 via-emerald-400 to-amber-400',
     shadow: 'shadow-sky-200',
     age: 'preschool',
+  },
+  {
+    key: 'mathtreasure',
+    emoji: '🗺️',
+    title: 'Kho Báu Toán Học',
+    subtitle: 'Phiêu lưu 6 hòn đảo, giải toán mở rương kho báu',
+    gradient: 'from-amber-400 via-emerald-500 to-sky-500',
+    shadow: 'shadow-amber-200',
+    age: 'primary',
   },
   {
     key: 'challenge',
