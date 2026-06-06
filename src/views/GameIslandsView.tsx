@@ -48,6 +48,7 @@ type GameKey =
   | 'schooljourney'
   | 'mathtreasure'
   | 'memorycard'
+  | 'traffichero'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -506,6 +507,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-sky-400 via-fuchsia-500 to-purple-500',
     shadow: 'shadow-fuchsia-200',
     age: 'preschool',
+  },
+  {
+    key: 'traffichero',
+    emoji: '🚦',
+    title: 'Siêu Nhân Giao Thông',
+    subtitle: 'Học luật, biển báo và sang đường an toàn',
+    gradient: 'from-red-400 via-amber-400 to-emerald-500',
+    shadow: 'shadow-amber-200',
+    age: 'primary',
   },
   {
     key: 'challenge',

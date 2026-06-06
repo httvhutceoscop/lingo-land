@@ -73,6 +73,7 @@ import TravelCatView from './views/TravelCatView';
 import SchoolJourneyView from './views/SchoolJourneyView';
 import MathTreasureView from './views/MathTreasureView';
 import MemoryCardView from './views/MemoryCardView';
+import TrafficHeroView from './views/TrafficHeroView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -145,6 +146,7 @@ type View =
   | 'schooljourney'
   | 'mathtreasure'
   | 'memorycard'
+  | 'traffichero'
   | 'gameisland'
   | 'knowledge';
 
@@ -198,6 +200,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'schooljourney',
   'mathtreasure',
   'memorycard',
+  'traffichero',
   'challenge',
 ]);
 
@@ -424,6 +427,9 @@ export default function App() {
       case 'memorycard':
         setView('memorycard');
         break;
+      case 'traffichero':
+        setView('traffichero');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -511,6 +517,7 @@ export default function App() {
         {view === 'schooljourney' && <SchoolJourneyView onBack={goGameIsland} />}
         {view === 'mathtreasure' && <MathTreasureView onBack={goGameIsland} />}
         {view === 'memorycard' && <MemoryCardView onBack={goGameIsland} />}
+        {view === 'traffichero' && <TrafficHeroView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={
