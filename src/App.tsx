@@ -66,6 +66,7 @@ import SpotDifferenceView from './views/SpotDifferenceView';
 import AnimalPuzzleView from './views/AnimalPuzzleView';
 import WriteLetterView from './views/WriteLetterView';
 import TrainPhonicsView from './views/TrainPhonicsView';
+import SpaceMathView from './views/SpaceMathView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -131,6 +132,7 @@ type View =
   | 'animalpuzzle'
   | 'writeletter'
   | 'trainphonics'
+  | 'spacemath'
   | 'gameisland'
   | 'knowledge';
 
@@ -177,6 +179,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'animalpuzzle',
   'writeletter',
   'trainphonics',
+  'spacemath',
   'challenge',
 ]);
 
@@ -382,6 +385,9 @@ export default function App() {
       case 'trainphonics':
         setView('trainphonics');
         break;
+      case 'spacemath':
+        setView('spacemath');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -462,6 +468,7 @@ export default function App() {
         {view === 'animalpuzzle' && <AnimalPuzzleView onBack={goGameIsland} />}
         {view === 'writeletter' && <WriteLetterView onBack={goGameIsland} />}
         {view === 'trainphonics' && <TrainPhonicsView onBack={goGameIsland} />}
+        {view === 'spacemath' && <SpaceMathView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={
