@@ -43,6 +43,7 @@ type GameKey =
   | 'trainphonics'
   | 'spacemath'
   | 'classmonitor'
+  | 'animalrescue'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -455,6 +456,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Quản lý lớp, giúp bạn, học kỹ năng lãnh đạo',
     gradient: 'from-sky-400 via-amber-400 to-emerald-400',
     shadow: 'shadow-amber-200',
+    age: 'primary',
+  },
+  {
+    key: 'animalrescue',
+    emoji: '🦸',
+    title: 'Cứu Hộ Động Vật',
+    subtitle: 'Tìm, chăm sóc và đưa thú về đúng môi trường sống',
+    gradient: 'from-emerald-400 via-sky-500 to-orange-500',
+    shadow: 'shadow-emerald-200',
     age: 'primary',
   },
   {
