@@ -47,6 +47,7 @@ type GameKey =
   | 'travelcat'
   | 'schooljourney'
   | 'mathtreasure'
+  | 'memorycard'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -496,6 +497,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-amber-400 via-emerald-500 to-sky-500',
     shadow: 'shadow-amber-200',
     age: 'primary',
+  },
+  {
+    key: 'memorycard',
+    emoji: '🧠',
+    title: 'Học Viện Trí Nhớ',
+    subtitle: 'Lật thẻ tìm cặp giống nhau — luyện trí nhớ',
+    gradient: 'from-sky-400 via-fuchsia-500 to-purple-500',
+    shadow: 'shadow-fuchsia-200',
+    age: 'preschool',
   },
   {
     key: 'challenge',
