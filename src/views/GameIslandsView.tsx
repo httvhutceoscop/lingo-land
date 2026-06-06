@@ -40,6 +40,7 @@ type GameKey =
   | 'spotdiff'
   | 'animalpuzzle'
   | 'writeletter'
+  | 'trainphonics'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -425,6 +426,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Tô theo nét để luyện viết chữ cái, từ và câu',
     gradient: 'from-sky-400 via-indigo-500 to-purple-500',
     shadow: 'shadow-indigo-200',
+    age: 'primary',
+  },
+  {
+    key: 'trainphonics',
+    emoji: '🚂',
+    title: 'Chuyến Tàu Âm Vần',
+    subtitle: 'Ghép âm đầu, vần và thanh điệu thành tiếng',
+    gradient: 'from-sky-400 via-indigo-500 to-purple-500',
+    shadow: 'shadow-sky-200',
     age: 'primary',
   },
   {
