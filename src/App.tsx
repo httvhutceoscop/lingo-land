@@ -70,6 +70,7 @@ import SpaceMathView from './views/SpaceMathView';
 import ClassMonitorView from './views/ClassMonitorView';
 import AnimalRescueView from './views/AnimalRescueView';
 import TravelCatView from './views/TravelCatView';
+import SchoolJourneyView from './views/SchoolJourneyView';
 import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
@@ -139,6 +140,7 @@ type View =
   | 'classmonitor'
   | 'animalrescue'
   | 'travelcat'
+  | 'schooljourney'
   | 'gameisland'
   | 'knowledge';
 
@@ -189,6 +191,7 @@ const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
   'classmonitor',
   'animalrescue',
   'travelcat',
+  'schooljourney',
   'challenge',
 ]);
 
@@ -406,6 +409,9 @@ export default function App() {
       case 'travelcat':
         setView('travelcat');
         break;
+      case 'schooljourney':
+        setView('schooljourney');
+        break;
       case 'challenge':
         setView('challenge');
         break;
@@ -490,6 +496,7 @@ export default function App() {
         {view === 'classmonitor' && <ClassMonitorView onBack={goGameIsland} />}
         {view === 'animalrescue' && <AnimalRescueView onBack={goGameIsland} />}
         {view === 'travelcat' && <TravelCatView onBack={goGameIsland} />}
+        {view === 'schooljourney' && <SchoolJourneyView onBack={goGameIsland} />}
         {view === 'coloring' && (
           <Suspense
             fallback={

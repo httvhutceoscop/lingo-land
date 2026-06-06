@@ -45,6 +45,7 @@ type GameKey =
   | 'classmonitor'
   | 'animalrescue'
   | 'travelcat'
+  | 'schooljourney'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -476,6 +477,15 @@ const GAMES: GameCard[] = [
     gradient: 'from-sky-400 via-orange-400 to-emerald-500',
     shadow: 'shadow-sky-200',
     age: 'primary',
+  },
+  {
+    key: 'schooljourney',
+    emoji: '🏫',
+    title: 'Hành Trình Đến Trường',
+    subtitle: 'Chuẩn bị đồ, đi học an toàn, kết bạn — sẵn sàng vào lớp 1',
+    gradient: 'from-sky-400 via-emerald-400 to-amber-400',
+    shadow: 'shadow-sky-200',
+    age: 'preschool',
   },
   {
     key: 'challenge',
