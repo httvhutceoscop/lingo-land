@@ -42,6 +42,7 @@ type GameKey =
   | 'writeletter'
   | 'trainphonics'
   | 'spacemath'
+  | 'classmonitor'
   | 'challenge';
 
 // Nhóm tuổi đề xuất cho mỗi game.
@@ -445,6 +446,15 @@ const GAMES: GameCard[] = [
     subtitle: 'Phi hành gia nhí giải toán, chinh phục 7 hành tinh',
     gradient: 'from-sky-500 via-violet-500 to-cyan-500',
     shadow: 'shadow-violet-200',
+    age: 'primary',
+  },
+  {
+    key: 'classmonitor',
+    emoji: '🎓',
+    title: 'Bé Làm Lớp Trưởng',
+    subtitle: 'Quản lý lớp, giúp bạn, học kỹ năng lãnh đạo',
+    gradient: 'from-sky-400 via-amber-400 to-emerald-400',
+    shadow: 'shadow-amber-200',
     age: 'primary',
   },
   {
