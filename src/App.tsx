@@ -402,6 +402,10 @@ export default function App() {
             <span className="text-emerald-400">▶️</span>
           </button>
         </div>
+
+        <div className="mt-6 pt-4 border-t border-slate-100 text-center text-[10px] text-slate-400 font-bold">
+          LingoLand v{__APP_VERSION__}
+        </div>
       </SideDrawer>
     </div>
   );

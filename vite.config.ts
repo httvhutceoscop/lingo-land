@@ -1,6 +1,9 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import pkg from './package.json';
+
+const pkgVersion = pkg.version;
 
 function googleTagPlugin(tagId: string): Plugin {
   return {
@@ -26,6 +29,9 @@ export default defineConfig(({ mode }) => {
   const googleTag = env.VITE_GOOGLE_TAG ?? '';
   return {
     base: '/lingo-land/',
+    define: {
+      __APP_VERSION__: JSON.stringify(pkgVersion),
+    },
     plugins: [
       googleTagPlugin(googleTag),
       react(),
