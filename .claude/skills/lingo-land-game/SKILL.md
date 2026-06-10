@@ -1,6 +1,6 @@
 ---
 name: lingo-land-game
-description: Implementation guide để thêm một game mới vào codebase lingo-land. Dùng skill này sau khi đã có thiết kế game (tự viết hoặc từ skill educational-game-designer) và sẵn sàng viết code. Skill walk-through đầy đủ 7 nơi cần sửa (View union, GameKey, GAME_ISLAND_VIEWS, pickGame switch, App.tsx render, GameCard entry, View file mới), giúp chọn HTML vs Canvas vs Phaser, và tuân thủ convention localStorage / BGM / SFX của dự án.
+description: Implementation guide để thêm một game mới vào codebase lingo-land. Dùng skill này sau khi đã có thiết kế game (tự viết hoặc từ skill educational-game-designer) và sẵn sàng viết code. Skill walk-through các nơi cần sửa (tạo View file mới, GameKey, GameCard entry, GAME_COMPONENTS registry trong App.tsx) sau khi app chuyển sang react-router (HashRouter) — routing/BGM/nav giờ tự động theo path, giúp chọn HTML vs Canvas vs Phaser, và tuân thủ convention localStorage / BGM / SFX của dự án.
 ---
 
 # Lingo-Land — Hướng dẫn implement game mới
@@ -8,6 +8,8 @@ description: Implementation guide để thêm một game mới vào codebase lin
 Skill này là **đối tác kỹ thuật** của `educational-game-designer`. Khi đã có thiết kế (mục tiêu học, độ tuổi, core loop, mechanics), skill này hướng dẫn cách wire game vào codebase chính xác và đúng convention.
 
 > ⚠️ Trước khi bắt đầu, kiểm tra lại bằng việc đọc [CLAUDE.md](../../../CLAUDE.md), [src/App.tsx](../../../src/App.tsx), và [src/views/GameIslandsView.tsx](../../../src/views/GameIslandsView.tsx) để bắt mọi thay đổi convention gần đây — file này có thể đã cũ.
+
+> 🧭 **App dùng `react-router-dom` v6 + `HashRouter`** (xem [src/main.tsx](../../../src/main.tsx)). Mỗi game ở Đảo Trò Chơi nằm tại route `/game/:key`. Việc dispatch không còn qua `switch pickGame()` + render thủ công nữa — giờ là **registry `GAME_COMPONENTS`** trong [App.tsx](../../../src/App.tsx). BGM, highlight bottom-nav, và nút Quay-lại đều tự động theo `pathname`, nên thêm game gọn hơn hẳn so với mô hình `view: View` cũ.
 
 ## Quyết định đầu tiên: HTML vs Canvas vs Phaser
 
@@ -23,9 +25,9 @@ Skill này là **đối tác kỹ thuật** của `educational-game-designer`. K
 - Bắt đầu bằng HTML. Nếu cần >5 phần tử chuyển động song song hoặc drag-với-velocity → Canvas. Nếu cần collision/sprite/physics nghiêm túc → Phaser.
 - Đừng dùng Phaser cho 1 màn quiz đơn giản — phí 1MB bundle.
 
-## Checklist 7 bước: thêm 1 Game Island game
+## Checklist: thêm 1 Game Island game
 
-Mỗi bước có chi tiết bên dưới. Mọi bước đều BẮT BUỘC, thiếu 1 bước game sẽ hỏng theo cách khác nhau.
+Chỉ còn **4 bước**, gói gọn trong 2 file ([GameIslandsView.tsx](../../../src/views/GameIslandsView.tsx) + [App.tsx](../../../src/App.tsx)) cộng file view mới. Routing, BGM, nav-highlight, và nút Quay-lại được lo tự động — KHÔNG còn `View` union, `GAME_ISLAND_VIEWS` set, `pickGame` switch, hay render thủ công như trước.
 
 ### Bước 1 — Tạo file view mới `src/views/<Tên>View.tsx`
 
@@ -45,7 +47,7 @@ export default function MyGameView({ onBack }: Props) {
 }
 ```
 
-- `onBack` luôn quay về `gameisland` (KHÔNG về `map`) — đã xử lý trong App.tsx.
+- `onBack` quay về Đảo Trò Chơi (`/games`). Bạn KHÔNG cần tự wire — `GameRoute` trong App.tsx truyền sẵn `onBack={() => navigate('/games')}`. Trong game chỉ cần gọi `onBack()`.
 - Phaser-based: `export default function` được wrap bằng pattern dùng `useEffect` + ref `<div>` mount Phaser game; tham chiếu 3 view Phaser hiện có.
 - Canvas-based: dùng `useRef<HTMLCanvasElement>` + `useEffect` setup RAF, cleanup trong return.
 
@@ -55,7 +57,7 @@ export default function MyGameView({ onBack }: Props) {
 export type GameKey = 'feedanimal' | 'count' | /* ... | */ 'mygame';
 ```
 
-Thêm key mới vào cuối union để minimal-diff.
+Thêm key mới vào cuối union để minimal-diff. `key` này chính là segment trong URL: `/game/mygame`.
 
 ### Bước 3 — Thêm entry vào `GAMES: GameCard[]` (cùng file)
 
@@ -75,50 +77,32 @@ Thêm key mới vào cuối union để minimal-diff.
 - `age`: `'preschool'` cho 1-5t, `'primary'` cho 6-10t. View sẽ render game theo nhóm tuổi.
 - `emoji` đại diện hoạt động cốt lõi, không chỉ trang trí.
 
-### Bước 4 — Mở rộng `View` union trong [src/App.tsx](../../../src/App.tsx)
+### Bước 4 — Thêm vào `GAME_COMPONENTS` registry trong [src/App.tsx](../../../src/App.tsx)
 
-```ts
-type View = 'map' | 'knowledge' | /* ... | */ 'mygame';
-```
-
-`View` là superset của `GameKey` cho Game Island view names. Tên view = key game (lowercase, không space).
-
-### Bước 5 — Thêm vào `GAME_ISLAND_VIEWS` Set (cùng file App.tsx)
-
-```ts
-const GAME_ISLAND_VIEWS = new Set<View>([
-  'feedanimal',
-  // ...
-  'mygame',
-]);
-```
-
-**Đây là bước hay quên nhất.** Nếu thiếu:
-- BGM sẽ KHÔNG tự bật/tắt khi vào game.
-- BottomNav sẽ không highlight `'map'` (active state lỗi).
-
-### Bước 6 — Thêm `case` vào `pickGame(key)` trong App.tsx
-
-```ts
-case 'mygame': setView('mygame'); break;
-```
-
-### Bước 7 — Thêm conditional render trong App.tsx
+Đây là chỗ duy nhất cần đụng trong App.tsx. Thêm 1 dòng vào object `GAME_COMPONENTS` (mapping `GameKey → component`) và import component ở đầu file:
 
 ```tsx
-{view === 'mygame' && <MyGameView onBack={() => setView('gameisland')} />}
+// đầu file App.tsx — static import nếu game nhẹ:
+import MyGameView from './views/MyGameView';
+
+// ...trong const GAME_COMPONENTS: Record<GameKey, ComponentType<{ onBack }>> = {
+  // ...
+  mygame: MyGameView,
+// };
 ```
 
-**Import:** ở đầu file App.tsx. Nếu game không phải Phaser và không nặng asset → static import. Nếu nặng → lazy:
+Route `/game/:key` (`GameRoute`) tự tra registry, tự bọc `Suspense`, tự truyền `onBack`. **Không cần** thêm `<Route>`, không cần render thủ công, không cần `pickGame`. (`GAME_COMPONENTS` là `Record<GameKey, …>` đầy đủ — quên một key sẽ lỗi typecheck ngay, đỡ quên thầm lặng như `GAME_ISLAND_VIEWS` cũ.)
+
+**Nếu game nặng (Phaser ~1MB, hoặc asset SVG lớn) → lazy import:**
 
 ```tsx
 const MyGameView = lazy(() => import('./views/MyGameView'));
-
-// Trong JSX:
-<Suspense fallback={<div className="...">Đang tải…</div>}>
-  <MyGameView onBack={() => setView('gameisland')} />
-</Suspense>
+// rồi vẫn: mygame: MyGameView,  trong GAME_COMPONENTS
 ```
+
+`GameRoute` đã wrap mọi component trong `Suspense` với fallback `"Đang tải…"`, nên lazy game chạy ngay — KHÔNG tự thêm `<Suspense>`. (Muốn fallback đặc biệt như ColoringView "🎨 Đang tải tranh tô màu…" thì sửa hàm `gameFallback(key)` trong App.tsx.)
+
+> `'challenge'` (TimeChallengeView) cũng chỉ là một `GameKey` trong registry, không có route đặc biệt — vào tại `/game/challenge`.
 
 ## localStorage: chọn đúng suffix
 
@@ -155,7 +139,7 @@ Nếu game **xứng đáng** vào hệ thống GameContext (score / streak / SRS
 ## Audio: chọn đúng API
 
 ### BGM (tự động)
-Đã handle: vào view trong `GAME_ISLAND_VIEWS` → `startBgm()`, rời → `stopBgm()`. Không gọi tay.
+Đã handle theo path: vào route `/game/*` → `startBgm()`, rời → `stopBgm()` (một `useEffect` watch `useLocation().pathname` trong App.tsx). Không gọi tay. Vì game của bạn ở `/game/<key>`, BGM tự bật — không cần đăng ký thêm bất cứ đâu.
 
 Tắt cho user: env var `VITE_BGM_ENABLED=false`. Đừng thêm UI tắt nhạc trong game riêng — đã có cơ chế global.
 
@@ -226,7 +210,7 @@ export default function MyPhaserGame({ onBack }: { onBack: () => void }) {
 }
 ```
 
-**BẮT BUỘC `React.lazy`** trong App.tsx — phaser ~1MB.
+**BẮT BUỘC `React.lazy`** khi đăng ký trong `GAME_COMPONENTS` — phaser ~1MB.
 
 ## Canvas + RAF: pattern bắt buộc
 
@@ -258,13 +242,13 @@ npm run dev         # mở http://localhost:5173/lingo-land/
 ```
 
 **Test trong browser:**
-1. Mở Đảo Trò Chơi từ map.
+1. Mở Đảo Trò Chơi từ map (`/games`).
 2. Card mới hiển thị đúng nhóm tuổi (preschool/primary).
-3. Tap card → vào game → nhạc BGM bật.
+3. Tap card → URL đổi sang `/lingo-land/#/game/mygame`, vào game → nhạc BGM bật.
 4. Chơi 1 vòng, đảm bảo SFX phản hồi đúng.
-5. Nhấn nút Quay lại → về `gameisland` (KHÔNG về `map`), BGM tiếp tục.
+5. Nhấn nút Quay lại → về `/games` (Đảo Trò Chơi, KHÔNG về map), BGM tiếp tục.
 6. Đi đến Map (qua BottomNav) → BGM dừng.
-7. F5 reload → state localStorage giữ đúng (nếu game có persist).
+7. **Deep-link & reload**: dán thẳng `…/#/game/mygame` vào tab mới → vào đúng game. F5 reload tại game → vẫn ở game + state localStorage giữ đúng.
 8. Mở DevTools → Application → Local Storage → tìm key `lingoland_<game>_*`.
 
 **Không có test runner.** Verify thủ công là duy nhất.
@@ -273,9 +257,9 @@ npm run dev         # mở http://localhost:5173/lingo-land/
 
 ### Game không vào Game Island (rare)
 Nếu là ref tool, screen secondary (vd "đồng hồ" trong SideDrawer):
-- KHÔNG thêm vào `GAMES`, `GameKey`, `GAME_ISLAND_VIEWS`.
-- KHÔNG bật BGM tự động.
-- Thêm vào SideDrawer items thay vì Game Island grid. Xem [src/components/SideDrawer.tsx](../../../src/components/SideDrawer.tsx).
+- KHÔNG thêm vào `GAMES`, `GameKey`, `GAME_COMPONENTS`.
+- KHÔNG bật BGM tự động (BGM chỉ bật ở route `/game/*`).
+- Cấp một route riêng cho nó (vd `/clock`) trong `<Routes>` của App.tsx, rồi thêm item gọi `navigate('/clock')` + đóng drawer trong SideDrawer. Xem [src/components/SideDrawer.tsx](../../../src/components/SideDrawer.tsx) và cách `/alphabet`, `/numbers` được wire.
 
 ### Game tham gia hệ unlock của Knowledge Island (rare)
 - Đây là re-design lớn. Hỏi user trước.
@@ -287,10 +271,11 @@ Bespoke shape OK. Đặt key dạng `lingoland_<game>` (không suffix), document
 
 ## Tránh
 
-- ❌ Quên `GAME_ISLAND_VIEWS` (BGM hỏng câm lặng).
+- ❌ Quên thêm vào `GAME_COMPONENTS` (route `/game/<key>` sẽ redirect về `/games`, game không mở được).
 - ❌ Quên prefix `lingoland_` (key không bị reset).
 - ❌ Phaser không lazy-load (initial bundle phình).
 - ❌ Static import asset coloring/svg lớn → bundle.
+- ❌ Tự thêm `<Suspense>` quanh game trong registry (GameRoute đã bọc sẵn — thừa).
 - ❌ Tự viết BGM riêng cho game (đè lên loop chung).
 - ❌ Đẩy progress vào GameContext khi không thuộc Knowledge Island.
 - ❌ Animation chạy 60fps với `useState` thay vì `useRef` (lag re-render).
@@ -299,8 +284,8 @@ Bespoke shape OK. Đặt key dạng `lingoland_<game>` (không suffix), document
 
 ## Tóm tắt mental model
 
-1. Thiết kế xong (từ `educational-game-designer`) → quyết HTML/Canvas/Phaser → tạo view file.
-2. Wire 7 chỗ: GameKey, GAMES card, View union, GAME_ISLAND_VIEWS, pickGame switch, App.tsx render, import (+ lazy nếu cần).
+1. Thiết kế xong (từ `educational-game-designer`) → quyết HTML/Canvas/Phaser → tạo view file (contract `{ onBack }`).
+2. Wire 2 file: trong **GameIslandsView.tsx** thêm `GameKey` + `GAMES` card; trong **App.tsx** thêm 1 dòng vào `GAME_COMPONENTS` (+ import, `lazy` nếu nặng). Routing/BGM/nav/back tự động theo path.
 3. Chọn localStorage suffix đúng (`_hs` / `_passed` / `_done`), prefix `lingoland_`.
-4. BGM tự động. SFX: prefer `beep.ts` synthesize, dùng `<audio>` chỉ khi cần asset cố định.
-5. `npm run typecheck` → `npm run dev` → verify thủ công trong browser.
+4. BGM tự động (route `/game/*`). SFX: prefer `beep.ts` synthesize, dùng `<audio>` chỉ khi cần asset cố định.
+5. `npm run typecheck` → `npm run dev` → verify thủ công trong browser (gồm deep-link & reload).

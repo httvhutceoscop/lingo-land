@@ -1,4 +1,12 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState, type ComponentType } from 'react';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useParams,
+  useLocation,
+} from 'react-router-dom';
 import Header from './components/Header';
 import BottomNav, { type NavKey } from './components/BottomNav';
 import MapView from './views/MapView';
@@ -78,139 +86,200 @@ import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import { startBgm, stopBgm } from './lib/bgm';
-import type { Category, SubGroup } from './data/gameData';
-import type { MathLevel } from './data/mathData';
+import { CATEGORIES, findSubGroup, type Word } from './data/gameData';
+import { MATH_LEVELS } from './data/mathData';
 
-type View =
-  | 'map'
-  | 'category'
-  | 'flashcard'
-  | 'test'
-  | 'result'
-  | 'leader'
-  | 'profile'
-  | 'pron'
-  | 'stickers'
-  | 'challenge'
-  | 'review'
-  | 'alphabet'
-  | 'numbers'
-  | 'mathland'
-  | 'mathquiz'
-  | 'numberpop'
-  | 'feedanimal'
-  | 'compare'
-  | 'subtract'
-  | 'plus'
-  | 'count'
-  | 'matchpuzzle'
-  | 'sequence'
-  | 'coloring'
-  | 'mathrescue'
-  | 'ocean'
-  | 'greenknight'
-  | 'codekingdom'
-  | 'traintrack'
-  | 'ecobalance'
-  | 'lightengineer'
-  | 'magicisland'
-  | 'marspack'
-  | 'detective'
-  | 'riverrescue'
-  | 'whackmath'
-  | 'fruitrescue'
-  | 'spellingking'
-  | 'tracerkids'
-  | 'feedcount'
-  | 'bubbleletters'
-  | 'connectdots'
-  | 'dinoalphabet'
-  | 'fruitscale'
-  | 'rhymegarden'
-  | 'toneking'
-  | 'ghepting'
-  | 'khoiso'
-  | 'congkhoi'
-  | 'bekhoi'
-  | 'cauvongso'
-  | 'missingletter'
-  | 'supermarket'
-  | 'spotdiff'
-  | 'animalpuzzle'
-  | 'writeletter'
-  | 'trainphonics'
-  | 'spacemath'
-  | 'classmonitor'
-  | 'animalrescue'
-  | 'travelcat'
-  | 'schooljourney'
-  | 'mathtreasure'
-  | 'memorycard'
-  | 'traffichero'
-  | 'gameisland'
-  | 'knowledge';
+// Mọi game ở Đảo Trò Chơi đều nhận đúng một prop `onBack`. Registry này thay cho
+// switch pickGame() + 50 nhánh render cũ — thêm game mới chỉ cần một dòng ở đây
+// (và một entry trong GAMES của GameIslandsView). 'challenge' (TimeChallenge) cũng
+// là một game key nên nằm cùng bảng.
+const GAME_COMPONENTS: Record<GameKey, ComponentType<{ onBack: () => void }>> = {
+  numberpop: NumberPopView,
+  feedanimal: FeedAnimalView,
+  compare: CompareView,
+  subtract: SubtractView,
+  count: CountView,
+  plus: PlusView,
+  matchpuzzle: MatchPuzzleView,
+  sequence: SequenceView,
+  coloring: ColoringView,
+  mathrescue: MathRescueView,
+  ocean: OceanVocabularyView,
+  greenknight: GreenKnightRecycleView,
+  codekingdom: CodeKingdomView,
+  traintrack: TrainTrackPuzzleView,
+  ecobalance: EcoBalanceView,
+  lightengineer: LightEngineerView,
+  magicisland: MagicIsland2048View,
+  marspack: MarsPackingView,
+  detective: DetectiveCluesView,
+  riverrescue: RiverRescueView,
+  whackmath: WhackMathView,
+  fruitrescue: FruitRescueView,
+  spellingking: SpellingKingView,
+  tracerkids: TracerKidsView,
+  feedcount: FeedCountView,
+  bubbleletters: BubbleLettersView,
+  connectdots: ConnectDotsView,
+  dinoalphabet: DinoAlphabetView,
+  fruitscale: FruitScaleView,
+  rhymegarden: RhymeGardenView,
+  toneking: ToneKingView,
+  ghepting: GhepTiengView,
+  khoiso: KhoiSoView,
+  congkhoi: CongKhoiView,
+  bekhoi: BeKhoiView,
+  cauvongso: CauVongSoView,
+  missingletter: MissingLetterView,
+  supermarket: SupermarketMathView,
+  spotdiff: SpotDifferenceView,
+  animalpuzzle: AnimalPuzzleView,
+  writeletter: WriteLetterView,
+  trainphonics: TrainPhonicsView,
+  spacemath: SpaceMathView,
+  classmonitor: ClassMonitorView,
+  animalrescue: AnimalRescueView,
+  travelcat: TravelCatView,
+  schooljourney: SchoolJourneyView,
+  mathtreasure: MathTreasureView,
+  memorycard: MemoryCardView,
+  traffichero: TrafficHeroView,
+  challenge: TimeChallengeView,
+};
 
-const GAME_ISLAND_VIEWS: ReadonlySet<View> = new Set<View>([
-  'numberpop',
-  'feedanimal',
-  'compare',
-  'subtract',
-  'count',
-  'plus',
-  'matchpuzzle',
-  'sequence',
-  'coloring',
-  'mathrescue',
-  'ocean',
-  'greenknight',
-  'codekingdom',
-  'traintrack',
-  'ecobalance',
-  'lightengineer',
-  'magicisland',
-  'marspack',
-  'detective',
-  'riverrescue',
-  'whackmath',
-  'fruitrescue',
-  'spellingking',
-  'tracerkids',
-  'feedcount',
-  'bubbleletters',
-  'connectdots',
-  'dinoalphabet',
-  'fruitscale',
-  'rhymegarden',
-  'toneking',
-  'ghepting',
-  'khoiso',
-  'congkhoi',
-  'bekhoi',
-  'cauvongso',
-  'missingletter',
-  'supermarket',
-  'spotdiff',
-  'animalpuzzle',
-  'writeletter',
-  'trainphonics',
-  'spacemath',
-  'classmonitor',
-  'animalrescue',
-  'travelcat',
-  'schooljourney',
-  'mathtreasure',
-  'memorycard',
-  'traffichero',
-  'challenge',
-]);
+// Dispatch của 7 mini-game ôn tập từ vựng (test view) theo SubGroup.mode.
+const TEST_COMPONENTS: Record<
+  string,
+  ComponentType<{ words: Word[]; onFinish: (r: QuizResult) => void; onExit: () => void }>
+> = {
+  quiz: QuizView,
+  matching: MatchingView,
+  listening: ListeningView,
+  typing: TypingView,
+  memory: MemoryView,
+  hangman: HangmanView,
+  shadow: ShadowView,
+};
+
+const NAV_PATHS: Record<NavKey, string> = {
+  map: '/',
+  pron: '/pronunciation',
+  leader: '/leaderboard',
+  profile: '/profile',
+};
+
+function navKeyForPath(pathname: string): NavKey {
+  if (pathname === '/leaderboard') return 'leader';
+  if (pathname === '/pronunciation') return 'pron';
+  if (pathname === '/profile' || pathname === '/stickers') return 'profile';
+  return 'map';
+}
+
+const gameFallback = (key: string | undefined) =>
+  key === 'coloring' ? (
+    <div className="py-10 text-center text-slate-400 font-bold animate-pulse">
+      🎨 Đang tải tranh tô màu…
+    </div>
+  ) : (
+    <div className="p-8 text-center text-slate-400">Đang tải…</div>
+  );
+
+// /game/:key — tra registry, render với onBack về Đảo Trò Chơi. Key lạ → quay lại danh sách.
+function GameRoute() {
+  const { key } = useParams<{ key: string }>();
+  const navigate = useNavigate();
+  const Comp = key ? GAME_COMPONENTS[key as GameKey] : undefined;
+  if (!Comp) return <Navigate to="/games" replace />;
+  return (
+    <Suspense fallback={gameFallback(key)}>
+      <Comp onBack={() => navigate('/games')} />
+    </Suspense>
+  );
+}
+
+// /category/:categoryId — id là Category.id (number).
+function CategoryRoute() {
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const navigate = useNavigate();
+  const category = CATEGORIES.find((c) => String(c.id) === categoryId);
+  if (!category) return <Navigate to="/knowledge" replace />;
+  return (
+    <CategoryView
+      category={category}
+      onPickSubGroup={(sg) => navigate(`/learn/${sg.id}/flashcard`)}
+      onStartTest={(sg) => navigate(`/learn/${sg.id}/test`)}
+      onBack={() => navigate('/knowledge')}
+    />
+  );
+}
+
+// /learn/:subGroupId/flashcard — học thẻ trước khi làm bài.
+function FlashcardRoute() {
+  const { subGroupId } = useParams<{ subGroupId: string }>();
+  const navigate = useNavigate();
+  const found = subGroupId ? findSubGroup(subGroupId) : null;
+  if (!found) return <Navigate to="/knowledge" replace />;
+  return (
+    <FlashcardView
+      subGroup={found.subGroup}
+      onExit={() => navigate(`/category/${found.category.id}`)}
+      onComplete={() => navigate(`/learn/${found.subGroup.id}/test`)}
+    />
+  );
+}
+
+// /learn/:subGroupId/test — dispatch mini-game theo mode.
+function TestRoute() {
+  const { subGroupId } = useParams<{ subGroupId: string }>();
+  const navigate = useNavigate();
+  const found = subGroupId ? findSubGroup(subGroupId) : null;
+  if (!found) return <Navigate to="/knowledge" replace />;
+  const { subGroup, category } = found;
+  const Comp = TEST_COMPONENTS[subGroup.mode];
+  if (!Comp) return <Navigate to={`/category/${category.id}`} replace />;
+  return (
+    <Comp
+      words={subGroup.words}
+      onFinish={(result) =>
+        navigate(`/learn/${subGroup.id}/result`, { state: { result } })
+      }
+      onExit={() => navigate(`/category/${category.id}`)}
+    />
+  );
+}
+
+// /learn/:subGroupId/result — quizResult truyền qua location.state (không serialize vào URL),
+// nên refresh trang này sẽ mất kết quả → quay về trang category.
+function ResultRoute() {
+  const { subGroupId } = useParams<{ subGroupId: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const found = subGroupId ? findSubGroup(subGroupId) : null;
+  const result = (location.state as { result?: QuizResult } | null)?.result ?? null;
+  if (!found) return <Navigate to="/knowledge" replace />;
+  if (!result) return <Navigate to={`/category/${found.category.id}`} replace />;
+  return (
+    <ResultView
+      subGroup={found.subGroup}
+      result={result}
+      onBack={() => navigate(`/category/${found.category.id}`)}
+    />
+  );
+}
+
+// /math/:levelId — levelId là MathLevel.id ('math.symbols', 'math.plus.5'…).
+function MathQuizRoute() {
+  const { levelId } = useParams<{ levelId: string }>();
+  const navigate = useNavigate();
+  const level = MATH_LEVELS.find((l) => l.id === levelId);
+  if (!level) return <Navigate to="/math" replace />;
+  return <MathQuizView level={level} onBack={() => navigate('/math')} />;
+}
 
 export default function App() {
-  const [view, setView] = useState<View>('map');
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeSubGroup, setActiveSubGroup] = useState<SubGroup | null>(null);
-  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeMathLevel, setActiveMathLevel] = useState<MathLevel | null>(null);
 
   useEffect(() => {
     speak('');
@@ -221,388 +290,83 @@ export default function App() {
     return () => window.clearTimeout(t);
   }, []);
 
+  // BGM chỉ bật trong các màn Đảo Trò Chơi (mọi route /game/* — kể cả /game/challenge).
   useEffect(() => {
-    if (GAME_ISLAND_VIEWS.has(view)) {
-      startBgm();
-    } else {
-      stopBgm();
-    }
-  }, [view]);
+    if (location.pathname.startsWith('/game/')) startBgm();
+    else stopBgm();
+  }, [location.pathname]);
 
-  const goMap = () => {
-    setActiveCategory(null);
-    setActiveSubGroup(null);
-    setView('map');
-  };
-
-  const goCategory = () => {
-    setActiveSubGroup(null);
-    setView('category');
-  };
-
-  const goProfile = () => setView('profile');
-
-  const handleNavigate = (key: NavKey) => {
-    if (key === 'map') goMap();
-    else setView(key);
-  };
-
-  const pickCategory = (category: Category) => {
-    setActiveCategory(category);
-    setView('category');
-  };
-
-  const pickSubGroup = (subGroup: SubGroup) => {
-    setActiveSubGroup(subGroup);
-    setView('flashcard');
-  };
-
-  const startTestDirect = (subGroup: SubGroup) => {
-    setActiveSubGroup(subGroup);
-    setView('test');
-  };
-
-  const startTest = () => setView('test');
-
-  const finishTest = (result: QuizResult) => {
-    setQuizResult(result);
-    setView('result');
-  };
-
-  const navActive: NavKey =
-    view === 'leader' || view === 'pron'
-      ? view
-      : view === 'profile' || view === 'stickers'
-        ? 'profile'
-        : 'map';
-
-  const goGameIsland = () => setView('gameisland');
-
-  const pickGame = (key: GameKey) => {
-    switch (key) {
-      case 'numberpop':
-        setView('numberpop');
-        break;
-      case 'feedanimal':
-        setView('feedanimal');
-        break;
-      case 'coloring':
-        setView('coloring');
-        break;
-      case 'sequence':
-        setView('sequence');
-        break;
-      case 'matchpuzzle':
-        setView('matchpuzzle');
-        break;
-      case 'count':
-        setView('count');
-        break;
-      case 'plus':
-        setView('plus');
-        break;
-      case 'subtract':
-        setView('subtract');
-        break;
-      case 'compare':
-        setView('compare');
-        break;
-      case 'mathrescue':
-        setView('mathrescue');
-        break;
-      case 'ocean':
-        setView('ocean');
-        break;
-      case 'greenknight':
-        setView('greenknight');
-        break;
-      case 'codekingdom':
-        setView('codekingdom');
-        break;
-      case 'traintrack':
-        setView('traintrack');
-        break;
-      case 'ecobalance':
-        setView('ecobalance');
-        break;
-      case 'lightengineer':
-        setView('lightengineer');
-        break;
-      case 'magicisland':
-        setView('magicisland');
-        break;
-      case 'marspack':
-        setView('marspack');
-        break;
-      case 'detective':
-        setView('detective');
-        break;
-      case 'riverrescue':
-        setView('riverrescue');
-        break;
-      case 'whackmath':
-        setView('whackmath');
-        break;
-      case 'fruitrescue':
-        setView('fruitrescue');
-        break;
-      case 'spellingking':
-        setView('spellingking');
-        break;
-      case 'tracerkids':
-        setView('tracerkids');
-        break;
-      case 'feedcount':
-        setView('feedcount');
-        break;
-      case 'bubbleletters':
-        setView('bubbleletters');
-        break;
-      case 'connectdots':
-        setView('connectdots');
-        break;
-      case 'dinoalphabet':
-        setView('dinoalphabet');
-        break;
-      case 'fruitscale':
-        setView('fruitscale');
-        break;
-      case 'rhymegarden':
-        setView('rhymegarden');
-        break;
-      case 'toneking':
-        setView('toneking');
-        break;
-      case 'ghepting':
-        setView('ghepting');
-        break;
-      case 'khoiso':
-        setView('khoiso');
-        break;
-      case 'congkhoi':
-        setView('congkhoi');
-        break;
-      case 'bekhoi':
-        setView('bekhoi');
-        break;
-      case 'cauvongso':
-        setView('cauvongso');
-        break;
-      case 'missingletter':
-        setView('missingletter');
-        break;
-      case 'supermarket':
-        setView('supermarket');
-        break;
-      case 'spotdiff':
-        setView('spotdiff');
-        break;
-      case 'animalpuzzle':
-        setView('animalpuzzle');
-        break;
-      case 'writeletter':
-        setView('writeletter');
-        break;
-      case 'trainphonics':
-        setView('trainphonics');
-        break;
-      case 'spacemath':
-        setView('spacemath');
-        break;
-      case 'classmonitor':
-        setView('classmonitor');
-        break;
-      case 'animalrescue':
-        setView('animalrescue');
-        break;
-      case 'travelcat':
-        setView('travelcat');
-        break;
-      case 'schooljourney':
-        setView('schooljourney');
-        break;
-      case 'mathtreasure':
-        setView('mathtreasure');
-        break;
-      case 'memorycard':
-        setView('memorycard');
-        break;
-      case 'traffichero':
-        setView('traffichero');
-        break;
-      case 'challenge':
-        setView('challenge');
-        break;
-    }
-  };
+  const navActive = navKeyForPath(location.pathname);
+  const handleNavigate = (key: NavKey) => navigate(NAV_PATHS[key]);
 
   return (
     <div className="max-w-md md:max-w-3xl lg:max-w-4xl mx-auto min-h-screen flex flex-col relative bg-white shadow-2xl">
       <Header onOpenMenu={() => setDrawerOpen(true)} />
       <main className="flex-1 min-h-0 p-4 md:p-6 lg:p-8 relative overflow-y-auto">
-        {view === 'map' && (
-          <MapView
-            onPickKnowledge={() => setView('knowledge')}
-            onPickReview={() => setView('review')}
-            onPickMath={() => setView('mathland')}
-            onPickGameIsland={goGameIsland}
-          />
-        )}
-        {view === 'gameisland' && (
-          <GameIslandsView onPickGame={pickGame} onBack={goMap} />
-        )}
-        {view === 'knowledge' && (
-          <KnowledgeIslandsView
-            onPickCategory={pickCategory}
-            onBack={goMap}
-          />
-        )}
-        {view === 'numberpop' && <NumberPopView onBack={goGameIsland} />}
-        {view === 'feedanimal' && <FeedAnimalView onBack={goGameIsland} />}
-        {view === 'compare' && <CompareView onBack={goGameIsland} />}
-        {view === 'subtract' && <SubtractView onBack={goGameIsland} />}
-        {view === 'count' && <CountView onBack={goGameIsland} />}
-        {view === 'plus' && <PlusView onBack={goGameIsland} />}
-        {view === 'matchpuzzle' && <MatchPuzzleView onBack={goGameIsland} />}
-        {view === 'sequence' && <SequenceView onBack={goGameIsland} />}
-        {view === 'mathrescue' && <MathRescueView onBack={goGameIsland} />}
-        {view === 'ocean' && <OceanVocabularyView onBack={goGameIsland} />}
-        {view === 'greenknight' && <GreenKnightRecycleView onBack={goGameIsland} />}
-        {view === 'codekingdom' && <CodeKingdomView onBack={goGameIsland} />}
-        {view === 'traintrack' && <TrainTrackPuzzleView onBack={goGameIsland} />}
-        {view === 'ecobalance' && <EcoBalanceView onBack={goGameIsland} />}
-        {view === 'lightengineer' && <LightEngineerView onBack={goGameIsland} />}
-        {view === 'magicisland' && <MagicIsland2048View onBack={goGameIsland} />}
-        {view === 'marspack' && <MarsPackingView onBack={goGameIsland} />}
-        {view === 'detective' && <DetectiveCluesView onBack={goGameIsland} />}
-        {view === 'riverrescue' && <RiverRescueView onBack={goGameIsland} />}
-        {view === 'whackmath' && (
-          <Suspense fallback={<div className="p-8 text-center text-slate-400">Đang tải…</div>}>
-            <WhackMathView onBack={goGameIsland} />
-          </Suspense>
-        )}
-        {view === 'fruitrescue' && (
-          <Suspense fallback={<div className="p-8 text-center text-slate-400">Đang tải…</div>}>
-            <FruitRescueView onBack={goGameIsland} />
-          </Suspense>
-        )}
-        {view === 'spellingking' && (
-          <Suspense fallback={<div className="p-8 text-center text-slate-400">Đang tải…</div>}>
-            <SpellingKingView onBack={goGameIsland} />
-          </Suspense>
-        )}
-        {view === 'tracerkids' && <TracerKidsView onBack={goGameIsland} />}
-        {view === 'feedcount' && <FeedCountView onBack={goGameIsland} />}
-        {view === 'bubbleletters' && <BubbleLettersView onBack={goGameIsland} />}
-        {view === 'connectdots' && <ConnectDotsView onBack={goGameIsland} />}
-        {view === 'dinoalphabet' && <DinoAlphabetView onBack={goGameIsland} />}
-        {view === 'fruitscale' && <FruitScaleView onBack={goGameIsland} />}
-        {view === 'rhymegarden' && <RhymeGardenView onBack={goGameIsland} />}
-        {view === 'toneking' && <ToneKingView onBack={goGameIsland} />}
-        {view === 'ghepting' && <GhepTiengView onBack={goGameIsland} />}
-        {view === 'khoiso' && <KhoiSoView onBack={goGameIsland} />}
-        {view === 'congkhoi' && <CongKhoiView onBack={goGameIsland} />}
-        {view === 'bekhoi' && <BeKhoiView onBack={goGameIsland} />}
-        {view === 'cauvongso' && <CauVongSoView onBack={goGameIsland} />}
-        {view === 'missingletter' && <MissingLetterView onBack={goGameIsland} />}
-        {view === 'supermarket' && <SupermarketMathView onBack={goGameIsland} />}
-        {view === 'spotdiff' && <SpotDifferenceView onBack={goGameIsland} />}
-        {view === 'animalpuzzle' && <AnimalPuzzleView onBack={goGameIsland} />}
-        {view === 'writeletter' && <WriteLetterView onBack={goGameIsland} />}
-        {view === 'trainphonics' && <TrainPhonicsView onBack={goGameIsland} />}
-        {view === 'spacemath' && <SpaceMathView onBack={goGameIsland} />}
-        {view === 'classmonitor' && <ClassMonitorView onBack={goGameIsland} />}
-        {view === 'animalrescue' && <AnimalRescueView onBack={goGameIsland} />}
-        {view === 'travelcat' && <TravelCatView onBack={goGameIsland} />}
-        {view === 'schooljourney' && <SchoolJourneyView onBack={goGameIsland} />}
-        {view === 'mathtreasure' && <MathTreasureView onBack={goGameIsland} />}
-        {view === 'memorycard' && <MemoryCardView onBack={goGameIsland} />}
-        {view === 'traffichero' && <TrafficHeroView onBack={goGameIsland} />}
-        {view === 'coloring' && (
-          <Suspense
-            fallback={
-              <div className="py-10 text-center text-slate-400 font-bold animate-pulse">
-                🎨 Đang tải tranh tô màu…
-              </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <MapView
+                onPickKnowledge={() => navigate('/knowledge')}
+                onPickReview={() => navigate('/review')}
+                onPickMath={() => navigate('/math')}
+                onPickGameIsland={() => navigate('/games')}
+              />
             }
-          >
-            <ColoringView onBack={goGameIsland} />
-          </Suspense>
-        )}
-        {view === 'mathland' && (
-          <MathLandView
-            onPickLevel={(l) => {
-              setActiveMathLevel(l);
-              setView('mathquiz');
-            }}
-            onBack={goMap}
           />
-        )}
-        {view === 'mathquiz' && activeMathLevel && (
-          <MathQuizView level={activeMathLevel} onBack={() => setView('mathland')} />
-        )}
-        {view === 'challenge' && <TimeChallengeView onBack={goGameIsland} />}
-        {view === 'review' && <DailyReviewView onBack={goMap} />}
-        {view === 'category' && activeCategory && (
-          <CategoryView
-            category={activeCategory}
-            onPickSubGroup={pickSubGroup}
-            onStartTest={startTestDirect}
-            onBack={() => setView('knowledge')}
+          <Route
+            path="/games"
+            element={
+              <GameIslandsView
+                onPickGame={(key) => navigate(`/game/${key}`)}
+                onBack={() => navigate('/')}
+              />
+            }
           />
-        )}
-        {view === 'flashcard' && activeSubGroup && (
-          <FlashcardView
-            subGroup={activeSubGroup}
-            onExit={goCategory}
-            onComplete={startTest}
+          <Route path="/game/:key" element={<GameRoute />} />
+          <Route
+            path="/knowledge"
+            element={
+              <KnowledgeIslandsView
+                onPickCategory={(c) => navigate(`/category/${c.id}`)}
+                onBack={() => navigate('/')}
+              />
+            }
           />
-        )}
-        {view === 'test' && activeSubGroup && (
-          <>
-            {activeSubGroup.mode === 'quiz' && (
-              <QuizView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'matching' && (
-              <MatchingView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'listening' && (
-              <ListeningView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'typing' && (
-              <TypingView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'memory' && (
-              <MemoryView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'hangman' && (
-              <HangmanView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-            {activeSubGroup.mode === 'shadow' && (
-              <ShadowView words={activeSubGroup.words} onFinish={finishTest} onExit={goCategory} />
-            )}
-          </>
-        )}
-        {view === 'result' && activeSubGroup && quizResult && (
-          <ResultView
-            subGroup={activeSubGroup}
-            result={quizResult}
-            onBack={goCategory}
+          <Route path="/category/:categoryId" element={<CategoryRoute />} />
+          <Route path="/learn/:subGroupId/flashcard" element={<FlashcardRoute />} />
+          <Route path="/learn/:subGroupId/test" element={<TestRoute />} />
+          <Route path="/learn/:subGroupId/result" element={<ResultRoute />} />
+          <Route
+            path="/math"
+            element={
+              <MathLandView
+                onPickLevel={(l) => navigate(`/math/${l.id}`)}
+                onBack={() => navigate('/')}
+              />
+            }
           />
-        )}
-        {view === 'leader' && <LeaderboardView />}
-        {view === 'profile' && <ProfileView onOpenStickers={() => setView('stickers')} />}
-        {view === 'pron' && <PronunciationView />}
-        {view === 'stickers' && <StickersView onBack={goProfile} />}
-        {view === 'alphabet' && <AlphabetView onBack={goMap} />}
-        {view === 'numbers' && <NumberView onBack={goMap} />}
+          <Route path="/math/:levelId" element={<MathQuizRoute />} />
+          <Route path="/review" element={<DailyReviewView onBack={() => navigate('/')} />} />
+          <Route path="/leaderboard" element={<LeaderboardView />} />
+          <Route
+            path="/profile"
+            element={<ProfileView onOpenStickers={() => navigate('/stickers')} />}
+          />
+          <Route path="/stickers" element={<StickersView onBack={() => navigate('/profile')} />} />
+          <Route path="/pronunciation" element={<PronunciationView />} />
+          <Route path="/alphabet" element={<AlphabetView onBack={() => navigate('/')} />} />
+          <Route path="/numbers" element={<NumberView onBack={() => navigate('/')} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
       <BottomNav active={navActive} onNavigate={handleNavigate} />
       <SideDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <div className="space-y-2">
           <button
             onClick={() => {
-              setView('alphabet');
+              navigate('/alphabet');
               setDrawerOpen(false);
             }}
             className="w-full p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-100 rounded-2xl flex items-center gap-3 active:scale-95 transition-all text-left hover:shadow-md"
@@ -621,7 +385,7 @@ export default function App() {
 
           <button
             onClick={() => {
-              setView('numbers');
+              navigate('/numbers');
               setDrawerOpen(false);
             }}
             className="w-full p-4 bg-gradient-to-br from-emerald-50 to-blue-50 border-2 border-emerald-100 rounded-2xl flex items-center gap-3 active:scale-95 transition-all text-left hover:shadow-md"
