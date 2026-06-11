@@ -31,6 +31,8 @@ import AlphabetView from './views/AlphabetView';
 import NumberView from './views/NumberView';
 import MathLandView from './views/MathLandView';
 import MathQuizView from './views/MathQuizView';
+import VietLandView from './views/VietLandView';
+import VietLessonView from './views/VietLessonView';
 import NumberPopView from './views/NumberPopView';
 import FeedAnimalView from './views/FeedAnimalView';
 import CompareView from './views/CompareView';
@@ -88,6 +90,7 @@ import { speak } from './lib/audio';
 import { startBgm, stopBgm } from './lib/bgm';
 import { CATEGORIES, findSubGroup, type Word } from './data/gameData';
 import { MATH_LEVELS } from './data/mathData';
+import { VIET_LESSONS } from './data/vietData';
 
 // Mọi game ở Đảo Trò Chơi đều nhận đúng một prop `onBack`. Registry này thay cho
 // switch pickGame() + 50 nhánh render cũ — thêm game mới chỉ cần một dòng ở đây
@@ -276,6 +279,21 @@ function MathQuizRoute() {
   return <MathQuizView level={level} onBack={() => navigate('/math')} />;
 }
 
+// /viet/:lessonId — lessonId là VietLesson.id ('viet.alphabet', 'viet.blend'…).
+function VietLessonRoute() {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const navigate = useNavigate();
+  const lesson = VIET_LESSONS.find((l) => l.id === lessonId);
+  if (!lesson) return <Navigate to="/viet" replace />;
+  return (
+    <VietLessonView
+      lesson={lesson}
+      onBack={() => navigate('/viet')}
+      onPractice={(game) => navigate(`/game/${game}`)}
+    />
+  );
+}
+
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -310,6 +328,7 @@ export default function App() {
               <MapView
                 onPickKnowledge={() => navigate('/knowledge')}
                 onPickReview={() => navigate('/review')}
+                onPickViet={() => navigate('/viet')}
                 onPickMath={() => navigate('/math')}
                 onPickGameIsland={() => navigate('/games')}
               />
@@ -348,6 +367,16 @@ export default function App() {
             }
           />
           <Route path="/math/:levelId" element={<MathQuizRoute />} />
+          <Route
+            path="/viet"
+            element={
+              <VietLandView
+                onPickLesson={(l) => navigate(`/viet/${l.id}`)}
+                onBack={() => navigate('/')}
+              />
+            }
+          />
+          <Route path="/viet/:lessonId" element={<VietLessonRoute />} />
           <Route path="/review" element={<DailyReviewView onBack={() => navigate('/')} />} />
           <Route path="/leaderboard" element={<LeaderboardView />} />
           <Route

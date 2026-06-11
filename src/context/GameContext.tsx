@@ -3,6 +3,7 @@ import { ALL_WORDS, CATEGORIES, nextSubGroupId, type Word } from '../data/gameDa
 import { DEFAULT_PET_NAME, PET_NAME_MAX } from '../data/petData';
 import { DAILY_CAP, isDue, nextLevel, type WordStats } from '../data/srsData';
 import { prevMathLevelId } from '../data/mathData';
+import { prevVietLessonId } from '../data/vietData';
 
 type GameContextValue = {
   score: number;
@@ -14,6 +15,7 @@ type GameContextValue = {
   wordStats: WordStats;
   dueDeck: Word[];
   mathPassed: string[];
+  vietPassed: string[];
   isUnlocked: (subGroupId: string) => boolean;
   isPassed: (subGroupId: string) => boolean;
   addScore: (delta: number) => void;
@@ -26,6 +28,9 @@ type GameContextValue = {
   isMathPassed: (id: string) => boolean;
   isMathUnlocked: (id: string) => boolean;
   markMathPassed: (id: string) => void;
+  isVietPassed: (id: string) => boolean;
+  isVietUnlocked: (id: string) => boolean;
+  markVietPassed: (id: string) => void;
 };
 
 const STORAGE_UNLOCKED = 'lingoland_subgroups_v2';
@@ -34,6 +39,7 @@ const STORAGE_PET_NAME = 'lingoland_pet_name';
 const STORAGE_TIME_HS = 'lingoland_time_hs';
 const STORAGE_WORD_STATS = 'lingoland_word_stats';
 const STORAGE_MATH_PASSED = 'lingoland_math_passed';
+const STORAGE_VIET_PASSED = 'lingoland_viet_passed';
 const LEGACY_KEY = 'lingoland_levels';
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -103,6 +109,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [mathPassed, setMathPassed] = useState<string[]>(() =>
     loadStringArray(STORAGE_MATH_PASSED, () => [])
   );
+  const [vietPassed, setVietPassed] = useState<string[]>(() =>
+    loadStringArray(STORAGE_VIET_PASSED, () => [])
+  );
 
   useEffect(() => {
     localStorage.setItem('lingoland_score', String(score));
@@ -131,6 +140,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_MATH_PASSED, JSON.stringify(mathPassed));
   }, [mathPassed]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_VIET_PASSED, JSON.stringify(vietPassed));
+  }, [vietPassed]);
 
   const dueDeck = useMemo<Word[]>(() => {
     const now = Date.now();
@@ -208,6 +221,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setMathPassed((arr) => (arr.includes(id) ? arr : [...arr, id]));
   };
 
+  const isVietPassed = (id: string) => vietPassed.includes(id);
+
+  const isVietUnlocked = (id: string) => {
+    const prev = prevVietLessonId(id);
+    return prev === null || vietPassed.includes(prev);
+  };
+
+  const markVietPassed = (id: string) => {
+    setVietPassed((arr) => (arr.includes(id) ? arr : [...arr, id]));
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -220,6 +244,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         wordStats,
         dueDeck,
         mathPassed,
+        vietPassed,
         isUnlocked,
         isPassed,
         addScore,
@@ -232,6 +257,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         isMathPassed,
         isMathUnlocked,
         markMathPassed,
+        isVietPassed,
+        isVietUnlocked,
+        markVietPassed,
       }}
     >
       {children}

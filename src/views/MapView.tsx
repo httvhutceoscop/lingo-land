@@ -1,10 +1,12 @@
 import { TOTAL_SUBGROUPS } from '../data/gameData';
 import { TOTAL_MATH_LEVELS } from '../data/mathData';
+import { TOTAL_VIET_LESSONS } from '../data/vietData';
 import { useGame } from '../context/GameContext';
 
 type MapViewProps = {
   onPickKnowledge: () => void;
   onPickReview: () => void;
+  onPickViet: () => void;
   onPickMath: () => void;
   onPickGameIsland: () => void;
 };
@@ -12,12 +14,14 @@ type MapViewProps = {
 export default function MapView({
   onPickKnowledge,
   onPickReview,
+  onPickViet,
   onPickMath,
   onPickGameIsland,
 }: MapViewProps) {
-  const { passedSubGroups, dueDeck, mathPassed } = useGame();
+  const { passedSubGroups, dueDeck, mathPassed, vietPassed } = useGame();
   const dueCount = dueDeck.length;
   const mathDone = mathPassed.length;
+  const vietDone = vietPassed.length;
   const knowledgeDone = passedSubGroups.length;
 
   return (
@@ -52,6 +56,25 @@ export default function MapView({
             <div className="text-[10px] mt-1 font-bold bg-white/20 inline-block px-2 py-0.5 rounded-full">
               ✓ {knowledgeDone}/{TOTAL_SUBGROUPS} bài
             </div>
+          </div>
+          <span className="text-white text-xl">▶️</span>
+        </button>
+
+        <button
+          onClick={onPickViet}
+          className="w-full p-5 bg-gradient-to-br from-rose-400 via-red-500 to-amber-500 rounded-3xl shadow-lg shadow-rose-200 active:scale-95 transition-all flex items-center gap-4 text-left md:col-span-2"
+        >
+          <div className="text-5xl">🇻🇳</div>
+          <div className="flex-1 text-white">
+            <div className="font-black text-lg leading-tight">Đảo Tiếng Việt</div>
+            <div className="text-xs opacity-90 font-bold mt-0.5">
+              Bảng chữ cái, ghép âm vần, thanh điệu, tập đọc
+            </div>
+            {vietDone > 0 && (
+              <div className="text-[10px] mt-1 font-bold bg-white/20 inline-block px-2 py-0.5 rounded-full">
+                ✓ {vietDone}/{TOTAL_VIET_LESSONS} bài
+              </div>
+            )}
           </div>
           <span className="text-white text-xl">▶️</span>
         </button>
