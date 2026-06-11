@@ -2,6 +2,7 @@ import { useState, type KeyboardEvent } from 'react';
 import { TOTAL_SUBGROUPS } from '../data/gameData';
 import { useGame } from '../context/GameContext';
 import { getNextStage, getPetStage, getStageIndex, PET_NAME_MAX } from '../data/petData';
+import { getOpenAIKey, setOpenAIKey } from '../lib/audio';
 
 type ProfileViewProps = {
   onOpenStickers: () => void;
@@ -22,6 +23,20 @@ export default function ProfileView({ onOpenStickers }: ProfileViewProps) {
   const [editingName, setEditingName] = useState(false);
   const [draftName, setDraftName] = useState(petName);
   const [bouncing, setBouncing] = useState(false);
+
+  const [keyDraft, setKeyDraft] = useState(getOpenAIKey());
+  const [keySaved, setKeySaved] = useState(false);
+
+  const saveKey = () => {
+    setOpenAIKey(keyDraft);
+    setKeySaved(true);
+    setTimeout(() => setKeySaved(false), 2000);
+  };
+  const clearKey = () => {
+    setOpenAIKey('');
+    setKeyDraft('');
+    setKeySaved(false);
+  };
 
   const startEdit = () => {
     setDraftName(petName);
@@ -165,6 +180,42 @@ export default function ProfileView({ onOpenStickers }: ProfileViewProps) {
         </div>
         <span className="text-amber-500 text-xl">▶️</span>
       </button>
+
+      <div className="mt-6 bg-gradient-to-br from-violet-50 to-blue-50 p-6 rounded-3xl border-2 border-violet-100">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-2xl">🎙️</span>
+          <span className="font-black text-slate-800">Giọng đọc AI (OpenAI)</span>
+        </div>
+        <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-3">
+          Nhập API key OpenAI của bạn để dùng giọng đọc tự nhiên. Để trống sẽ dùng giọng
+          mặc định của trình duyệt. Key chỉ lưu trên máy bạn.
+        </p>
+        <input
+          type="password"
+          value={keyDraft}
+          onChange={(e) => {
+            setKeyDraft(e.target.value);
+            setKeySaved(false);
+          }}
+          placeholder="sk-..."
+          autoComplete="off"
+          className="w-full bg-white border-2 border-violet-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-violet-400 transition-colors mb-2"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={saveKey}
+            className="flex-1 py-2 bg-violet-500 text-white text-sm font-black rounded-xl active:scale-95 transition-all hover:bg-violet-600"
+          >
+            {keySaved ? '✓ Đã lưu' : 'Lưu'}
+          </button>
+          <button
+            onClick={clearKey}
+            className="px-4 py-2 bg-white border-2 border-slate-200 text-slate-500 text-sm font-bold rounded-xl active:scale-95 transition-all hover:border-slate-300"
+          >
+            Xóa
+          </button>
+        </div>
+      </div>
 
       <button
         onClick={handleReset}

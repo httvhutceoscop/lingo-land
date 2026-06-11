@@ -117,14 +117,96 @@ function stopCurrent(): void {
   }
 }
 
+// --- OpenAI text-to-speech (BYOK) -------------------------------------------
+// User tự nhập API key của họ, lưu trong localStorage (không nhúng vào bundle —
+// site GitHub Pages là public). Có key → ưu tiên giọng OpenAI; không có key /
+// lỗi mạng / hết quota / autoplay bị chặn → tự fallback về window.speechSynthesis.
+
+const OPENAI_KEY_STORAGE = 'lingoland_openai_key';
+const OPENAI_TTS_URL = 'https://api.openai.com/v1/audio/speech';
+const OPENAI_TTS_MODEL = 'gpt-4o-mini-tts'; // multilingual, rẻ; tự nhận diện vi/en theo input
+const OPENAI_TTS_VOICE = 'nova'; // giọng thân thiện cho trẻ
+
+// Instructions theo ngôn ngữ — ép GPT đọc đúng tiếng Việt (giọng Việt) cho lang vi-*,
+// thay vì để model tự đoán. Câu nói tiếng Anh (en-*) vẫn đọc giọng Anh.
+function ttsInstructions(lang: string): string {
+  const short = lang.split('-')[0].toLowerCase();
+  if (short === 'vi') {
+    return 'Đọc bằng tiếng Việt với giọng ấm áp, vui tươi, thân thiện, rõ ràng và dễ thương dành cho trẻ nhỏ.';
+  }
+  return 'Speak in a warm, cheerful, friendly tone for young children.';
+}
+
+export function getOpenAIKey(): string {
+  try {
+    return localStorage.getItem(OPENAI_KEY_STORAGE) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function setOpenAIKey(key: string): void {
+  try {
+    const trimmed = key.trim();
+    if (trimmed) localStorage.setItem(OPENAI_KEY_STORAGE, trimmed);
+    else localStorage.removeItem(OPENAI_KEY_STORAGE);
+  } catch {
+    /* ignore */
+  }
+}
+
+// Cache theo (lang, voice, text) → object URL của mp3. Câu khen lặp nhiều
+// ("Xuất sắc!", "Tuyệt vời!") nên cache để đỡ tốn phí + giảm độ trễ.
+const ttsCache = new Map<string, string>();
+
+function speechSynthesisSpeak(localized: string, lang: string): void {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return;
+  const msg = new SpeechSynthesisUtterance(localized);
+  msg.lang = lang;
+  window.speechSynthesis.speak(msg);
+}
+
+async function openAITts(input: string, lang: string, key: string, token: number): Promise<void> {
+  const cacheKey = `${lang}|${OPENAI_TTS_VOICE}|${input}`;
+  let url = ttsCache.get(cacheKey);
+  if (!url) {
+    const res = await fetch(OPENAI_TTS_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: OPENAI_TTS_MODEL,
+        voice: OPENAI_TTS_VOICE,
+        input,
+        instructions: ttsInstructions(lang),
+        response_format: 'mp3',
+      }),
+    });
+    if (!res.ok) throw new Error(`OpenAI TTS ${res.status}`);
+    url = URL.createObjectURL(await res.blob());
+    ttsCache.set(cacheKey, url);
+  }
+  if (token !== speakToken) return; // đã có speak() mới hơn → bỏ, không phát âm thanh cũ
+  const audio = new Audio(url);
+  currentAudio = audio;
+  audio.onended = () => {
+    if (currentAudio === audio) currentAudio = null;
+  };
+  await audio.play(); // autoplay bị chặn → throw → caller fallback
+}
+
 export function speak(text: string, lang: string = 'en-US'): void {
   if (!text) return;
   stopCurrent();
-  speakToken++;
-  if (typeof window === 'undefined' || !window.speechSynthesis) return;
-  const msg = new SpeechSynthesisUtterance(localize(text, lang));
-  msg.lang = lang;
-  window.speechSynthesis.speak(msg);
+  const token = ++speakToken;
+  const localized = localize(text, lang);
+  const key = getOpenAIKey();
+  if (!key) {
+    speechSynthesisSpeak(localized, lang);
+    return;
+  }
+  openAITts(localized, lang, key, token).catch(() => {
+    if (token === speakToken) speechSynthesisSpeak(localized, lang);
+  });
 }
 
 const cambridgeUrlCache = new Map<string, string | null>();
