@@ -17,7 +17,9 @@ function googleTagPlugin(tagId: string): Plugin {
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', '${tagId}');
+  // send_page_view: false — HashRouter là SPA, page_view được bắn thủ công theo
+  // từng route ở src/lib/analytics.ts. Tắt auto để khỏi đếm trùng trang đầu.
+  gtag('config', '${tagId}', { send_page_view: false });
 </script>`;
       return html.replace('</head>', `  ${snippet}\n</head>`);
     },

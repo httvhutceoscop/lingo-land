@@ -88,6 +88,7 @@ import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import { startBgm, stopBgm } from './lib/bgm';
+import { trackPageView } from './lib/analytics';
 import { CATEGORIES, findSubGroup, type Word } from './data/gameData';
 import { MATH_LEVELS } from './data/mathData';
 import { VIET_LESSONS } from './data/vietData';
@@ -313,6 +314,12 @@ export default function App() {
     if (location.pathname.startsWith('/game/')) startBgm();
     else stopBgm();
   }, [location.pathname]);
+
+  // Google Analytics: bắn page_view thủ công mỗi lần đổi route. HashRouter không tự
+  // làm việc này (xem src/lib/analytics.ts). No-op nếu chưa cấu hình VITE_GOOGLE_TAG.
+  useEffect(() => {
+    trackPageView(location.pathname, location.search);
+  }, [location.pathname, location.search]);
 
   const navActive = navKeyForPath(location.pathname);
   const handleNavigate = (key: NavKey) => navigate(NAV_PATHS[key]);
