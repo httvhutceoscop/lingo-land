@@ -13,6 +13,17 @@
     <title>LingoLand - English Adventure</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SBSMH1Q3K8"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    // send_page_view: false — HashRouter là SPA, page_view được bắn thủ công theo
+    // từng route ở src/lib/analytics.ts. Tắt auto để khỏi đếm trùng trang đầu.
+    gtag('config', 'G-SBSMH1Q3K8', { send_page_view: false });
+    </script>
     <style>
         body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
         .island-node { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
