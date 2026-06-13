@@ -66,7 +66,7 @@ type GameCard = {
   age: AgeGroup;
 };
 
-const GAMES: GameCard[] = [
+export const GAMES: GameCard[] = [
   {
     key: 'numberpop',
     emoji: '🎈',

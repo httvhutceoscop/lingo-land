@@ -84,7 +84,7 @@ import SchoolJourneyView from './views/SchoolJourneyView';
 import MathTreasureView from './views/MathTreasureView';
 import MemoryCardView from './views/MemoryCardView';
 import TrafficHeroView from './views/TrafficHeroView';
-import GameIslandsView, { type GameKey } from './views/GameIslandsView';
+import GameIslandsView, { type GameKey, GAMES } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import { startBgm, stopBgm } from './lib/bgm';
@@ -177,6 +177,64 @@ function navKeyForPath(pathname: string): NavKey {
   if (pathname === '/pronunciation') return 'pron';
   if (pathname === '/profile' || pathname === '/stickers') return 'profile';
   return 'map';
+}
+
+const APP_NAME = 'LingoLand';
+
+// Tiêu đề tĩnh cho từng route cố định. Route động (/game/:key, /category/:id,
+// /math/:levelId, /viet/:lessonId, /learn/...) được tra ở titleForPath bên dưới.
+const STATIC_TITLES: Record<string, string> = {
+  '/': 'Trang chủ',
+  '/games': 'Đảo Trò Chơi',
+  '/knowledge': 'Đảo Tri Thức',
+  '/math': 'Đảo Toán Học',
+  '/viet': 'Đảo Tiếng Việt',
+  '/review': 'Ôn tập hàng ngày',
+  '/leaderboard': 'Bảng xếp hạng',
+  '/profile': 'Hồ sơ của bé',
+  '/stickers': 'Bộ nhãn dán',
+  '/pronunciation': 'Phát âm',
+  '/alphabet': 'Bảng chữ cái',
+  '/numbers': 'Bảng số đếm',
+};
+
+const LEARN_PHASE_LABEL: Record<string, string> = {
+  flashcard: 'Học thẻ',
+  test: 'Kiểm tra',
+  result: 'Kết quả',
+};
+
+// Tên trang (chưa kèm hậu tố app) cho một pathname bất kỳ — tra tên thật từ
+// CATEGORIES/MATH_LEVELS/VIET_LESSONS/GAMES để khớp đúng nội dung màn hình.
+function pageLabel(pathname: string): string | undefined {
+  const staticLabel = STATIC_TITLES[pathname];
+  if (staticLabel) return staticLabel;
+
+  let m: RegExpMatchArray | null;
+  if ((m = pathname.match(/^\/game\/(.+)$/))) {
+    return GAMES.find((g) => g.key === m![1])?.title ?? 'Trò chơi';
+  }
+  if ((m = pathname.match(/^\/category\/(.+)$/))) {
+    return CATEGORIES.find((c) => String(c.id) === m![1])?.title ?? 'Chủ đề';
+  }
+  if ((m = pathname.match(/^\/learn\/(.+)\/(flashcard|test|result)$/))) {
+    const phase = LEARN_PHASE_LABEL[m[2]];
+    const sub = findSubGroup(m[1])?.subGroup.title;
+    return sub ? `${sub} · ${phase}` : phase;
+  }
+  if ((m = pathname.match(/^\/math\/(.+)$/))) {
+    return MATH_LEVELS.find((l) => l.id === m![1])?.title ?? 'Bài toán';
+  }
+  if ((m = pathname.match(/^\/viet\/(.+)$/))) {
+    return VIET_LESSONS.find((l) => l.id === m![1])?.title ?? 'Bài học';
+  }
+  return undefined;
+}
+
+// document.title cho route hiện tại: 'Đảo Toán Học · LingoLand'. Route lạ → chỉ tên app.
+function titleForPath(pathname: string): string {
+  const label = pageLabel(pathname);
+  return label ? `${label} · ${APP_NAME}` : APP_NAME;
 }
 
 const gameFallback = (key: string | undefined) =>
@@ -328,10 +386,13 @@ export default function App() {
     else stopBgm();
   }, [location.pathname]);
 
-  // Google Analytics: bắn page_view thủ công mỗi lần đổi route. HashRouter không tự
-  // làm việc này (xem src/lib/analytics.ts). No-op nếu chưa cấu hình VITE_GOOGLE_TAG.
+  // Mỗi lần đổi route: cập nhật document.title theo màn hình, rồi bắn page_view với
+  // đúng tiêu đề đó. HashRouter không tự gửi page_view (xem src/lib/analytics.ts);
+  // trackPageView là no-op nếu chưa cấu hình VITE_GOOGLE_TAG.
   useEffect(() => {
-    trackPageView(location.pathname, location.search);
+    const title = titleForPath(location.pathname);
+    document.title = title;
+    trackPageView(location.pathname, location.search, title);
   }, [location.pathname, location.search]);
 
   const navActive = navKeyForPath(location.pathname);
