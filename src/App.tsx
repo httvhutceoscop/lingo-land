@@ -88,7 +88,7 @@ import GameIslandsView, { type GameKey } from './views/GameIslandsView';
 import SideDrawer from './components/SideDrawer';
 import { speak } from './lib/audio';
 import { startBgm, stopBgm } from './lib/bgm';
-import { trackPageView } from './lib/analytics';
+import { trackPageView, trackEvent } from './lib/analytics';
 import { CATEGORIES, findSubGroup, type Word } from './data/gameData';
 import { MATH_LEVELS } from './data/mathData';
 import { VIET_LESSONS } from './data/vietData';
@@ -193,6 +193,10 @@ function GameRoute() {
   const { key } = useParams<{ key: string }>();
   const navigate = useNavigate();
   const Comp = key ? GAME_COMPONENTS[key as GameKey] : undefined;
+  // Đo game nào hay được mở. Chỉ bắn khi key hợp lệ (Comp tồn tại).
+  useEffect(() => {
+    if (key && Comp) trackEvent('game_start', { game: key });
+  }, [key, Comp]);
   if (!Comp) return <Navigate to="/games" replace />;
   return (
     <Suspense fallback={gameFallback(key)}>
@@ -244,9 +248,18 @@ function TestRoute() {
   return (
     <Comp
       words={subGroup.words}
-      onFinish={(result) =>
-        navigate(`/learn/${subGroup.id}/result`, { state: { result } })
-      }
+      onFinish={(result) => {
+        // Đo tỷ lệ hoàn thành/đậu bài theo sub-group & mini-game. pass: trùng
+        // quy tắc ở ResultView (correct >= total * 0.7).
+        trackEvent('test_finish', {
+          subgroup: subGroup.id,
+          mode: subGroup.mode,
+          correct: result.correct,
+          total: result.total,
+          passed: result.correct >= result.total * 0.7,
+        });
+        navigate(`/learn/${subGroup.id}/result`, { state: { result } });
+      }}
       onExit={() => navigate(`/category/${category.id}`)}
     />
   );
